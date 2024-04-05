@@ -9,8 +9,8 @@ public interface ISelect {
     public Logline[] getAllLogline ();
     public Component getComponent (int componentID);
     public Component[] getAllComponent ();
-    public Product getProduct (int productID);
-    public Product[] getAllProduct ();
+    public Recipe getProduct (int productID);
+    public Recipe[] getAllProduct ();
     public Unit getUnit (int unitID);
     public Unit[] getAllUnit ();
     public AGV getAGV (int agvID);

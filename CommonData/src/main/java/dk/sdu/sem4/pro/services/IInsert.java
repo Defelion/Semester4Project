@@ -8,7 +8,7 @@ public interface IInsert {
     public int addBatch (Batch batch);
     public int addLogline (int batchID, Logline logline);
     public int addComponent (Component component);
-    public int addProduct (Product product);
+    public int addProduct (Recipe recipe);
     public int addUnit (Unit unit);
     public int addAGV (AGV agv);
     public int addUser (User user);

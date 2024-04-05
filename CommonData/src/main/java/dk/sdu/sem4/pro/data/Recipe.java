@@ -2,22 +2,30 @@ package dk.sdu.sem4.pro.data;
 
 import java.util.List;
 
-public class Product {
+public class Recipe {
     private int id;
     private String name;
     private List<Component> componentList;
+    private double timeEstimation;
 
-    public Product() {}
+    public Recipe() {}
 
-    public Product (String Name, List<Component> ComponentList) {
+    public Recipe(String Name, List<Component> ComponentList) {
         this.componentList = ComponentList;
         this.name = Name;
     }
 
-    public Product (int ID, String Name, List<Component> ComponentList) {
+    public Recipe(int ID, String Name, List<Component> ComponentList) {
         this.id = ID;
         this.componentList = ComponentList;
         this.name = Name;
+    }
+
+    public Recipe(int ID, String Name, List<Component> ComponentList, double timeEstimation) {
+        this.id = ID;
+        this.componentList = ComponentList;
+        this.name = Name;
+        this.timeEstimation = timeEstimation;
     }
 
     public void setId(int id) {
@@ -49,5 +57,13 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getTimeEstimation() {
+        return timeEstimation;
+    }
+
+    public void setTimeEstimation(double timeEstimation) {
+        this.timeEstimation = timeEstimation;
     }
 }

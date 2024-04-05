@@ -7,27 +7,38 @@ public class Batch {
     private String description;
     private int amount;
     private List<Logline> log;
-    private Product product;
+    private Recipe recipe;
+    private int priority;
 
     public Batch() {}
-    public Batch (Product product, int amount, String description) {
-        this.product = product;
+
+    public Batch (Recipe recipe, int amount, int priority) {
+        this.recipe = recipe;
         this.amount = amount;
-        this.description = description;
+        this.priority = priority;
     }
 
-    public Batch (Product product, int amount, String description, List<Logline> log) {
-        this.product = product;
+    public Batch (Recipe recipe, int amount, String description, int priority) {
+        this.recipe = recipe;
         this.amount = amount;
         this.description = description;
+        this.priority = priority;
+    }
+
+    public Batch (Recipe recipe, int amount, String description, int priority, List<Logline> log) {
+        this.recipe = recipe;
+        this.amount = amount;
+        this.description = description;
+        this.priority = priority;
         this.log = log;
     }
 
-    public Batch (int ID, Product product, int amount, String description, List<Logline> log) {
+    public Batch (int ID, Recipe recipe, int amount, String description, int priority, List<Logline> log) {
         this.id = ID;
-        this.product = product;
+        this.recipe = recipe;
         this.amount = amount;
         this.description = description;
+        this.priority = priority;
         this.log = log;
     }
 
@@ -71,11 +82,15 @@ public class Batch {
         this.log.remove(logline);
     }
 
-    public Product getProduct() {
-        return product;
+    public Recipe getProduct() {
+        return recipe;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProduct(Recipe recipe) {
+        this.recipe = recipe;
     }
+
+    public int getPriority() { return priority; }
+
+    public void setPriority(int priority) { this.priority = priority; }
 }
