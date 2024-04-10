@@ -15,6 +15,7 @@
         <module>Communication</module>
         <module>CommonData</module>
         <module>CommonWeb</module>
+        <module>RESTCommunication</module>
     </modules>
 
     <properties>
