@@ -36,3 +36,13 @@ build/
 
 ### Mac OS ###
 .DS_Store
+mods-mvn/OpperationManager-1.0-SNAPSHOT.jar
+mods-mvn/OperationManager-1.0-SNAPSHOT.jar
+mods-mvn/communication-1.0-SNAPSHOT.jar
+mods-mvn/CommonWeb-1.0-SNAPSHOT.jar
+mods-mvn/CommonData-1.0-SNAPSHOT.jar
+mods-mvn/Common-1.0-SNAPSHOT.jar
+mods-mvn/OpperationManager-1.0-SNAPSHOT.jar
+/mods-mvn
+mods-mvn/OpperationManager-1.0-SNAPSHOT.jar
+*.jar
