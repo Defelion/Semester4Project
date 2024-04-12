@@ -1,4 +1,4 @@
-module datamanager {
-    requires spring.boot;
-    requires spring.boot.autoconfigure;
+module DataManager {
+    requires Common;
+    requires CommonData;
 }

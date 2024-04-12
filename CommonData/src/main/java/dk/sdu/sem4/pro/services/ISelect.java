@@ -5,7 +5,8 @@ import dk.sdu.sem4.pro.data.*;
 public interface ISelect {
     public Batch getBatch (int batchID);
     public Batch[] getAllBatch ();
-    public Logline getLogline (int batchID);
+    public Logline getLogline (int logLineID);
+    public Logline[] getBatchLog (int batchID);
     public Logline[] getAllLogline ();
     public Component getComponent (int componentID);
     public Component[] getAllComponent ();

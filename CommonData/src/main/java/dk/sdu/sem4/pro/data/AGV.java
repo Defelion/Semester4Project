@@ -4,8 +4,10 @@ import java.util.Date;
 
 public class AGV extends Unit{
     private Date changedDateTime;
-    private Date tjekDateTime;
+    private Date checkDateTime;
     private double chargeValue;
+    private double maxCharge;
+    private double minCharge;
 
     public AGV() {}
 
@@ -35,13 +37,13 @@ public class AGV extends Unit{
         this.changedDateTime = ChangedDateTime;
     }
 
-    public AGV (int ID, String Type, String State, double ChargeValue, Date ChangedDateTime, Date TjekDateTime) {
+    public AGV (int ID, String Type, String State, double ChargeValue, Date ChangedDateTime, Date checkDateTime, double minCharge, double maxCharge) {
         setId(ID);
         setType(Type);
         setState(State);
         this.chargeValue = ChargeValue;
         this.changedDateTime = ChangedDateTime;
-        this.tjekDateTime = TjekDateTime;
+        this.checkDateTime = checkDateTime;
     }
 
     public double getChargeValue() {
@@ -52,12 +54,12 @@ public class AGV extends Unit{
         this.chargeValue = chargeValue;
     }
 
-    public Date getTjekDateTime() {
-        return tjekDateTime;
+    public Date getCheckDateTime() {
+        return checkDateTime;
     }
 
-    public void setTjekDateTime(Date tjekDateTime) {
-        this.tjekDateTime = tjekDateTime;
+    public void setCheckDateTime(Date checkDateTime) {
+        this.checkDateTime = checkDateTime;
     }
 
     public Date getChangedDateTime() {
@@ -66,5 +68,21 @@ public class AGV extends Unit{
 
     public void setChangedDateTime(Date changedDateTime) {
         this.changedDateTime = changedDateTime;
+    }
+
+    public double getMaxCharge() {
+        return maxCharge;
+    }
+
+    public void setMaxCharge(double maxCharge) {
+        this.maxCharge = maxCharge;
+    }
+
+    public double getMinCharge() {
+        return minCharge;
+    }
+
+    public void setMinCharge(double minCharge) {
+        this.minCharge = minCharge;
     }
 }

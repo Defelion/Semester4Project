@@ -7,6 +7,7 @@ public class Logline {
     private String description;
     private Date date;
     private String type;
+    private int batchID;
 
     public Logline() {}
 
@@ -16,11 +17,12 @@ public class Logline {
         this.type = Type;
     }
 
-    public Logline(int ID, String Description, Date DateTime, String Type) {
+    public Logline(int ID, String Description, Date DateTime, String Type, int batchID) {
         this.id = ID;
         this.description = Description;
         this.date = DateTime;
         this.type = Type;
+        this.batchID = batchID;
     }
 
     public void setId(int id) {
@@ -54,5 +56,13 @@ public class Logline {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getBatchID() {
+        return batchID;
+    }
+
+    public void setBatchID(int batchID) {
+        this.batchID = batchID;
     }
 }
