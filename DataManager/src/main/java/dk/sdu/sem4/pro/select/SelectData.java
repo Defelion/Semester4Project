@@ -20,6 +20,11 @@ public class SelectData implements ISelect {
     }
 
     @Override
+    public Logline[] getBatchLog(int batchID) {
+        return new Logline[0];
+    }
+
+    @Override
     public Logline[] getAllLogline() {
         return new Logline[0];
     }
