@@ -5,9 +5,13 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
+.idea/misc.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/encodings.xml
+.idea/vcs.xml
+.idea/uiDesigner.xml
 *.iws
 *.iml
 *.ipr
@@ -36,3 +40,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+
+### Special
+mods-mvn/*
