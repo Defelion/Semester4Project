@@ -18,18 +18,20 @@ public class TransporterController implements IController {
         //as well as any NullPointerExceptions that might occur due to the Client being null.
         try {
             //This part loads the program into the Transporter by sending the JSONObject to the Client.
-            programObject.put("Program name", operation);
-            programObject.put("State", 1);
+            programObject.put("program name", operation);
+            programObject.put("state", 1);
 
             Integer state = client.send(programObject);
 
             //If the status is null or the status isn't status code 200, false is returned.
-            if (state != null && state != 1) {
+            if (state == null || state != 1) {
                 return false;
             }
 
             //This part sends the command to execute the program.
-            programObject.put("State", 2);
+            programObject.remove("program name");
+            programObject.put("state", 2);
+
             state = client.send(programObject);
 
             //If the status isn't null and the status is status code 200, true is returned.

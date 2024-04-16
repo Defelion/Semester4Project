@@ -65,8 +65,8 @@ public class RESTCommunication implements IClient {
             //This part reads the response from the connection, if there is one.
             JSONObject response = getJsonObject(connection);
             //This part returns the status code, if the response has one. If it doesn't, it returns null.
-            if (response != null && response.has("State")) {
-                return response.getInt("State");
+            if (response != null && response.has("state")) {
+                return response.getInt("state");
             } else {
                 return null;
             }
