@@ -56,9 +56,9 @@ create table UserGroup (
     name varchar not null
 );
 
-create table User (
+create table Users (
     ID serial not null unique primary key,
     name varchar not null,
     password varchar not null,
     UserGroup_ID integer not null references UserGroup
-)
+);
