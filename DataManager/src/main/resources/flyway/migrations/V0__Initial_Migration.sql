@@ -1,7 +1,8 @@
-create table Component (
+create table Batch (
     ID serial not null unique primary key,
-    name varchar not null,
-    wishedAmount integer not null
+    priority integer not null,
+    description text default '',
+    amount integer not null
 );
 
 create table LogLine (
@@ -9,7 +10,13 @@ create table LogLine (
     type VARCHAR not null,
     description text default '',
     dateTime timestamp,
-    Component_ID integer not null references Component
+    Batch_ID integer not null references Batch
+);
+
+create table Component (
+   ID serial not null unique primary key,
+   name varchar not null,
+   wishedAmount integer not null
 );
 
 create table Recipe (

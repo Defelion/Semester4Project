@@ -1,16 +1,32 @@
 package dk.sdu.sem4.pro.insert;
 
+import dk.sdu.sem4.pro.connection.Conn;
 import dk.sdu.sem4.pro.data.*;
 import dk.sdu.sem4.pro.services.IInsert;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class InsertData implements IInsert {
+
+    private Conn conn;
     /**
      * @param batch
      * @return ID
      */
     @Override
-    public int addBatch(Batch batch) {
-        return 0;
+    public int addBatch(Batch batch) throws IOException {
+        conn = new Conn();
+        int id = 0;
+        try(var connection = conn.getConnection()) {
+            String sql = "insert into batch (priority, description, amount) values (batch.priority, batch.description, batch.amount)";
+            var insert = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
     }
 
     /**

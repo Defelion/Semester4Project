@@ -1,9 +1,8 @@
 package dk.sdu.sem4.pro.connection;
 
 
-import org.flywaydb.core.internal.database.base.Connection;
-
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -27,6 +26,6 @@ public class Conn {
     public String getPass() { return pass; }
 
     public Connection getConnection() throws SQLException {
-        return (Connection) DriverManager.getConnection(URL,user,pass);
+        return DriverManager.getConnection(URL,user,pass);
     }
 }
