@@ -8,6 +8,8 @@ module DataManager {
     requires CommonData;
     requires flyway.core;
     requires java.sql;
+    requires java.desktop;
+    requires jhash;
     provides IUpdate with dk.sdu.sem4.pro.update.UpdateData;
     provides IDelete with dk.sdu.sem4.pro.delete.DeleteData;
     provides IInsert with dk.sdu.sem4.pro.insert.InsertData;
