@@ -4,7 +4,6 @@ import dk.sdu.sem4.pro.services.ISelect;
 import dk.sdu.sem4.pro.services.IUpdate;
 
 module DataManager {
-    requires Common;
     requires CommonData;
     requires flyway.core;
     requires java.sql;
