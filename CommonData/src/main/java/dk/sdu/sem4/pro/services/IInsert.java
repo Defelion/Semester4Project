@@ -29,5 +29,5 @@ public interface IInsert {
 
     public int addUserGroup (String userGroup);
 
-    public int addUser (User user);
+    public int addUser (User user) throws IOException;
 }
