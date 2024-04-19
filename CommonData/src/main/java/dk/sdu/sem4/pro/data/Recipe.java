@@ -1,28 +1,35 @@
 package dk.sdu.sem4.pro.data;
 
-import java.util.List;
 import java.util.Map;
 
 public class Recipe {
     private int id;
-    private String product;
+    private Component product;
     private Map<Component, Integer> componentList;
     private double timeEstimation;
 
     public Recipe() {}
 
-    public Recipe(String product, Map<Component, Integer> ComponentList) {
+    public Recipe(Component product) {
+        this.product = product;
+    }
+
+    public Recipe(int id) {
+        this.id = id;
+    }
+
+    public Recipe(Component product, Map<Component, Integer> ComponentList) {
         this.componentList = ComponentList;
         this.product = product;
     }
 
-    public Recipe(int ID, String product, Map<Component, Integer> ComponentList) {
+    public Recipe(int ID, Component product, Map<Component, Integer> ComponentList) {
         this.id = ID;
         this.componentList = ComponentList;
         this.product = product;
     }
 
-    public Recipe(int ID, String product, Map<Component, Integer> ComponentList, double timeEstimation) {
+    public Recipe(int ID, Component product, Map<Component, Integer> ComponentList, double timeEstimation) {
         this.id = ID;
         this.componentList = ComponentList;
         this.product = product;
@@ -52,11 +59,11 @@ public class Recipe {
         this.componentList = componentList;
     }
 
-    public String getProduct() {
+    public Component getProduct() {
         return product;
     }
 
-    public void setName(String product) {
+    public void setProduct(Component product) {
         this.product = product;
     }
 

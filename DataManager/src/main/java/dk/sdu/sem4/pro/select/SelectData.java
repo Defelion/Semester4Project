@@ -45,18 +45,33 @@ public class SelectData implements ISelect {
     }
 
     @Override
-    public List<Component> getAllComponent() {
-        return List.of();
+    public Component getComponent(String componentName) throws IOException {
+        SelectComponent selectComponent = new SelectComponent();
+        return selectComponent.getComponent(new Component(componentName));
     }
 
     @Override
-    public Recipe getProduct(int productID) {
-        return null;
+    public List<Component> getAllComponent() throws IOException {
+        SelectComponent selectComponent = new SelectComponent();
+        return selectComponent.getAllComponents();
     }
 
     @Override
-    public List<Recipe> getAllProducts() {
-        return List.of();
+    public Recipe getProduct(int productID) throws IOException {
+        SelectComponent selectComponent = new SelectComponent();
+        return selectComponent.getRecipe(new Recipe(new Component(productID)));
+    }
+
+    @Override
+    public Recipe getProduct(String productName) throws IOException {
+        SelectComponent selectComponent = new SelectComponent();
+        return selectComponent.getRecipe(new Recipe(new Component(productName)));
+    }
+
+    @Override
+    public List<Recipe> getAllProducts() throws IOException {
+        SelectComponent selectComponent = new SelectComponent();
+        return selectComponent.getAllRecipes();
     }
 
     @Override

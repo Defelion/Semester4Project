@@ -20,11 +20,15 @@ public interface ISelect {
 
     public Component getComponent(int componentID);
 
-    public List<Component> getAllComponent();
+    public Component getComponent(String componentName) throws IOException;
 
-    public Recipe getProduct(int productID);
+    public List<Component> getAllComponent() throws IOException;
 
-    public List<Recipe> getAllProducts();
+    public Recipe getProduct(int productID) throws IOException;
+
+    public Recipe getProduct(String productName) throws IOException;
+
+    public List<Recipe> getAllProducts() throws IOException;
 
     public Unit getUnit(int unitID);
 

@@ -7,6 +7,10 @@ public class Component {
 
     public Component() {}
 
+    public Component(int id) {
+        this.id = id;
+    }
+
     public Component (String name) {
         this.name = name;
     }
