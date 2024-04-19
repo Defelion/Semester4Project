@@ -4,7 +4,7 @@ public class User {
     private int id;
     private String name;
     private String password;
-    private String userGroup;
+    private UserGroup userGroup;
 
     public User() {}
 
@@ -13,24 +13,24 @@ public class User {
         this.password = password;
     }
 
-    public User(String name, String password, String userGroup) {
+    public User(String name, String password, UserGroup userGroup) {
         this.name = name;
         this.password = password;
         this.userGroup = userGroup;
     }
 
-    public User(int id, String name, String password, String userGroup) {
+    public User(int id, String name, String password, UserGroup userGroup) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.userGroup = userGroup;
     }
 
-    public String getUserGroup() {
+    public UserGroup getUserGroup() {
         return userGroup;
     }
 
-    public void setUserGroup(String userGroup) {
+    public void setUserGroup(UserGroup userGroup) {
         this.userGroup = userGroup;
     }
 

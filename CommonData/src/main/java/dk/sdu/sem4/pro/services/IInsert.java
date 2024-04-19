@@ -5,7 +5,10 @@ import dk.sdu.sem4.pro.data.*;
 import java.io.IOException;
 import java.util.List;
 
-//the returned int and List<Integer> is the ID/s of what is being added or 0 if not added and -1 if error
+//the returned int and List<Integer> is the ID/s of what is being added
+// or 0 if not added
+// or -1 if IOException
+// or -2 if SQLException
 
 public interface IInsert {
     //if log in Batch have Loglines they will be inserted into table LogLine
@@ -20,6 +23,7 @@ public interface IInsert {
 
     //if Inventory in Unit is filled it will be inserted into table Inventory
     public int addUnit (Unit unit);
+
     public List<Integer> addUnitInvetory (int unitID, Inventory inventory);
 
     //if Inventory in AGV is filled it will be inserted into table Inventory
@@ -29,5 +33,6 @@ public interface IInsert {
 
     public int addUserGroup (String userGroup);
 
+    //hashes password
     public int addUser (User user) throws IOException;
 }
