@@ -7,6 +7,10 @@ public class UserGroup {
 
     public UserGroup() {}
 
+    public UserGroup(int id) {
+        this.id = id;
+    }
+
     public UserGroup(String name) {
         this.name = name;
     }

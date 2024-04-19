@@ -49,7 +49,7 @@ public class SelectUser {
         return selectUser;
     }
 
-    public List<User> getUsers () throws IOException {
+    public List<User> getAllUsers () throws IOException {
         List<User> selectUsers = new ArrayList<>();
         Conn conn = new Conn();
 
@@ -76,5 +76,57 @@ public class SelectUser {
         }
 
         return selectUsers;
+    }
+
+    public UserGroup getUserGroup (UserGroup userGroup) throws IOException {
+        UserGroup selectUserGroup = null;
+        Conn conn = new Conn();
+
+        try (Connection connection = conn.getConnection()) {
+            var SQL = "SELECT * FROM usergroup ";
+            if(userGroup.getId() > 0)
+                SQL += "WHERE id = ?";
+            else if(userGroup.getName() != null)
+                SQL += "WHERE name = ?";
+            var selectSQL = connection.prepareStatement(SQL);
+            if(userGroup.getId() > 0)
+                selectSQL.setInt(1, userGroup.getId());
+            else if(userGroup.getName() != null)
+                selectSQL.setString(1, userGroup.getName());
+            ResultSet rs = selectSQL.executeQuery();
+            while (rs.next()) {
+                selectUserGroup = new UserGroup(
+                        rs.getInt("id"),
+                        rs.getString("name")
+                );
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return selectUserGroup;
+    }
+
+    public List<UserGroup> getUserGroups () throws IOException {
+        List<UserGroup> selectUserGroups = new ArrayList<>();
+        Conn conn = new Conn();
+
+        try (Connection connection = conn.getConnection()) {
+            var SQL = "SELECT * FROM usergroup";
+            var selectSQL = connection.prepareStatement(SQL);
+            ResultSet rs = selectSQL.executeQuery();
+            while (rs.next()) {
+                selectUserGroups.add(new UserGroup(
+                        rs.getInt("id"),
+                        rs.getString("name")
+                ));
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return selectUserGroups;
     }
 }
