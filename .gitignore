@@ -7,9 +7,7 @@ target/
 .idea/modules.xml
 .idea/misc.xml
 .idea/jarRepositories.xml
-.idea/compiler.xml
 .idea/libraries/
-.idea/encodings.xml
 .idea/vcs.xml
 .idea/uiDesigner.xml
 *.iws
