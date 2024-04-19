@@ -8,13 +8,36 @@
 <body>
 <div th:replace="~{fragments/navigation :: navigation}"></div>
 
-<h1>Production</h1>
-<label>Choose product: </label>
-<select>
-    <option value="option1">Option 1</option>
-    <option value="option2">Option 2</option>
-    <option value="option3">Option 3</option>
-</select>
+<div>
+    <div>
+        <h1>Production</h1>
+        <label>Choose product: </label>
+        <select>
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+        </select>
+        <br> <br>
+        <label>Choose quantity: </label>
+        <input type="number">
+        <br> <br>
+        <label>Choose production priority (1 = Most important): </label>
+        <select>
+            <option value="option1">1</option>
+            <option value="option2">2</option>
+            <option value="option3">3</option>
+        </select>
+        <br> <br>
+    </div>
+
+    <div>
+        <h1>Buttons for whole production</h1>
+        <button>Start</button>
+        <button>Pause</button>
+        <button>Continue</button>
+        <button>Stop</button>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
