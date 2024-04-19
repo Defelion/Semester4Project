@@ -43,6 +43,12 @@ public interface ISelect {
 
     public Inventory getInventory();
 
+    public Inventory getInventoryByComponent(int componentID);
+
+    public Inventory getInventoryByComponent(String componentName);
+
+    public Inventory getInventoryByUnit(int unitID);
+
     //type can be Wharehouse, Assembly or AGV
     public Inventory getInventoryByUnitType(String type);
 
