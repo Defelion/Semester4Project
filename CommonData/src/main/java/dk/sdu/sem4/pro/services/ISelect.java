@@ -10,7 +10,9 @@ public interface ISelect {
 
     public List<Batch> getAllBatch() throws IOException;
 
-    public List<Batch> getAllBatchByProductID(Recipe recipe) throws IOException;
+    public List<Batch> getAllBatchByProductID(int productID) throws IOException;
+
+    public List<Batch> getAllBatchByProductName(String productName) throws IOException;
 
     public Logline getLogline(int logLineID) throws IOException;
 

@@ -11,32 +11,44 @@ public class SelectData implements ISelect {
 
     @Override
     public Batch getBatch(int batchID) throws IOException {
-        return null;
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getBatch(batchID);
     }
 
     @Override
     public List<Batch> getAllBatch() throws IOException {
-        return List.of();
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getAllBatch();
     }
 
     @Override
-    public List<Batch> getAllBatchByProductID(Recipe recipe) throws IOException {
-        return List.of();
+    public List<Batch> getAllBatchByProductID(int productID) throws IOException {
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getAllBatchbyProduct(new Component(productID));
+    }
+
+    @Override
+    public List<Batch> getAllBatchByProductName(String productName) throws IOException {
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getAllBatchbyProduct(new Component(productName));
     }
 
     @Override
     public Logline getLogline(int logLineID) throws IOException {
-        return null;
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getLogLine(logLineID);
     }
 
     @Override
     public List<Logline> getBatchLog(int batchID) throws IOException {
-        return List.of();
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getBatchLog(batchID);
     }
 
     @Override
     public List<Logline> getAllLogline() throws IOException {
-        return List.of();
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getLogLines();
     }
 
     @Override
