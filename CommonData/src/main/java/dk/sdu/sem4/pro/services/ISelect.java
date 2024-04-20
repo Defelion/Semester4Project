@@ -6,19 +6,19 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ISelect {
-    public Batch getBatch(int batchID);
+    public Batch getBatch(int batchID) throws IOException;
 
-    public List<Batch> getAllBatch();
+    public List<Batch> getAllBatch() throws IOException;
 
-    public List<Batch> getAllBatchByProductID(Recipe recipe);
+    public List<Batch> getAllBatchByProductID(Recipe recipe) throws IOException;
 
-    public Logline getLogline(int logLineID);
+    public Logline getLogline(int logLineID) throws IOException;
 
-    public List<Logline> getBatchLog(int batchID);
+    public List<Logline> getBatchLog(int batchID) throws IOException;
 
-    public List<Logline> getAllLogline();
+    public List<Logline> getAllLogline() throws IOException;
 
-    public Component getComponent(int componentID);
+    public Component getComponent(int componentID) throws IOException;
 
     public Component getComponent(String componentName) throws IOException;
 
@@ -30,27 +30,30 @@ public interface ISelect {
 
     public List<Recipe> getAllProducts() throws IOException;
 
-    public Unit getUnit(int unitID);
+    public Unit getUnit(int unitID) throws IOException;
 
-    public List<Unit> getAllUnit();
+    public List<Unit> getAllUnit() throws IOException;
 
     //type can be Wharehouse or Assembly
-    public List<Unit> getAllUnitByType(String type);
+    public List<Unit> getAllUnitByType(String type) throws IOException;
 
-    public AGV getAGV(int agvID);
+    public AGV getAGV(int agvID) throws IOException;
 
-    public List<AGV> getAllAGV();
+    public List<AGV> getAllAGV() throws IOException;
 
-    public Inventory getInventory();
+    public Inventory getInventory() throws IOException;
 
-    public Inventory getInventoryByComponent(int componentID);
+    public Inventory getInventoryByComponent(int componentID) throws IOException;
 
-    public Inventory getInventoryByComponent(String componentName);
+    public Inventory getInventoryByComponent(String componentName) throws IOException;
 
-    public Inventory getInventoryByUnit(int unitID);
+    //need a type to know if it is UnitInventory or AGVInventory
+    public Inventory getInventoryByUnit(int unitID) throws IOException;
+
+    public Inventory getInventoryByAGV(int AGVID) throws IOException;
 
     //type can be Wharehouse, Assembly or AGV
-    public Inventory getInventoryByUnitType(String type);
+    public Inventory getInventoryByUnitType(String type) throws IOException;
 
     public User getUser(int userID) throws IOException;
 

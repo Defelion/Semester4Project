@@ -10,38 +10,39 @@ import java.util.List;
 public class SelectData implements ISelect {
 
     @Override
-    public Batch getBatch(int batchID) {
+    public Batch getBatch(int batchID) throws IOException {
         return null;
     }
 
     @Override
-    public List<Batch> getAllBatch() {
+    public List<Batch> getAllBatch() throws IOException {
         return List.of();
     }
 
     @Override
-    public List<Batch> getAllBatchByProductID(Recipe recipe) {
+    public List<Batch> getAllBatchByProductID(Recipe recipe) throws IOException {
         return List.of();
     }
 
     @Override
-    public Logline getLogline(int logLineID) {
+    public Logline getLogline(int logLineID) throws IOException {
         return null;
     }
 
     @Override
-    public List<Logline> getBatchLog(int batchID) {
+    public List<Logline> getBatchLog(int batchID) throws IOException {
         return List.of();
     }
 
     @Override
-    public List<Logline> getAllLogline() {
+    public List<Logline> getAllLogline() throws IOException {
         return List.of();
     }
 
     @Override
-    public Component getComponent(int componentID) {
-        return null;
+    public Component getComponent(int componentID) throws IOException {
+        SelectComponent selectComponent = new SelectComponent();
+        return selectComponent.getComponent(new Component(componentID));
     }
 
     @Override
@@ -75,38 +76,69 @@ public class SelectData implements ISelect {
     }
 
     @Override
-    public Unit getUnit(int unitID) {
-        return null;
+    public Unit getUnit(int unitID) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getUnit(unitID);
     }
 
     @Override
-    public List<Unit> getAllUnit() {
-        return List.of();
+    public List<Unit> getAllUnit() throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getAllUnits("none");
     }
 
     @Override
-    public List<Unit> getAllUnitByType(String type) {
-        return List.of();
+    public List<Unit> getAllUnitByType(String type) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getAllUnits(type);
     }
 
     @Override
-    public AGV getAGV(int agvID) {
-        return null;
+    public AGV getAGV(int agvID) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getAGV(agvID);
     }
 
     @Override
-    public List<AGV> getAllAGV() {
-        return List.of();
+    public List<AGV> getAllAGV() throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getAllAGVs();
     }
 
     @Override
-    public Inventory getInventory() {
-        return null;
+    public Inventory getInventory() throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventory();
     }
 
     @Override
-    public Inventory getInventoryByUnitType(String type) {
-        return null;
+    public Inventory getInventoryByComponent(int componentID) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventoryByComponent(new Component(componentID));
+    }
+
+    @Override
+    public Inventory getInventoryByComponent(String componentName) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventoryByComponent(new Component(componentName));
+    }
+
+    @Override
+    public Inventory getInventoryByUnit(int unitID) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventoryByUnit(new Unit(unitID), true);
+    }
+
+    @Override
+    public Inventory getInventoryByAGV(int AGVID) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventoryByUnit(new Unit(AGVID), true);
+    }
+
+    @Override
+    public Inventory getInventoryByUnitType(String type) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventoryByUnit(new Unit(type), false);
     }
 
     @Override
