@@ -16,6 +16,8 @@
         <module>CommonData</module>
         <module>CommonWeb</module>
         <module>DataManager</module>
+        <module>MQTTCommunication</module>
+        <module>AssemblyStationController</module>
     </modules>
 
     <properties>
