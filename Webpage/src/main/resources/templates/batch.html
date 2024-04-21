@@ -5,10 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Batch</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">  </head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 20px;
+        padding: 0;
+    }
+
+    .monitor-batch {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #ffffff;
+        margin: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .monitor-batch h1 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+
+    .monitor-batch table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .monitor-batch th, .monitor-batch td {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .monitor-batch th {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .monitor-batch tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .monitor-batch tr:hover {
+        background-color: #e2e2e2;
+    }
+
+</style>
 <body>
 <div th:replace="~{fragments/navigation :: navigation}"></div>
 
-<h1>Batch</h1>
+<div class="monitor-batch">
+    <h1>Monitor Batch</h1>
+
+    <table style="width:100%">
+        <tr>
+            <th>Batch ID</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Produced</th>
+            <th>Start time</th>
+            <th>Expected end time</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+        </tr>
+    </table>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

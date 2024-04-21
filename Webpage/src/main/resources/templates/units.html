@@ -5,10 +5,317 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Units</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">  </head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 20px;
+        padding: 0;
+    }
+
+    h1, h2, h3 {
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        margin-top: 10px;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #e8e8e8;
+    }
+
+    div.warehouse-section, div.agv-section, div.assembly-section {
+        background-color: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    div.agv-section {
+        border-top: 3px solid #007BFF;
+    }
+
+    div.assembly-section {
+        border-top: 3px solid #28A745;
+    }
+
+</style>
 <body>
 <div th:replace="~{fragments/navigation :: navigation}"></div>
 
-<h1>Units</h1>
+<div>
+    <h1>Monitor Units</h1>
+
+    <div class="warehouse-section">
+        <h2>Warehouse</h2>
+        <h3>State</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>State</th>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Idle</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Loading</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Unloading</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Idle</td>
+            </tr>
+        </table>
+
+
+        <h3>Inventory/Amount</h3>
+        <table>
+            <tr>
+                <th>Item 1</th>
+                <th>Item 2</th>
+                <th>Item 3</th>
+                <th>Item 4</th>
+                <th>Item 5</th>
+                <th>Item 6</th>
+                <th>Item 7</th>
+                <th>Item 8</th>
+                <th>Item 9</th>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="agv-section">
+        <h2>AGV</h2>
+        <h3>State</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Moving to/State</th>
+                <th>Battery Level</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Warehouse 3</td>
+                <td>13%</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Warehouse 2</td>
+                <td>13%</td>
+            </tr>
+        </table>
+
+        <h3>Inventory/Amount</h3>
+        <table>
+            <tr>
+                <th>Item 1</th>
+                <th>Item 2</th>
+                <th>Item 3</th>
+                <th>Item 4</th>
+                <th>Item 5</th>
+                <th>Item 6</th>
+                <th>Item 7</th>
+                <th>Item 8</th>
+                <th>Item 9</th>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="assembly-section">
+        <h2>Assembly Station</h2>
+        <h3>State</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>State</th>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Working</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Idle</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Working</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Idle</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <th>Item 1</th>
+                <th>Item 2</th>
+                <th>Item 3</th>
+                <th>Item 4</th>
+                <th>Item 5</th>
+                <th>Item 6</th>
+                <th>Item 7</th>
+                <th>Item 8</th>
+                <th>Item 9</th>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>12</td>
+                <td>5</td>
+                <td>24</td>
+                <td>2</td>
+                <td>76</td>
+                <td>34</td>
+                <td>24</td>
+                <td>23</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

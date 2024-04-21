@@ -48,3 +48,5 @@ mods-mvn/OpperationManager-1.0-SNAPSHOT.jar
 *.jar
 .idea/misc.xml
 .idea/encodings.xml
+.idea/misc.xml
+.idea/encodings.xml
