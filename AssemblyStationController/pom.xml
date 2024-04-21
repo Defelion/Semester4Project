@@ -31,16 +31,22 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.vaadin.external.google</groupId>
             <artifactId>android-json</artifactId>
             <version>0.0.20131108.vaadin1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu.sem4.pro</groupId>
+            <artifactId>MQTTCommunication</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -56,7 +62,7 @@
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
                         <arg>--add-modules</arg>
-                        <arg>communication</arg>
+                        <arg>Common,communication,android.json</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
