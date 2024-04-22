@@ -8,6 +8,8 @@ import java.util.List;
 public interface ISelect {
     public Batch getBatch(int batchID) throws IOException;
 
+    public Batch getBatchWithHigestPriority() throws IOException;
+
     public List<Batch> getAllBatch() throws IOException;
 
     public List<Batch> getAllBatchByProductID(int productID) throws IOException;

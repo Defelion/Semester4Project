@@ -16,6 +16,12 @@ public class SelectData implements ISelect {
     }
 
     @Override
+    public Batch getBatchWithHigestPriority() throws IOException {
+        SelectBatch selectBatch = new SelectBatch();
+        return selectBatch.getBatchWithHigestPriority();
+    }
+
+    @Override
     public List<Batch> getAllBatch() throws IOException {
         SelectBatch selectBatch = new SelectBatch();
         return selectBatch.getAllBatch();

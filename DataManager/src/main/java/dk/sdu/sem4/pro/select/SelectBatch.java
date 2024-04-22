@@ -1,10 +1,7 @@
 package dk.sdu.sem4.pro.select;
 
 import dk.sdu.sem4.pro.connection.Conn;
-import dk.sdu.sem4.pro.data.Batch;
-import dk.sdu.sem4.pro.data.Component;
-import dk.sdu.sem4.pro.data.Logline;
-import dk.sdu.sem4.pro.data.Recipe;
+import dk.sdu.sem4.pro.data.*;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -91,6 +88,30 @@ public class SelectBatch {
             var sql = "SELECT * FROM batch where id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, batchID);
+            ResultSet rs = ps.executeQuery();
+            SelectComponent selectComponent = new SelectComponent();
+            while (rs.next()) {
+                batch = new Batch(
+                        rs.getInt("id"),
+                        selectComponent.getRecipe(new Recipe(rs.getInt("id"))),
+                        rs.getInt("amount"),
+                        rs.getString("description"),
+                        rs.getInt("priority"),
+                        getBatchLog(rs.getInt("id"))
+                );
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return batch;
+    }
+
+    public Batch getBatchWithHigestPriority () throws IOException {
+        Batch batch = null;
+        Conn conn = new Conn();
+        try (Connection connection = conn.getConnection()) {
+            var sql = "SELECT * FROM batch order by priority desc limit 1";
+            PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             SelectComponent selectComponent = new SelectComponent();
             while (rs.next()) {

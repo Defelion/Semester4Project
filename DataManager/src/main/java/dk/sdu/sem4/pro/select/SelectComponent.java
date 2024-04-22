@@ -1,8 +1,7 @@
 package dk.sdu.sem4.pro.select;
 
 import dk.sdu.sem4.pro.connection.Conn;
-import dk.sdu.sem4.pro.data.Component;
-import dk.sdu.sem4.pro.data.Recipe;
+import dk.sdu.sem4.pro.data.*;
 
 import java.io.IOException;
 import java.sql.Connection;
