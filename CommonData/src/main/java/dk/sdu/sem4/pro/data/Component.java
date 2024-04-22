@@ -1,11 +1,15 @@
 package dk.sdu.sem4.pro.data;
 
 public class Component {
-    private int id;
+    private int id = 0;
     private String name;
     private int wishedAmount;
 
     public Component() {}
+
+    public Component(int id) {
+        this.id = id;
+    }
 
     public Component (String name) {
         this.name = name;

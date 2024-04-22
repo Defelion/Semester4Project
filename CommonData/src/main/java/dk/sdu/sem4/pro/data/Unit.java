@@ -3,22 +3,38 @@ package dk.sdu.sem4.pro.data;
 import java.util.List;
 
 public class Unit {
-    private int id;
+    private int id = 0;
     private String type;
     private String state;
-    private List<Component> componentList;
+    private Inventory inventory;
 
-    public Unit () {}
-
-    public Unit (String Type, String State) {
-        this.type = Type;
-        this.state = State;
+    public Unit () {
     }
 
-    public Unit (int ID, String Type, String State) {
+    public Unit (int ID) {
+        this.id = ID;
+    }
+
+    public Unit (String type) {
+        this.type = type;
+    }
+
+    public Unit (int ID, String type) {
+        this.id = ID;
+        this.type = type;
+    }
+
+    public Unit (String Type, String State, Inventory inventory) {
+        this.type = Type;
+        this.state = State;
+        this.inventory = inventory;
+    }
+
+    public Unit (int ID, String Type, String State, Inventory inventory) {
         this.id = ID;
         this.type = Type;
         this.state = State;
+        this.inventory = inventory;
     }
 
     public int getId() {
@@ -45,19 +61,11 @@ public class Unit {
         return state;
     }
 
-    public void setComponentList(List<Component> componentList) {
-        this.componentList = componentList;
+    public Inventory getInventory() {
+        return inventory;
     }
 
-    public List<Component> getComponentList() {
-        return componentList;
-    }
-
-    public void addComponent (Component component) {
-        this.componentList.add(component);
-    }
-
-    public void removeComponent (Component component) {
-        this.componentList.remove(component);
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 }
