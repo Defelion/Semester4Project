@@ -16,7 +16,7 @@
         <module>CommonData</module>
         <module>CommonWeb</module>
         <module>RESTCommunication</module>
-        <module>TransporterController</module>
+        <module>AGVController</module>
     </modules>
 
     <properties>
