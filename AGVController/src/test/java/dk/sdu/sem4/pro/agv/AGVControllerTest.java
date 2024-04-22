@@ -1,4 +1,4 @@
-package dk.sdu.sem4.pro.transporter;
+package dk.sdu.sem4.pro.agv;
 
 import dk.sdu.sem4.pro.rest.RESTCommunication;
 
@@ -11,15 +11,15 @@ class AGVControllerTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
+        agvController.setStopTask(false);
     }
 
     @org.junit.jupiter.api.AfterEach
     void tearDown() {
     }
-
     @org.junit.jupiter.api.Test
     void startTask() {
-        boolean result = agvController.startTask("MoveToAssemblyOperation");
+        boolean result = agvController.startTask("MoveToStorageOperation");
         assertTrue(result);
     }
 
@@ -32,8 +32,19 @@ class AGVControllerTest {
 
     @org.junit.jupiter.api.Test
     void getCurrentBattery() {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         double batteryLevel = agvController.getCurrentBattery(agv);
-        agvController.startTask("MoveToAssemblyOperation");
+        boolean result = agvController.startTask("MoveToAssemblyOperation");
+        assertTrue(result);
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         assertNotEquals(batteryLevel, agvController.getCurrentBattery(agv));
     }
 }

@@ -1,4 +1,4 @@
-package dk.sdu.sem4.pro.transporter;
+package dk.sdu.sem4.pro.agv;
 
 import dk.sdu.sem4.pro.common.services.IController;
 import dk.sdu.sem4.pro.services.IClient;
@@ -16,13 +16,22 @@ public class AGVController implements IController {
     public boolean isStopTask() {
         return stopTask;
     }
+    public void setStopTask(boolean bool){
+        stopTask = bool;
+    }
 
     public boolean startTask(String operation) {
-        if(stopTask) {
-            JSONObject programObject = new JSONObject();
+        if(!stopTask) {
+            JSONObject programObject = client.receive();
             //This part catches any JSONExceptions when constructing the JSONObject,
             //as well as any NullPointerExceptions that might occur due to the Client being null.
             try {
+                if(!programObject.has("state") && programObject.getInt("state") != 1) {
+                    return false;
+                }
+
+                programObject = new JSONObject();
+
                 //This part loads the program into the Transporter by sending the JSONObject to the Client.
                 programObject.put("program name", operation);
                 programObject.put("state", 1);
@@ -59,13 +68,15 @@ public class AGVController implements IController {
 
     public double getCurrentBattery(AGV agv) {
         JSONObject response = client.receive();
+        double batteryLevel = -1;
         if (response != null && response.has("battery")) {
             try {
                 agv.setBatteryLevel(response.getDouble("battery"));
+                batteryLevel = response.getDouble("battery");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         }
-        return agv.getBatteryLevel();
+        return batteryLevel;
     }
 }
