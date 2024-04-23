@@ -18,6 +18,8 @@
         <module>DataManager</module>
         <module>RESTCommunication</module>
         <module>AGVController</module>
+        <module>MQTTCommunication</module>
+        <module>AssemblyStationController</module>
     </modules>
 
     <properties>
