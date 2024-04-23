@@ -17,32 +17,32 @@ public class AssemblyStationController implements IController {
         JSONObject jsonObject = new JSONObject();
         JSONObject taskJson = new JSONObject();
         Integer resp = 0;
-            if (operation == "status") {
-                try {
-                    jsonObject.put("topic", "Operation");
-                    taskJson.put("ProcessID", operation);
-                    jsonObject.put("task", taskJson);
-                } catch(JSONException je) {
-                    je.printStackTrace();
-                    return false;
-                }
-                try {
-                    resp = (int)client.receive().get("status");
-                } catch (JSONException je) {
-                    je.printStackTrace();
-                    return false;
-                }
-            } else {
-                try {
-                    jsonObject.put("topic", "Emulator/Operation");
-                    taskJson.put("ProcessID", operation);
-                    jsonObject.put("task", taskJson);
-                } catch(JSONException je) {
-                    je.printStackTrace();
-                    return false;
-                }
-                resp = client.send(jsonObject);
+        if (operation == "status") {
+            try {
+                jsonObject.put("topic", "Operation");
+                taskJson.put("ProcessID", operation);
+                jsonObject.put("task", taskJson);
+            } catch(JSONException je) {
+                je.printStackTrace();
+                return false;
             }
+            try {
+                resp = (int)client.receive().get("status");
+            } catch (JSONException je) {
+                je.printStackTrace();
+                return false;
+            }
+        } else {
+            try {
+                jsonObject.put("topic", "Emulator/Operation");
+                taskJson.put("ProcessID", operation);
+                jsonObject.put("task", taskJson);
+            } catch(JSONException je) {
+                je.printStackTrace();
+                return false;
+            }
+            resp = client.send(jsonObject);
+        }
 
         if (resp == 200) {
             return true;

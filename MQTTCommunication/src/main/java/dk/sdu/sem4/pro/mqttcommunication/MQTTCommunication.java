@@ -7,33 +7,9 @@ import dk.sdu.sem4.pro.services.IClient;
 public class MQTTCommunication implements IClient {
     static String API_BASE = "tcp://localhost:1883";
     static String ClientId = "code";
-    static MqttClient client;
-    private static MQTTCommunication INSTANCE;
-    MemoryPersistence persistence = new MemoryPersistence();
+
 
     public MQTTCommunication() {
-        // Dont use, should be singleton like, but CBSE dont like
-        try {
-            client = new MqttClient(API_BASE, ClientId, persistence);
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
-            client.connect(connOpts);
-        } catch(MqttException me) {
-            System.out.println("reason "+me.getReasonCode());
-            System.out.println("msg "+me.getMessage());
-            System.out.println("loc "+me.getLocalizedMessage());
-            System.out.println("cause "+me.getCause());
-            System.out.println("excep "+me);
-            me.printStackTrace();
-        }
-    }
-
-    public static MQTTCommunication getInstance() {
-        if(INSTANCE == null) {
-            INSTANCE = new MQTTCommunication();
-        }
-
-        return INSTANCE;
     }
 
 
@@ -60,7 +36,7 @@ public class MQTTCommunication implements IClient {
     public Integer send(JSONObject jsonObject) {
         String topic = "";
         String task = "";
-
+        MqttClient client = this.connectToClient();
         try {
             topic = jsonObject.get("topic").toString();
             task = jsonObject.get("task").toString();
@@ -76,6 +52,8 @@ public class MQTTCommunication implements IClient {
         message.setQos(2);
         try {
             client.publish(topic, message);
+            client.disconnect();
+            client.close();
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());
             System.out.println("msg "+me.getMessage());
@@ -86,5 +64,24 @@ public class MQTTCommunication implements IClient {
         }
 
         return 200;
+    }
+
+    private MqttClient connectToClient() {
+        MemoryPersistence persistence = new MemoryPersistence();
+        try {
+            MqttClient client = new MqttClient(API_BASE, ClientId, persistence);
+            MqttConnectOptions connOpts = new MqttConnectOptions();
+            connOpts.setCleanSession(true);
+            client.connect(connOpts);
+            return client;
+        } catch(MqttException me) {
+            System.out.println("reason "+me.getReasonCode());
+            System.out.println("msg "+me.getMessage());
+            System.out.println("loc "+me.getLocalizedMessage());
+            System.out.println("cause "+me.getCause());
+            System.out.println("excep "+me);
+            me.printStackTrace();
+        }
+        return null;
     }
 }
