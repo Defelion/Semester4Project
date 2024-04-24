@@ -5,9 +5,13 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
+.idea/misc.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/encodings.xml
+.idea/vcs.xml
+.idea/uiDesigner.xml
 *.iws
 *.iml
 *.ipr
@@ -36,17 +40,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
-mods-mvn/OpperationManager-1.0-SNAPSHOT.jar
-mods-mvn/OperationManager-1.0-SNAPSHOT.jar
-mods-mvn/communication-1.0-SNAPSHOT.jar
-mods-mvn/CommonWeb-1.0-SNAPSHOT.jar
-mods-mvn/CommonData-1.0-SNAPSHOT.jar
-mods-mvn/Common-1.0-SNAPSHOT.jar
-mods-mvn/OpperationManager-1.0-SNAPSHOT.jar
-/mods-mvn
-mods-mvn/OpperationManager-1.0-SNAPSHOT.jar
-*.jar
-.idea/misc.xml
-.idea/encodings.xml
-.idea/misc.xml
-.idea/encodings.xml
+
+
+### Special
+mods-mvn/*

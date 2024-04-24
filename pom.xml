@@ -15,6 +15,11 @@
         <module>Communication</module>
         <module>CommonData</module>
         <module>CommonWeb</module>
+        <module>DataManager</module>
+        <module>RESTCommunication</module>
+        <module>AGVController</module>
+        <module>MQTTCommunication</module>
+        <module>AssemblyStationController</module>
     </modules>
 
     <properties>
@@ -34,6 +39,14 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <configuration>
+                        <argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+                    </configuration>
+                </plugin>
                     <plugin>
                         <artifactId>maven-clean-plugin</artifactId>
                         <version>3.3.2</version>
