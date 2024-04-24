@@ -44,3 +44,4 @@ build/
 
 ### Special
 mods-mvn/*
+.idea/.name
