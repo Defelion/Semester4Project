@@ -1,6 +1,6 @@
 package dk.sdu.sem4.pro.rest;
 
-import dk.sdu.sem4.pro.services.IClient;
+import dk.sdu.sem4.pro.communication.services.IClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
