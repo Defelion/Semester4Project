@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Operations {
-    private final Map<Integer, Unit> unitMap = new ConcurrentHashMap<>();
-    private Map<Integer, Integer> batchQueue = new ConcurrentHashMap<>();
-    private LinkedList<String> taskQueue = new LinkedList<>();
+    public final Map<Integer, Unit> unitMap = new ConcurrentHashMap<>();
+    public Map<Integer, Integer> batchQueue = new ConcurrentHashMap<>();
+    public LinkedList<String> taskQueue = new LinkedList<>();
 }
