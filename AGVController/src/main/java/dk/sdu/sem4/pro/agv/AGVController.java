@@ -1,7 +1,8 @@
 package dk.sdu.sem4.pro.agv;
 
 import dk.sdu.sem4.pro.common.services.IController;
-import dk.sdu.sem4.pro.services.IClient;
+import dk.sdu.sem4.pro.commondata.data.AGV;
+import dk.sdu.sem4.pro.communication.services.IClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,7 +72,7 @@ public class AGVController implements IController {
         double batteryLevel = -1;
         if (response != null && response.has("battery")) {
             try {
-                agv.setBatteryLevel(response.getDouble("battery"));
+                agv.setChargeValue(response.getDouble("battery"));
                 batteryLevel = response.getDouble("battery");
             } catch (JSONException e) {
                 throw new RuntimeException(e);

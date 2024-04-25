@@ -3,7 +3,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.json.JSONObject;
 import org.json.JSONException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import dk.sdu.sem4.pro.services.IClient;
+import dk.sdu.sem4.pro.communication.services.IClient;
 public class MQTTCommunication implements IClient {
     static String API_BASE = "tcp://localhost:1883";
     static String ClientId = "code";
