@@ -10,7 +10,10 @@ create table LogLine (
     type VARCHAR not null,
     description text default '',
     dateTime timestamp,
-    Batch_ID integer not null references Batch
+    Batch_ID integer not null,
+    foreign key (Batch_ID)
+         references Batch(ID)
+         on delete cascade
 );
 
 create table Component (
@@ -23,8 +26,14 @@ create table Recipe (
     ID serial not null unique primary key,
     amount integer not null,
     timeEstimation float not null,
-    Product_Component_ID integer not null references Component,
-    Material_Component_ID integer not null references Component
+    Product_Component_ID integer not null,
+    Material_Component_ID integer not null,
+    foreign key (Product_Component_ID)
+        references Component(ID)
+        on delete cascade,
+    foreign key (Material_Component_ID)
+        references Component(ID)
+        on delete cascade
 );
 
 create table Units (
@@ -36,8 +45,14 @@ create table Units (
 create table UnitInventory (
     ID serial not null unique primary key,
     amount integer not null,
-    Units_ID integer not null references Units,
-    Component_ID integer not null references Component
+    Units_ID integer not null,
+    Component_ID integer not null,
+    foreign key (Units_ID)
+        references Units(ID)
+        on delete cascade,
+    foreign key (Component_ID)
+        references Component(ID)
+        on delete cascade
 );
 
 create table AGV (
@@ -54,8 +69,14 @@ create table AGV (
 create table AGVInventory (
       ID serial not null unique primary key,
       amount integer not null,
-      AGV_ID integer not null references AGV,
-      Component_ID integer not null references Component
+      AGV_ID integer not null,
+      Component_ID integer not null,
+      foreign key (AGV_ID)
+          references AGV(ID)
+          on delete cascade,
+      foreign key (Component_ID)
+          references Component(ID)
+          on delete cascade
 );
 
 create table UserGroup (
@@ -67,5 +88,8 @@ create table Users (
     ID serial not null unique primary key,
     name varchar not null,
     password varchar not null,
-    UserGroup_ID integer not null references UserGroup
+    UserGroup_ID integer not null,
+    foreign key (UserGroup_ID)
+        references UserGroup(ID)
+        on delete cascade
 );
