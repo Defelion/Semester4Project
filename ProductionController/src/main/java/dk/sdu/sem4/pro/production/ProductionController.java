@@ -1,10 +1,11 @@
 package dk.sdu.sem4.pro.production;
 
 import dk.sdu.sem4.pro.common.services.IProduction;
-import dk.sdu.sem4.pro.data.Batch;
-import dk.sdu.sem4.pro.data.Recipe;
-import dk.sdu.sem4.pro.services.IInsert;
-import dk.sdu.sem4.pro.services.ISelect;
+import dk.sdu.sem4.pro.commondata.data.Batch;
+import dk.sdu.sem4.pro.commondata.data.Recipe;
+import dk.sdu.sem4.pro.commondata.services.IInsert;
+import dk.sdu.sem4.pro.commondata.services.ISelect;
+import dk.sdu.sem4.pro.webpage.serviceloader.DatabaseLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,11 @@ public class ProductionController {
     private IInsert iInsert;
     private ISelect iSelect;
 
-    public ProductionController(IProduction iProduction, IInsert iInsert, ISelect iSelect) {
-        this.iProduction = iProduction;
-        this.iInsert = iInsert;
-        this.iSelect = iSelect;
+    public ProductionController() {
+        iProduction = ProductionLoader.getIProductionList().getFirst();
+        iInsert = findSpecificImplementation(DatabaseLoader.getIInsertList(), "InsertData");
+        iSelect = findSpecificImplementation(DatabaseLoader.getISelectList(), "SelectData");
+
     }
 
     @PostMapping("/start")
@@ -78,5 +80,14 @@ public class ProductionController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+    }
+    public static <T> T findSpecificImplementation(List<? extends T> implementations, String className) {
+        for (T implementation : implementations) {
+            if (implementation.getClass().getName().equals(className)) {
+                return implementation;
+            }
+        }
+        return null;
     }
 }
