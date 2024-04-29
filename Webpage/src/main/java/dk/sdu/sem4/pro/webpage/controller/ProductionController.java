@@ -1,11 +1,13 @@
-package dk.sdu.sem4.pro.production;
+package dk.sdu.sem4.pro.webpage.controller;
 
+import dk.sdu.sem4.pro.operationmanager.OperationManager;
 import dk.sdu.sem4.pro.common.services.IProduction;
 import dk.sdu.sem4.pro.commondata.data.Batch;
 import dk.sdu.sem4.pro.commondata.data.Recipe;
 import dk.sdu.sem4.pro.commondata.services.IInsert;
 import dk.sdu.sem4.pro.commondata.services.ISelect;
 import dk.sdu.sem4.pro.webpage.serviceloader.DatabaseLoader;
+import dk.sdu.sem4.pro.webpage.serviceloader.ProductionLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +22,15 @@ public class ProductionController {
     private ISelect iSelect;
 
     public ProductionController() {
-        iProduction = ProductionLoader.getIProductionList().getFirst();
         iInsert = findSpecificImplementation(DatabaseLoader.getIInsertList(), "InsertData");
         iSelect = findSpecificImplementation(DatabaseLoader.getISelectList(), "SelectData");
-
+        List<IProduction> productionList = ProductionLoader.getIProductionList();
+        if (!productionList.isEmpty()) {
+            iProduction = productionList.get(0);
+        } else {
+            System.out.println("No implementations of IProduction found.");
+            //throw new RuntimeException("No implementations of IProduction found.");
+        }
     }
 
     @PostMapping("/start")
