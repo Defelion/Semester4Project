@@ -1,93 +1,82 @@
 package dk.sdu.sem4.pro.soap;
 
 import dk.sdu.sem4.pro.communication.services.IClient;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.XML;
 import jakarta.xml.soap.*;
 
 import java.net.URL;
-import javax.xml.namespace.QName;
+import java.net.MalformedURLException;
 
 public class SOAPCommunication implements IClient {
-    private final URL endpoint;
+    private URL endpoint;
 
-    public SOAPCommunication(String endpointUrl) throws SOAPException {
+    public SOAPCommunication() {
         try {
-            this.endpoint = new URL(endpointUrl);
-        } catch (Exception e) {
-            throw new SOAPException("Invalid endpoint URL", e);
+            this.endpoint = new URL("http://localhost:8082/v1/status/");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid endpoint URL", e);
         }
     }
 
     @Override
     public JSONObject receive() {
         try {
-            SOAPMessage soapResponse = sendSOAPRequest(createSOAPRequest());
-            return soapMessageToJSONObject(soapResponse);
-        } catch (SOAPException e) {
+            SOAPConnection connection = SOAPConnectionFactory.newInstance().createConnection();
+            SOAPMessage response = connection.call(createSOAPRequest("GetData"), endpoint);
+            connection.close();
+            return parseSOAPResponseToJSONObject(response);
+        } catch (SOAPException | JSONException e) {
             e.printStackTrace();
-            return new JSONObject().put("error", e.getMessage());
+            JSONObject error = new JSONObject();
+            error.put("error", e.getMessage());
+            return error;
         }
     }
 
     @Override
     public Integer send(JSONObject jsonObject) {
         try {
-            SOAPMessage soapRequest = createSOAPRequest(jsonObject);
-            SOAPMessage soapResponse = sendSOAPRequest(soapRequest);
-            return extractStatusCodeFromResponse(soapResponse);
-        } catch (SOAPException e) {
+            SOAPConnection connection = SOAPConnectionFactory.newInstance().createConnection();
+            SOAPMessage response = connection.call(createSOAPRequest("SendData", jsonObject), endpoint);
+            connection.close();
+            return extractStatusCodeFromSOAPResponse(response);
+        } catch (SOAPException | JSONException e) {
             e.printStackTrace();
-            return null;
+            return 500;
         }
     }
 
-    private SOAPMessage createSOAPRequest() throws SOAPException {
+    private SOAPMessage createSOAPRequest(String operation, JSONObject data) throws SOAPException, JSONException {
         MessageFactory factory = MessageFactory.newInstance();
-        SOAPMessage soapMessage = factory.createMessage();
-        // Build SOAP request here based on your service's requirements
-        soapMessage.saveChanges();
-        return soapMessage;
-    }
+        SOAPMessage message = factory.createMessage();
+        SOAPPart part = message.getSOAPPart();
+        SOAPEnvelope envelope = part.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPElement operationElement = body.addChildElement(envelope.createName(operation));
 
-    private SOAPMessage createSOAPRequest(JSONObject jsonObject) throws SOAPException {
-        MessageFactory factory = MessageFactory.newInstance();
-        SOAPMessage soapMessage = factory.createMessage();
-        SOAPBody body = soapMessage.getSOAPBody();
-        QName bodyName = new QName("http://example.com/soap", "sendData", "ns");
-        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
-        // Assuming the JSON object contains a direct XML string representation
-        String xmlString = XML.toString(jsonObject);
-        bodyElement.addTextNode(xmlString);
-        soapMessage.saveChanges();
-        return soapMessage;
-    }
-
-    private SOAPMessage sendSOAPRequest(SOAPMessage request) throws SOAPException {
-        SOAPConnectionFactory factory = SOAPConnectionFactory.newInstance();
-        try (SOAPConnection connection = factory.createConnection()) {
-            return connection.call(request, endpoint);
+        if (data != null) {
+            for (String key : data.keySet()) {
+                String value = data.getString(key);
+                operationElement.addChildElement(key).addTextNode(value);
+            }
         }
+
+        message.saveChanges();
+        return message;
     }
 
-    private JSONObject soapMessageToJSONObject(SOAPMessage soapMessage) throws SOAPException {
-        try {
-            SOAPBody body = soapMessage.getSOAPBody();
-            String xmlString = body.getTextContent();
-            return XML.toJSONObject(xmlString);
-        } catch (Exception e) {
-            throw new SOAPException("Error converting SOAP message to JSON", e);
-        }
+    private SOAPMessage createSOAPRequest(String operation) throws SOAPException {
+        return createSOAPRequest(operation, null);
     }
 
-    private Integer extractStatusCodeFromResponse(SOAPMessage soapResponse) throws SOAPException {
-        try {
-            SOAPBody body = soapResponse.getSOAPBody();
-            // This assumes the status code is a direct text child of the SOAP body
-            String content = body.getTextContent();
-            return Integer.parseInt(content);
-        } catch (NumberFormatException e) {
-            throw new SOAPException("Error extracting status code from response", e);
-        }
+    private JSONObject parseSOAPResponseToJSONObject(SOAPMessage response) throws JSONException {
+        // Dummy implementation
+        return new JSONObject();
+    }
+
+    private Integer extractStatusCodeFromSOAPResponse(SOAPMessage response) {
+        // Dummy implementation
+        return 200;
     }
 }
