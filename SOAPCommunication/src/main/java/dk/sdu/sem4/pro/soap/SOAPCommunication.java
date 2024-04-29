@@ -4,6 +4,7 @@ import dk.sdu.sem4.pro.communication.services.IClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import jakarta.xml.soap.*;
+import java.util.Iterator;
 
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -26,13 +27,28 @@ public class SOAPCommunication implements IClient {
             SOAPMessage response = connection.call(createSOAPRequest("GetData"), endpoint);
             connection.close();
             return parseSOAPResponseToJSONObject(response);
-        } catch (SOAPException | JSONException e) {
+        } catch (SOAPException e) {
             e.printStackTrace();
             JSONObject error = new JSONObject();
-            error.put("error", e.getMessage());
+            try {
+                error.put("error", e.getMessage());
+            } catch (JSONException ex) {
+                throw new RuntimeException(ex);
+            }
+            return error;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            JSONObject error = new JSONObject();
+            try {
+                error.put("error", "JSONException occurred: " + e.getMessage());
+            } catch (JSONException jsonException) {
+                jsonException.printStackTrace();
+            }
             return error;
         }
     }
+
+
 
     @Override
     public Integer send(JSONObject jsonObject) {
@@ -56,17 +72,20 @@ public class SOAPCommunication implements IClient {
         SOAPElement operationElement = body.addChildElement(envelope.createName(operation));
 
         if (data != null) {
-            for (String key : data.keySet()) {
+            Iterator<String> keys = data.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
                 String value = data.getString(key);
                 operationElement.addChildElement(key).addTextNode(value);
             }
         }
 
+
         message.saveChanges();
         return message;
     }
 
-    private SOAPMessage createSOAPRequest(String operation) throws SOAPException {
+    private SOAPMessage createSOAPRequest(String operation) throws SOAPException, JSONException {
         return createSOAPRequest(operation, null);
     }
 
