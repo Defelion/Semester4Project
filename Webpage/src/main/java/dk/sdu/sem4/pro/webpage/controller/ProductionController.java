@@ -1,6 +1,5 @@
 package dk.sdu.sem4.pro.webpage.controller;
 
-import dk.sdu.sem4.pro.operationmanager.OperationManager;
 import dk.sdu.sem4.pro.common.services.IProduction;
 import dk.sdu.sem4.pro.commondata.data.Batch;
 import dk.sdu.sem4.pro.commondata.data.Recipe;
@@ -10,10 +9,11 @@ import dk.sdu.sem4.pro.webpage.serviceloader.DatabaseLoader;
 import dk.sdu.sem4.pro.webpage.serviceloader.ProductionLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Component
 @RestController
 @RequestMapping("/production")
 public class ProductionController {
@@ -21,15 +21,29 @@ public class ProductionController {
     private IInsert iInsert;
     private ISelect iSelect;
 
+    private DatabaseLoader databaseLoader;
+
     public ProductionController() {
-        iInsert = findSpecificImplementation(DatabaseLoader.getIInsertList(), "InsertData");
-        iSelect = findSpecificImplementation(DatabaseLoader.getISelectList(), "SelectData");
+        databaseLoader = new DatabaseLoader();
+        iInsert = findSpecificImplementation(databaseLoader.getIInsertList(), "InsertData");
+        iSelect = findSpecificImplementation(databaseLoader.getISelectList(), "SelectData");
+
         List<IProduction> productionList = ProductionLoader.getIProductionList();
         if (!productionList.isEmpty()) {
             iProduction = productionList.get(0);
-        } else {
+        }
+
+        if (iInsert == null) {
+
+            System.out.println("No implementations of iInsert found.");
+        }
+
+        if (iSelect == null) {
+            System.out.println("No implementations of iSelect found.");
+        }
+
+        if (iProduction == null) {
             System.out.println("No implementations of IProduction found.");
-            //throw new RuntimeException("No implementations of IProduction found.");
         }
     }
 

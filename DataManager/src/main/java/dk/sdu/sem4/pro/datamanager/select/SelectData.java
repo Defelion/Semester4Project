@@ -2,10 +2,12 @@ package dk.sdu.sem4.pro.datamanager.select;
 
 import dk.sdu.sem4.pro.commondata.data.*;
 import dk.sdu.sem4.pro.commondata.services.ISelect;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
+@Service
 public class SelectData implements ISelect {
 
     @Override

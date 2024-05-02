@@ -1,16 +1,41 @@
 package dk.sdu.sem4.pro.webpage.serviceloader;
 
 import dk.sdu.sem4.pro.commondata.services.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
+@Configuration
+@ComponentScan(basePackages = "dk.sdu.sem4.pro.datamanager.select")
+public class DatabaseLoader {
 
-public abstract class DatabaseLoader {
-    public static List<ISelect> getISelectList(){
+    public DatabaseLoader() {
+    }
+
+    @Bean
+    public List<ISelect> getISelectList(){
         List<ISelect> selectServices = new ArrayList<>();
         ServiceLoader<ISelect> selectLoader = ServiceLoader.load(ISelect.class);
+
+        System.out.println("Elements in ServiceLoader:" + selectLoader.stream().count());
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        System.out.println("ClassLoader for DatabaseLoader: " + classLoader);
+
+        System.out.println("Paths searched by ServiceLoader:");
+        try {
+            Enumeration<URL> resources = classLoader.getResources("META-INF/services/dk.sdu.sem4.pro.commondata.services.ISelect");
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                System.out.println(url);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Iterator<ISelect> iterator = selectLoader.iterator();
         while(iterator.hasNext()){
             selectServices.add(iterator.next());
@@ -18,7 +43,8 @@ public abstract class DatabaseLoader {
         return selectServices;
     }
 
-    public static List<IDelete> getIDeleteList(){
+    @Bean
+    public List<IDelete> getIDeleteList(){
         List<IDelete> deleteServices = new ArrayList<>();
         ServiceLoader<IDelete> deleteLoader = ServiceLoader.load(IDelete.class);
         Iterator<IDelete> iterator = deleteLoader.iterator();
@@ -28,7 +54,8 @@ public abstract class DatabaseLoader {
         return deleteServices;
     }
 
-    public static List<IUpdate> getIUpdateList(){
+    @Bean
+    public List<IUpdate> getIUpdateList(){
         List<IUpdate> updateServices = new ArrayList<>();
         ServiceLoader<IUpdate> updateLoader = ServiceLoader.load(IUpdate.class);
         Iterator<IUpdate> iterator = updateLoader.iterator();
@@ -38,7 +65,8 @@ public abstract class DatabaseLoader {
         return updateServices;
     }
 
-    public static List<IInsert> getIInsertList(){
+    @Bean
+    public List<IInsert> getIInsertList(){
         List<IInsert> insertServices = new ArrayList<>();
         ServiceLoader<IInsert> insertLoader = ServiceLoader.load(IInsert.class);
         Iterator<IInsert> iterator = insertLoader.iterator();
@@ -48,7 +76,8 @@ public abstract class DatabaseLoader {
         return insertServices;
     }
 
-    public static List<IHash> getIHashList(){
+    @Bean
+    public List<IHash> getIHashList(){
         List<IHash> hashServices = new ArrayList<>();
         ServiceLoader<IHash> hashLoader = ServiceLoader.load(IHash.class);
         Iterator<IHash> iterator = hashLoader.iterator();

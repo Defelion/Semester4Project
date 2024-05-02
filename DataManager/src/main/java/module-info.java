@@ -15,6 +15,7 @@ module DataManager {
     requires java.sql;
     requires java.desktop;
     requires jhash;
+    requires spring.context;
     provides IUpdate with UpdateData;
     provides IDelete with DeleteData;
     provides IInsert with InsertData;
