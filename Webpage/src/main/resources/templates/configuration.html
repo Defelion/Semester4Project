@@ -45,7 +45,7 @@
         color: #2c3e50;
     }
 
-    .agv-config input[type="number"], .products-config input, .products-config select, .products-config button {
+    .agv-config input[type="number"], .products-config input, .products-config select, .products-config button, .agv-config button {
         width: 100%;
         padding: 8px;
         margin-top: 5px;
@@ -55,7 +55,7 @@
         border-radius: 4px;
     }
 
-    .products-config button {
+    .agv-config button, .products-config button {
         background-color: #ecf0f1;
         color: #333;
         border: none;
@@ -63,9 +63,10 @@
         cursor: pointer;
     }
 
-    .products-config button:hover {
+    .agv-config button:hover, .products-config button:hover {
         background-color: #dcdde1;
     }
+
 </style>
 <body>
 <div th:replace="~{fragments/navigation :: navigation}"></div>
@@ -75,16 +76,15 @@
 
     <div class="agv-config">
         <h2>AGV Configuration</h2>
-        <label>Minimum charge: </label>
-        <input type="number" placeholder="">
-        <label>Maximum charge: </label>
-        <input type="number" placeholder="">
+        <input type="number" placeholder="Enter minimum charge" id="minCharge" name="minCharge">
+        <input type="number" placeholder="Enter maximum charge" id="maxCharge" name="maxCharge">
+        <button type="button" id="updateMinMaxCharge">Update charges</button>
     </div>
 
     <div class="products-config">
         <h2>Products Configuration</h2>
-        <input>
-        <button>Add component</button>
+        <input id="component-name" name="component-name" placeholder="Enter component name">
+        <button type="submit" id="add-component">Add component</button>
 
         <select>
             <option>Component 1</option>
@@ -105,6 +105,64 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script>
+
+
+
+    $(document).ready(function() {
+        function updateChargesForAllAGVs(minCharge, maxCharge) {
+            $.ajax({
+                url: '/configuration/updateAllCharges',
+                type: 'POST',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    minCharge: minCharge,
+                    maxCharge: maxCharge
+                }),
+                success: function(response) {
+                    console.log('Success:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        }
+
+        $('#updateMinMaxCharge').click(function(event) {
+            event.preventDefault();
+            var minChargeValue = parseFloat($('#minCharge').val());
+            var maxChargeValue = parseFloat($('#maxCharge').val());
+            updateChargesForAllAGVs(minChargeValue, maxChargeValue);
+        });
+    });
+
+
+    /*$(document).ready(function() {
+        function updateChargesForAllAGVs(minCharge, maxCharge) {
+            $.ajax({
+                url: '/configuration/updateAllCharges',
+                type: 'POST',
+                dataType: "json",
+                data: JSON.stringify({
+                    minCharge: minCharge,
+                    maxCharge: maxCharge
+                }),
+            });
+        }
+
+        $('#updateMinMaxCharge').click(function(event) {
+            event.preventDefault();
+            var minChargeValue = $('#minCharge').val();
+            var maxChargeValue = $('#maxCharge').val();
+            alert("test")
+            updateChargesForAllAGVs(minChargeValue, maxChargeValue);
+        });
+    });
+
+     */
+</script>
 
 </body>
 </html>
