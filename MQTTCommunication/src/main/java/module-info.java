@@ -3,7 +3,7 @@ import dk.sdu.sem4.pro.mqttcommunication.MQTTCommunication;
 
 module MQTTCommunication {
     requires android.json;
-    requires communication;
+    requires Communication;
     requires org.eclipse.paho.client.mqttv3;
     provides IClient with MQTTCommunication;
 }
