@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>AGVController</artifactId>
+    <artifactId>SOAPCommunication</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -18,34 +18,33 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>dk.sdu.sem4.pro</groupId>
-            <artifactId>Common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+        <!-- Dependency for communication module -->
         <dependency>
             <groupId>dk.sdu.sem4.pro</groupId>
             <artifactId>Communication</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Jakarta SOAP API -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
+            <groupId>jakarta.xml.soap</groupId>
+            <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>2.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Metro - JAX-WS RI, including SOAP support -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-ri</artifactId>
+            <version>3.0.2</version>
+            <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>dk.sdu.sem4.pro</groupId>
-            <artifactId>RESTCommunication</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>dk.sdu.sem4.pro</groupId>
-            <artifactId>CommonData</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.vaadin.external.google</groupId>
+            <artifactId>android-json</artifactId>
+            <version>0.0.20131108.vaadin1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -61,8 +60,6 @@
                     <target>21</target>
                     <compilerArgs>
                         <arg>-Xlint:unchecked</arg>
-                        <arg>--add-modules</arg>
-                        <arg>Common,Communication,android.json</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

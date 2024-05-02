@@ -1,5 +1,5 @@
 module AssemblyStationController {
-    requires communication;
+    requires Communication;
     requires android.json;
     requires Common;
 }

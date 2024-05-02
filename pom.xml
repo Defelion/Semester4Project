@@ -20,6 +20,7 @@
         <module>AGVController</module>
         <module>MQTTCommunication</module>
         <module>AssemblyStationController</module>
+        <module>SOAPCommunication</module>
         <module>ProductionController</module>
     </modules>
 
@@ -92,6 +93,12 @@
                                             <artifactId>${project.artifactId}</artifactId>
                                             <version>${project.version}</version>
                                             <type>jar</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>org.springframework.boot</groupId>
+                                            <artifactId>spring-boot-starter-parent</artifactId>
+                                            <version>3.2.4</version>
+                                            <type>pom</type>
                                         </artifactItem>
                                     </artifactItems>
                                     <outputDirectory>../mods-mvn</outputDirectory>
