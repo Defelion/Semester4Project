@@ -20,6 +20,7 @@
         <module>AGVController</module>
         <module>MQTTCommunication</module>
         <module>AssemblyStationController</module>
+        <module>SOAPCommunication</module>
     </modules>
 
     <properties>
