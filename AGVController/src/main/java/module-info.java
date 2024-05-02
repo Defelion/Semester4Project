@@ -1,6 +1,6 @@
 module AGVController {
     requires Common;
-    requires Communication;
+    requires communication;
     requires android.json;
     requires CommonData;
 }

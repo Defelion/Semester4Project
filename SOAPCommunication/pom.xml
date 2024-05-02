@@ -21,7 +21,7 @@
         <!-- Dependency for communication module -->
         <dependency>
             <groupId>dk.sdu.sem4.pro</groupId>
-            <artifactId>Communication</artifactId>
+            <artifactId>communication</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
