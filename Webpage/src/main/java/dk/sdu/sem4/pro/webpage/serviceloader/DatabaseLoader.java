@@ -6,15 +6,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public abstract class DatabaseLoader {
     public static List<ISelect> getISelectList(){
         List<ISelect> selectServices = new ArrayList<>();
-        ServiceLoader<ISelect> selectLoader = ServiceLoader.load(ISelect.class);
+        selectServices = ServiceLoader.load(ISelect.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        /*ServiceLoader<ISelect> selectLoader = ServiceLoader.load(ISelect.class);
         Iterator<ISelect> iterator = selectLoader.iterator();
         while(iterator.hasNext()){
             selectServices.add(iterator.next());
-        }
+        }*/
+        System.out.println(selectServices);
         return selectServices;
     }
 

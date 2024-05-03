@@ -61,9 +61,9 @@
     <h1>Reports</h1>
 
     <div></div>
-    <table th:each="ReportTable : ${log}">
-        <tr>
-            <th></th>
+    <table>
+        <tr th:each="createdTable  : ${log}">
+            <td th:each="logline : ${createdTable.tableCols}" th:text="logline.Value"></td>
         </tr>
     </table>
 </div>
