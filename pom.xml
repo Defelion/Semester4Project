@@ -21,7 +21,6 @@
         <module>MQTTCommunication</module>
         <module>AssemblyStationController</module>
         <module>SOAPCommunication</module>
-        <module>WarehouseController</module>
     </modules>
 
     <properties>
