@@ -84,7 +84,7 @@
     <div class="products-config">
         <h2>Products Configuration</h2>
         <input id="component-name" name="component-name" placeholder="Enter component name">
-        <button type="submit" id="add-component">Add component</button>
+        <button type="button" id="add-component">Add component</button>
 
         <select>
             <option>Component 1</option>
@@ -136,32 +136,33 @@
             var maxChargeValue = parseFloat($('#maxCharge').val());
             updateChargesForAllAGVs(minChargeValue, maxChargeValue);
         });
-    });
 
-
-    /*$(document).ready(function() {
-        function updateChargesForAllAGVs(minCharge, maxCharge) {
+        function addComponent(componentName) {
             $.ajax({
-                url: '/configuration/updateAllCharges',
+                url: '/configuration/addComponent',
                 type: 'POST',
-                dataType: "json",
-                data: JSON.stringify({
-                    minCharge: minCharge,
-                    maxCharge: maxCharge
-                }),
+                contentType: "application/json",
+                data: JSON.stringify({ componentName: componentName }),
+                success: function(response) {
+                    console.log('Component added:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to add component:', xhr.responseText);
+                }
             });
         }
 
-        $('#updateMinMaxCharge').click(function(event) {
+        $('#add-component').click(function(event) {
             event.preventDefault();
-            var minChargeValue = $('#minCharge').val();
-            var maxChargeValue = $('#maxCharge').val();
-            alert("test")
-            updateChargesForAllAGVs(minChargeValue, maxChargeValue);
+            var componentName = $('#component-name').val();
+            addComponent(componentName);
+            $('#component-name').val('');
         });
+
     });
 
-     */
+
+
 </script>
 
 </body>
