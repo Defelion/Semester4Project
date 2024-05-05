@@ -63,27 +63,18 @@ public class ConfigurationController {
     }
 
     @PostMapping("/addComponent")
-    public ResponseEntity<String> addComponent(@RequestBody Map<String, String> componentDetails) {
-        String componentName = componentDetails.get("componentName");
-        if (componentName == null || componentName.isEmpty()) {
-            return ResponseEntity.badRequest().body("Component name is required");
-        }
+    public ResponseEntity<?> addComponent(@RequestBody Component component) {
+        try {
+            String componentName = component.getName();
+            System.out.println("Received component name: " + componentName);
 
-        Component component = new Component(componentName);
-        int result = 0;
+            component.setName(componentName);
 
-        for (IInsert iInsert : iInsertList) {
-            result = iInsert.addComponent(component);
-            if (result != 0) {
-                break;
-            }
-        }
+            return ResponseEntity.ok("Component added successfully!");
 
-        if (result == 0) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add component due to unknown error");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to add component: " + e.getMessage());
         }
-        return ResponseEntity.ok("Component added successfully with ID: " + result);
     }
 }
-
 

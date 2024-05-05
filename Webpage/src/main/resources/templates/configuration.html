@@ -142,7 +142,7 @@
                 url: '/configuration/addComponent',
                 type: 'POST',
                 contentType: "application/json",
-                data: JSON.stringify({ componentName: componentName }),
+                data: JSON.stringify({ name: componentName }),
                 success: function(response) {
                     console.log('Component added:', response);
                 },
