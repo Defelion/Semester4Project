@@ -61,62 +61,13 @@
 <div class="inventory">
     <h1>Inventory</h1>
 
-    <table style="width:100%">
+
+    <table>
         <tr>
-            <th>Component/Product</th>
-            <th>Amount</th>
-            <th>Warehouse</th>
-            <th>AGV</th>
-            <th>Assembly station</th>
-            <th>Minimum amount</th>
+            <th th:each="header : ${createdTables[0].tableCols}" th:text="${header.colName}"></th>
         </tr>
-        <tr>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-        </tr>
-        <tr>
-            <td>6</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
+        <tr th:each="createdTable, rowStat : ${createdTables}" th:if="${rowStat.index} >= 0">
+            <td th:each="tableCol : ${createdTable.tableCols}" th:text="${tableCol.value}"></td>
         </tr>
     </table>
 </div>
