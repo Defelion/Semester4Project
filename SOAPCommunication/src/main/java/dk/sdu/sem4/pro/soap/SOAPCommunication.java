@@ -51,25 +51,28 @@ public class SOAPCommunication implements IClient {
 
     static class SOAPRequest {
         static SOAPMessage handleRequest(String operation, JSONObject data, URL endpoint, SOAPConnection connection) throws SOAPException, JSONException {
-            MessageFactory factory = MessageFactory.newInstance();
-            SOAPMessage message = factory.createMessage();
-            SOAPPart part = message.getSOAPPart();
-            SOAPEnvelope envelope = part.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPElement operationElement = body.addChildElement(envelope.createName(operation));
+            MessageFactory factory = MessageFactory.newInstance(); // Creates a factory to build SOAP messages.
+            SOAPMessage message = factory.createMessage(); // Creates a new empty SOAP message.
+            SOAPPart part = message.getSOAPPart(); // Gets the main part of the SOAP message.
+            SOAPEnvelope envelope = part.getEnvelope(); // Gets the envelope, which wraps the content.
+            SOAPBody body = envelope.getBody(); // Gets the body where the main data of the message goes.
 
+            SOAPElement operationElement = body.addChildElement(envelope.createName(operation)); // Creates a new element for the operation.
+
+            // If there is data, add it to the SOAP message.
             if (data != null) {
-                Iterator<String> keys = data.keys();
+                Iterator<String> keys = data.keys(); // Gets all the keys in the JSON object.
                 while (keys.hasNext()) {
-                    String key = keys.next();
-                    String value = data.getString(key);
+                    String key = keys.next(); // The key in the JSON pair.
+                    String value = data.getString(key); // The value in the JSON pair.
+                    // Creates a new element with the key name and adds the value as its text.
                     operationElement.addChildElement(key).addTextNode(value);
                 }
             }
 
-            message.saveChanges();
-            SOAPMessage response = connection.call(message, endpoint);
-            return response;
+            message.saveChanges(); // Finalizes the changes to the SOAP message.
+            SOAPMessage response = connection.call(message, endpoint); // Sends the message and waits for a response.
+            return response; // Returns the SOAP response message.
         }
 
         static JSONObject parseResponse(SOAPMessage response) throws JSONException {
