@@ -60,12 +60,20 @@
 <div class="reports-section">
     <h1>Reports</h1>
 
-    <div></div>
-    <table>
-        <tr th:each="createdTable  : ${log}">
-            <td th:each="logline : ${createdTable.tableCols}" th:text="logline.Value"></td>
-        </tr>
-    </table>
+    <div>
+        <h2>Search</h2>
+    </div>
+    <div>
+        <h2>Log</h2>
+        <table>
+            <tr>
+                <th th:each="header : ${createdTables[0].tableCols}" th:text="${header.colName}"></th>
+            </tr>
+            <tr th:each="createdTable, rowStat : ${createdTables}" th:if="${rowStat.index} >= 0">
+                <td th:each="tableCol : ${createdTable.tableCols}" th:text="${tableCol.value}"></td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
