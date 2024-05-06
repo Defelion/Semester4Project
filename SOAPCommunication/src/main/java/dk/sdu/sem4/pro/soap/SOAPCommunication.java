@@ -75,14 +75,41 @@ public class SOAPCommunication implements IClient {
             return response; // Returns the SOAP response message.
         }
 
-        static JSONObject parseResponse(SOAPMessage response) throws JSONException {
-            // Dummy implementation
-            return new JSONObject();
+        // This method parses the SOAP message response into a JSON object.
+        static JSONObject parseResponse(SOAPMessage response) throws JSONException, SOAPException {
+            JSONObject jsonObject = new JSONObject(); // Creates a new empty JSON object.
+            SOAPBody body = response.getSOAPBody(); // Gets the body part of the SOAP response.
+
+            // Iterates through each node (element) in the SOAP body.
+            Iterator<Node> iterator = body.getChildElements(); // Gets all child elements of the SOAP body.
+            while (iterator.hasNext()) {
+                Node node = iterator.next(); // Gets the next node in the iteration.
+                // Checks if the node is a SOAP element to ensure it's a valid element.
+                if (node instanceof SOAPElement) {
+                    SOAPElement element = (SOAPElement) node; // Casts the node to a SOAP element.
+                    String name = element.getLocalName(); // Gets the tag name of the element.
+                    String value = element.getValue(); // Gets the text content of the element.
+                    // Adds the tag name and text content as a key-value pair in the JSON object.
+                    jsonObject.put(name, value);
+                }
+            }
+
+            return jsonObject; // Returns the filled JSON object.
         }
 
+
         static Integer extractStatusCode(SOAPMessage response) {
-            // Dummy implementation
-            return 200;
+            try {
+                SOAPBody body = response.getSOAPBody();
+                if (body.hasFault()) {
+                    return 500; // Simulating a failure scenario
+                } else {
+                    return 200; // Simulating a success scenario
+                }
+            } catch (SOAPException e) {
+                e.printStackTrace();
+                return 500; // Default error code in case of exception
+            }
         }
     }
 }
