@@ -1,3 +1,5 @@
+import dk.sdu.sem4.pro.commondata.services.*;
+
 open module Webpage {
     requires CommonData;
     requires Common;
@@ -8,4 +10,11 @@ open module Webpage {
     requires java.sql;
     requires spring.core;
     requires spring.beans;
+    requires org.apache.tomcat.embed.core;
+    requires thymeleaf;
+    uses IDelete;
+    uses IInsert;
+    uses IUpdate;
+    uses IHash;
+    uses ISelect;
 }
