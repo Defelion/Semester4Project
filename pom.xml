@@ -42,13 +42,13 @@
             <build>
                 <plugins>
                     <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.1.2</version>
-                    <configuration>
-                        <argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
-                    </configuration>
-                </plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <artifactId>maven-clean-plugin</artifactId>
                         <version>3.3.2</version>
@@ -61,6 +61,36 @@
                                     <directory>libs</directory>
                                 </fileset>
                             </filesets>
+                        </configuration>
+                    </plugin><plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>../mods-mvn</outputDirectory>
+                                <overWriteReleases>false</overWriteReleases>
+                                <overWriteSnapshots>false</overWriteSnapshots>
+                                <overWriteIfNewer>true</overWriteIfNewer>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.4.1</version>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>mods-mvn/</classpathPrefix> </manifest>
+                            </archive>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -80,6 +110,19 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <version>3.6.0</version>
                         <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>../mods-mvn</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>false</overWriteSnapshots>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>copy-installed</id>
                                 <phase>install</phase>
@@ -105,6 +148,18 @@
                                 </configuration>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.4.1</version>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>mods-mvn/</classpathPrefix> </manifest>
+                            </archive>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

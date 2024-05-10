@@ -36,6 +36,7 @@ public class ReportsController {
             for (ISelect select : selects) {
                 batches = select.getAllBatch();
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
