@@ -1,5 +1,6 @@
 package dk.sdu.sem4.pro.webpage.serviceloader;
 
+import dk.sdu.sem4.pro.common.modulefinder.ModuleLocator;
 import dk.sdu.sem4.pro.commondata.services.*;
 
 import java.util.ArrayList;
@@ -12,8 +13,12 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class DatabaseLoader {
     public static List<ISelect> getISelectList(){
+
         List<ISelect> selectServices = new ArrayList<>();
-        selectServices = ServiceLoader.load(ISelect.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        selectServices = ServiceLoader.load(ModuleLocator.getModuleLayer(), ISelect.class)
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .collect(toList());
         /*ServiceLoader<ISelect> selectLoader = ServiceLoader.load(ISelect.class);
         Iterator<ISelect> iterator = selectLoader.iterator();
         while(iterator.hasNext()){
