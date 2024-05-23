@@ -17,9 +17,21 @@ import java.util.stream.Stream;
 
 
 public abstract class ModuleLocator {
+
+    private static ModuleLayer layer;
+    private static ModuleLayer layer2;
+    private static ModuleLayer createLayer(String from, String module) {
+        var finder = ModuleFinder.of(Paths.get(from));
+        var parent = ModuleLayer.boot();
+        var cf = parent.configuration().resolve(finder, ModuleFinder.of(), Set.of(module));
+        return parent.defineModulesWithOneLoader(cf, ClassLoader.getSystemClassLoader());
+    }
+
     public static ModuleLayer getModuleLayer() {
         System.out.println(System.getProperty("user.dir")+"/mods-mvn/");
         try {
+            //layer = createLayer(System.getProperty("user.dir") + "/mods-mvn/", "org.eclipse.persistence.sdo");
+            //layer2 = createLayer(System.getProperty("user.dir") + "/mods-mvn/", "commonj.sdo");
             Path modulesDir = Paths.get(System.getProperty("user.dir")+"/mods-mvn/");
 
             Predicate<Path> filter = path -> path.getFileName().toString().endsWith("SNAPSHOT.jar");
