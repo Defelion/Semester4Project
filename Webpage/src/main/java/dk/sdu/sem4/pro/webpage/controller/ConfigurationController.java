@@ -2,6 +2,7 @@ package dk.sdu.sem4.pro.webpage.controller;
 
 import dk.sdu.sem4.pro.commondata.data.AGV;
 import dk.sdu.sem4.pro.commondata.data.Component;
+import dk.sdu.sem4.pro.commondata.services.IDelete;
 import dk.sdu.sem4.pro.commondata.services.IInsert;
 import dk.sdu.sem4.pro.commondata.services.ISelect;
 import dk.sdu.sem4.pro.commondata.services.IUpdate;
@@ -21,11 +22,14 @@ public class ConfigurationController {
     private List<ISelect> iSelectList;
     private List<IUpdate> iUpdateList;
     private List<IInsert> iInsertList;
+    private List<IDelete> iDeleteList;
+
 
     public ConfigurationController() {
         iSelectList = DatabaseLoader.getISelectList();
         iUpdateList = DatabaseLoader.getIUpdateList();
         iInsertList = DatabaseLoader.getIInsertList();
+        iDeleteList = DatabaseLoader.getIDeleteList();
     }
 
     @PostMapping("/updateAllCharges")
@@ -76,5 +80,33 @@ public class ConfigurationController {
             return ResponseEntity.badRequest().body("Failed to add component: " + e.getMessage());
         }
     }
+
+    @PostMapping("/removeComponent")
+    public ResponseEntity<?> removeComponent(@RequestBody Map<String, String> request) {
+        try {
+            String componentName = request.get("name");
+            System.out.println("Received component name to remove: " + componentName);
+
+            boolean deleteResult = false;
+
+            for (IDelete iDelete : iDeleteList) {
+                deleteResult = iDelete.deleteComponent(Integer.parseInt(componentName));
+                if (deleteResult) {
+                    break;
+                }
+            }
+
+            if (deleteResult) {
+                return ResponseEntity.ok("Component removed successfully!");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove component");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to remove component: " + e.getMessage());
+        }
+    }
+
+
 }
 

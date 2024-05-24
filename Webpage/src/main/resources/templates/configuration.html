@@ -86,10 +86,10 @@
         <input id="component-name" name="component-name" placeholder="Enter component name">
         <button type="button" id="add-component">Add component</button>
 
-        <select>
+        <select id="component-list">
             <option>Component 1</option>
         </select>
-        <button>Remove component</button>
+        <button type="button" id="remove-component">Remove component</button>
 
         <select>
             <option>Product 1</option>
@@ -157,6 +157,27 @@
             var componentName = $('#component-name').val();
             addComponent(componentName);
             $('#component-name').val('');
+        });
+
+        function removeComponent(componentName) {
+            $.ajax({
+                url: '/configuration/removeComponent',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({ name: componentName }),
+                success: function(response) {
+                    console.log('Component removed:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to remove component:', xhr.responseText);
+                }
+            });
+        }
+
+        $('#remove-component').click(function(event) {
+            event.preventDefault();
+            var componentName = $('#component-list').val();
+            removeComponent(componentName);
         });
 
     });
