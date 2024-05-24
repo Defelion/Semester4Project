@@ -34,10 +34,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
-            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.1</version>
                 <configuration>
@@ -48,26 +44,16 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>3.1.0</version>
                 <configuration>
-                    <executable>${java}</executable>
-                    <workingDirectory>.</workingDirectory>
-                    <longModulepath>false</longModulepath>
+                    <mainClass>dk.sdu.sem4.pro.serviceapplication.Main</mainClass>
+                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                    <classpathScope>compile</classpathScope>
+                    <executable>java</executable>
                     <arguments>
-                        <argument>-Dorg.lwjgl.util.Debug=true</argument>
-                        <argument>-Djava.library.path=libs</argument>
-                        <argument>--module-path=mods-mvn</argument>
-                        <argument>--class-path=libs/*</argument>                     -->
-                        <argument>--module=OperationsManager/dk.sdu.sem4.pro.serviceapplication.Main</argument>
-                        <argument>--add-modules javafx.graphics</argument>
+                        <argument>--module-path</argument>
+                        <argument>${project.build.directory}/mods-mvn</argument> <argument>--module</argument>
+                        <argument>ServiceApplication/dk.sdu.sem4.pro.serviceapplication</argument>
                     </arguments>
                 </configuration>
             </plugin>
