@@ -45,15 +45,22 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <mainClass>dk.sdu.sem4.pro.serviceapplication.Main</mainClass>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                    <classpathScope>compile</classpathScope>
                     <executable>java</executable>
+                    <workingDirectory>.</workingDirectory>
+                    <longModulepath>false</longModulepath>
                     <arguments>
-                        <argument>--module-path</argument>
-                        <argument>${project.build.directory}/mods-mvn</argument> <argument>--module</argument>
-                        <argument>ServiceApplication/dk.sdu.sem4.pro.serviceapplication</argument>
+                        <argument>--module-path=${project.build.directory}/mods-mvn</argument>
+                        <argument>--module=ServiceApplication/dk.sdu.sem4.pro.serviceapplication</argument>
                     </arguments>
                 </configuration>
             </plugin>
