@@ -1,5 +1,6 @@
 package dk.sdu.sem4.pro.webpage.controller;
 
+import dk.sdu.sem4.pro.webpage.classes.InventoryTable;
 import dk.sdu.sem4.pro.webpage.classes.ReportTable;
 import dk.sdu.sem4.pro.webpage.generatetable.CreatedTable;
 import dk.sdu.sem4.pro.webpage.generatetable.TableCol;
@@ -29,28 +30,30 @@ public class BatchController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }*/
-        List<ReportTable> reportTables = new ArrayList<>();
+        List<InventoryTable> reportTables = new ArrayList<>();
         List<String> headers = new ArrayList<>();
-        /*ReportTable reportTable = null;
-        for (Batch batch : batches) {
-            reportTable = new ReportTable();
-            if(batch.getId() > 0) {
-                reportTable.setId(batch.getId());
-                if(!headers.contains("ID")) {
-                    headers.add("ID");
+        if (reportTables != null) {
+            /*ReportTable reportTable = null;
+            for (Batch batch : batches) {
+                reportTable = new ReportTable();
+                if(batch.getId() > 0) {
+                    reportTable.setId(batch.getId());
+                    if(!headers.contains("ID")) {
+                        headers.add("ID");
+                    }
                 }
-            }
-            reportTables.add(reportTable);
-        }*/
+                reportTables.add(reportTable);
+            }*/
+        }
         List<CreatedTable> createdTables = createTableList(headers, reportTables);
         return createdTables;
     }
 
-    public List<CreatedTable> createTableList(List<String> headers, List<ReportTable> reportTables) {
+    public List<CreatedTable> createTableList(List<String> headers, List<InventoryTable> Tables) {
         List<CreatedTable> tableList = new ArrayList<>();
 
         int rows = 0;
-        if (reportTables.isEmpty()) {
+        if (Tables.isEmpty()) {
             // Add backup test data
             for (int i = 1; i <= 10; i++) {
                 CreatedTable createdTable = new CreatedTable();
@@ -72,7 +75,7 @@ public class BatchController {
             }
         } else {
             // Populate table with data from reportTables
-            for (ReportTable reportTable : reportTables) {
+            for (InventoryTable reportTable : Tables) {
                 rows++;
                 CreatedTable createdTable = new CreatedTable();
                 createdTable.setRow(rows);

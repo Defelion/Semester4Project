@@ -11,11 +11,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectBatch {
     public Logline getLogLine (int logLineID) throws IOException {
-        Logline logLine = null;
+        Logline logLine = new Logline();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM logline WHERE ID = ?";
@@ -31,6 +32,8 @@ public class SelectBatch {
                         rs.getInt("batch_id")
                 );
             }
+            ps.close();
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -38,7 +41,7 @@ public class SelectBatch {
     }
 
     public List<Logline> getLogLines () throws IOException {
-        List<Logline> logLines = null;
+        List<Logline> logLines = new ArrayList<>();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM logline order by datetime desc";
@@ -54,6 +57,8 @@ public class SelectBatch {
                     )
                 );
             }
+            ps.close();
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -61,7 +66,7 @@ public class SelectBatch {
     }
 
     public List<Logline> getBatchLog (int batchID) throws IOException {
-        List<Logline> logLines = null;
+        List<Logline> logLines = new ArrayList<>();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM logline where batch_id = ? order by datetime desc";
@@ -78,31 +83,37 @@ public class SelectBatch {
                         )
                 );
             }
+            ps.close();
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println(logLines);
         return logLines;
     }
 
     public Batch getBatch (int batchID) throws IOException {
-        Batch batch = null;
+        Batch batch = new Batch();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM batch where id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, batchID);
             ResultSet rs = ps.executeQuery();
-            SelectComponent selectComponent = new SelectComponent();
             while (rs.next()) {
                 batch = new Batch(
                         rs.getInt("id"),
-                        selectComponent.getRecipe(new Recipe(rs.getInt("id"))),
+                        new Recipe(rs.getInt("component_id")),
                         rs.getInt("amount"),
                         rs.getString("description"),
-                        rs.getInt("priority"),
-                        getBatchLog(rs.getInt("id"))
+                        rs.getInt("priority")
                 );
             }
+            ps.close();
+            rs.close();
+            SelectComponent component = new SelectComponent();
+            batch.setProduct(component.getRecipe(batch.getProduct()));
+            batch.setLog(getBatchLog(batch.getId()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -110,23 +121,26 @@ public class SelectBatch {
     }
 
     public Batch getBatchWithHigestPriority () throws IOException {
-        Batch batch = null;
+        Batch batch = new Batch();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM batch order by priority desc limit 1";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            SelectComponent selectComponent = new SelectComponent();
             while (rs.next()) {
                 batch = new Batch(
-                        rs.getInt("id"),
-                        selectComponent.getRecipe(new Recipe(rs.getInt("id"))),
-                        rs.getInt("amount"),
-                        rs.getString("description"),
-                        rs.getInt("priority"),
-                        getBatchLog(rs.getInt("id"))
-                );
+                                rs.getInt("id"),
+                                new Recipe(rs.getInt("component_id")),
+                                rs.getInt("amount"),
+                                rs.getString("description"),
+                                rs.getInt("priority")
+                        );
             }
+            ps.close();
+            rs.close();
+            SelectComponent component = new SelectComponent();
+            batch.setProduct(component.getRecipe(batch.getProduct()));
+            batch.setLog(getBatchLog(batch.getId()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -134,32 +148,39 @@ public class SelectBatch {
     }
 
     public List<Batch> getAllBatch () throws IOException {
-        List<Batch> batchs = null;
+        List<Batch> batchs = new ArrayList<>();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM batch";
+            System.out.println("SQL Query: " + sql);
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            SelectComponent selectComponent = new SelectComponent();
             while (rs.next()) {
                 batchs.add(new Batch(
                         rs.getInt("id"),
-                        selectComponent.getRecipe(new Recipe(rs.getInt("id"))),
+                        new Recipe(rs.getInt("component_id")),
                         rs.getInt("amount"),
                         rs.getString("description"),
-                        rs.getInt("priority"),
-                        getBatchLog(rs.getInt("id"))
-                    )
+                        rs.getInt("priority")
+                        )
                 );
             }
+            ps.close();
+            rs.close();
+            SelectComponent component = new SelectComponent();
+            for (Batch batch : batchs) {
+                batch.setProduct(component.getRecipe(batch.getProduct()));
+                batch.setLog(getBatchLog(batch.getId()));
+            }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return batchs;
     }
 
     public List<Batch> getAllBatchbyProduct (Component product) throws IOException {
-        List<Batch> batchs = null;
+        List<Batch> batchs = new ArrayList<>();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM batch ";
@@ -177,17 +198,22 @@ public class SelectBatch {
                 ps.setString(1, product.getName());
             }
             ResultSet rs = ps.executeQuery();
-            SelectComponent selectComponent = new SelectComponent();
             while (rs.next()) {
                 batchs.add(new Batch(
                                 rs.getInt("id"),
-                                selectComponent.getRecipe(new Recipe(rs.getInt("id"))),
+                                new Recipe(rs.getInt("component_id")),
                                 rs.getInt("amount"),
                                 rs.getString("description"),
-                                rs.getInt("priority"),
-                                getBatchLog(rs.getInt("id"))
+                                rs.getInt("priority")
                         )
                 );
+            }
+            ps.close();
+            rs.close();
+            SelectComponent component = new SelectComponent();
+            for (Batch batch : batchs) {
+                batch.setProduct(component.getRecipe(batch.getProduct()));
+                batch.setLog(getBatchLog(batch.getId()));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

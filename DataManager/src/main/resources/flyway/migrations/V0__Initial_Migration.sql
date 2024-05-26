@@ -2,7 +2,11 @@ create table Batch (
     ID serial not null unique primary key,
     priority integer not null,
     description text default '',
-    amount integer not null
+    amount integer not null,
+    component_ID integer not null,
+    foreign key (component_ID)
+        references Component(ID)
+        on delete cascade
 );
 
 create table LogLine (
