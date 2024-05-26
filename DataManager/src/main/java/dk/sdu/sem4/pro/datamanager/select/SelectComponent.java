@@ -9,7 +9,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SelectComponent {
     public Component getComponent (Component component) throws IOException {
@@ -31,6 +33,7 @@ public class SelectComponent {
                 selectComponent.setId(rs.getInt("id"));
                 selectComponent.setName(rs.getString("name"));
             }
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -50,6 +53,7 @@ public class SelectComponent {
                 component.setName(rs.getString("name"));
                 components.add(component);
             }
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -60,6 +64,7 @@ public class SelectComponent {
         Conn conn = new Conn();
         Recipe selectRecipe = new Recipe();
         try (Connection connection = conn.getConnection()) {
+            Component product = new Component();
             String sql = "SELECT * FROM Recipe ";
             if (recipe.getId() > 0)
                 sql += "WHERE id = ?";
@@ -68,23 +73,33 @@ public class SelectComponent {
             var selectSQL = connection.prepareStatement(sql);
             if(recipe.getId() > 0)
                 selectSQL.setInt(1, recipe.getId());
-            else if(recipe.getProduct().getId() > 0)
+            else if(recipe.getProduct().getId() > 0) {
+                product = getComponent(recipe.getProduct());
                 selectSQL.setInt(1, recipe.getProduct().getId());
+            }
             else if(recipe.getProduct().getName() != null) {
-                selectSQL.setInt(1,
-                        getComponent(new Component(recipe.getProduct().getName())).getId());
+                product = getComponent(recipe.getProduct());
+                selectSQL.setInt(1,product.getId());
             }
             ResultSet rs = selectSQL.executeQuery();
             while (rs.next()) {
                 if(selectRecipe.getId() != 0) {
                     selectRecipe.setId(rs.getInt("id"));
-                    selectRecipe.setProduct(getComponent(new Component(rs.getInt("product_component_id"))));
+                    if(product.getId() != 0) selectRecipe.setProduct(product);
+                    else selectRecipe.setProduct(new Component(rs.getInt("product_component_id")));
                 }
                 selectRecipe.addComponent(
-                        getComponent(new Component(rs.getInt("material_component_id"))),
+                        new Component(rs.getInt("material_component_id")),
                         rs.getInt("amount"));
                 selectRecipe.setTimeEstimation(rs.getInt("timeestimation"));
             }
+            rs.close();
+            if(product.getId() != 0) selectRecipe.setProduct(getComponent(selectRecipe.getProduct()));
+            Map<Component, Integer> componentIntegerEntryMap = new HashMap<>();
+            for(Map.Entry<Component, Integer> componentIntegerEntry : selectRecipe.getComponentMap().entrySet()) {
+                componentIntegerEntryMap.put(getComponent(componentIntegerEntry.getKey()), componentIntegerEntry.getValue());
+            }
+            selectRecipe.setComponentList(componentIntegerEntryMap);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

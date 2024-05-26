@@ -33,6 +33,21 @@ public class Batch {
         this.log = log;
     }
 
+    public Batch (int ID, int amount, String description, int priority) {
+        this.id = ID;
+        this.amount = amount;
+        this.description = description;
+        this.priority = priority;
+    }
+
+    public Batch (int ID, Recipe recipe, int amount, String description, int priority) {
+        this.id = ID;
+        this.recipe = recipe;
+        this.amount = amount;
+        this.description = description;
+        this.priority = priority;
+    }
+
     public Batch (int ID, Recipe recipe, int amount, String description, int priority, List<Logline> log) {
         this.id = ID;
         this.recipe = recipe;

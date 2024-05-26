@@ -1,5 +1,6 @@
 package dk.sdu.sem4.pro.commondata.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Recipe {
@@ -49,6 +50,7 @@ public class Recipe {
     }
 
     public void addComponent (Component Component, int amount) {
+        if(componentList == null) { componentList = new HashMap<Component, Integer>(); }
         componentList.put(Component, amount);
     }
 
