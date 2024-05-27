@@ -43,17 +43,4 @@ public class WarehouseController implements IController {
             return "Error while stopping task.";
         }
     }
-
-    public double checkInventory(String itemCode) {
-        try {
-            JSONObject jsonObject = new JSONObject().put("ItemCode", itemCode);
-            JSONObject response = soapClient.receive();
-            if (response.has(itemCode)) {
-                return response.getDouble(itemCode);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return -1.0; // Indicates an error or unknown item
-    }
 }
