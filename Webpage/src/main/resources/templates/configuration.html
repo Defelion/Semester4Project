@@ -76,16 +76,20 @@
 
     <div class="agv-config">
         <h2>AGV Configuration</h2>
-        <input type="number" placeholder="Enter minimum charge" id="minCharge" name="minCharge">
-        <input type="number" placeholder="Enter maximum charge" id="maxCharge" name="maxCharge">
-        <button type="button" id="updateMinMaxCharge">Update charges</button>
+        <form th:action="@{/updateCharges}" method="post">
+            <input type="number" name="minCharge" placeholder="Enter minimum charge">
+            <input type="number" name="maxCharge" placeholder="Enter maximum charge">
+            <a href="/updateChargesForm"><button>Update Charges</button></a>
+        </form>
     </div>
 
     <div class="products-config">
         <h2>Component Configuration</h2>
-        <label>Add Component</label>
-        <input id="component-name" name="component-name" placeholder="Enter component name">
-        <button type="button" id="add-component">Add component</button>
+        <form th:action="@{/addComponent}" method="post">
+            <label>Add Component</label>
+            <input type="text" id="component-name" name="component-name" placeholder="Enter component name">
+            <input type="button" id="add-component" name="add-component" th:href="/configuration/addComponentForm" value="Add component">
+        </form>
 
         <label>Select component to be removed</label>
         <select id="component-list">
@@ -124,7 +128,7 @@
 
 
     $(document).ready(function() {
-        function updateChargesForAllAGVs(minCharge, maxCharge) {
+        /*function updateChargesForAllAGVs(minCharge, maxCharge) {
             $.ajax({
                 url: '/configuration/updateAllCharges',
                 type: 'POST',
@@ -170,7 +174,7 @@
             var componentName = $('#component-name').val();
             addComponent(componentName);
             $('#component-name').val('');
-        });
+        });*/
 
         function removeComponent(componentName) {
             $.ajax({

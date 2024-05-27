@@ -80,11 +80,19 @@ public class ConfigurationController {
         return products;
     }
 
-    @PostMapping("/updateAllCharges")
-    public ResponseEntity<String> updateAllCharges(@RequestBody Map<String, Double> charges) {
+    @GetMapping("/updateChargesForm")
+    public String updateChargesForm() {
+        return "updateChargesForm";
+    }
+
+    @PostMapping("/updateCharges")
+    public String updateAllCharges(@RequestParam("minCharge") double setMinCharge, @RequestParam("maxCharge") double setMaxCharge) {
         try {
-            Double minCharge = charges.get("minCharge");
-            Double maxCharge = charges.get("maxCharge");
+            if(setMinCharge > setMaxCharge) {
+                return "redirect:/configuration";
+            }
+            double minCharge = setMinCharge;
+            double maxCharge = setMaxCharge;
             boolean updateResult = true;
             List<AGV> allAGV = selectData.getAllAGV();
 
@@ -95,33 +103,35 @@ public class ConfigurationController {
                     updateResult = updateData.updateAGV(agv);
                 }
             }
-            System.out.println("Charges are updated");
             if (updateResult) {
-                return ResponseEntity.ok("All AGVs updated successfully");
+                System.out.println("Charges are updated");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update AGVs");
+                System.out.println("Charges are not updated");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating AGVs: " + e.getMessage());
+            System.out.println("Error updating AGVs: " + e.getMessage());
         }
+        return "redirect:/configuration";
+    }
+
+    @GetMapping("/addComponentForm")
+    public String addComponentForm() {
+        return "addComponentForm";
     }
 
     @PostMapping("/addComponent")
-    public ResponseEntity<?> addComponent(@RequestBody Component component) {
+    public String addComponent(@RequestParam("component-name") String componentName) {
         try {
-            String componentName = component.getName();
             System.out.println("Received component name: " + componentName);
-
+            Component component = new Component();
             component.setName(componentName);
             component.setWishedAmount(0);
 
             System.out.println(insertData.addComponent(component));
-
-            return ResponseEntity.ok("Component added successfully!");
-
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to add component: " + e.getMessage());
+            System.out.println("Failed to add component: " + e.getMessage());
         }
+        return "redirect:/configuration";
     }
 
     @PostMapping("/removeComponent")
@@ -144,7 +154,5 @@ public class ConfigurationController {
             return ResponseEntity.badRequest().body("Failed to remove component: " + e.getMessage());
         }
     }
-
-
 }
 
