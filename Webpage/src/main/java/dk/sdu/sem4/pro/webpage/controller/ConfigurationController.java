@@ -6,6 +6,10 @@ import dk.sdu.sem4.pro.commondata.services.IDelete;
 import dk.sdu.sem4.pro.commondata.services.IInsert;
 import dk.sdu.sem4.pro.commondata.services.ISelect;
 import dk.sdu.sem4.pro.commondata.services.IUpdate;
+import dk.sdu.sem4.pro.datamanager.delete.DeleteData;
+import dk.sdu.sem4.pro.datamanager.insert.InsertData;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
+import dk.sdu.sem4.pro.datamanager.update.UpdateData;
 import dk.sdu.sem4.pro.webpage.serviceloader.DatabaseLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +23,21 @@ import java.util.Map;
 @Controller
 @RequestMapping("/configuration")
 public class ConfigurationController {
-    private List<ISelect> iSelectList;
+    /*private List<ISelect> iSelectList;
     private List<IUpdate> iUpdateList;
     private List<IInsert> iInsertList;
-    private List<IDelete> iDeleteList;
+    private List<IDelete> iDeleteList;*/
+    private final SelectData selectData = new SelectData();
+    private final UpdateData updateData = new UpdateData();
+    private final DeleteData deleteData = new DeleteData();
+    private final InsertData insertData = new InsertData();
 
 
     public ConfigurationController() {
-        iSelectList = DatabaseLoader.getISelectList();
+        /*iSelectList = DatabaseLoader.getISelectList();
         iUpdateList = DatabaseLoader.getIUpdateList();
         iInsertList = DatabaseLoader.getIInsertList();
-        iDeleteList = DatabaseLoader.getIDeleteList();
+        iDeleteList = DatabaseLoader.getIDeleteList();*/
     }
 
     @PostMapping("/updateAllCharges")
@@ -37,22 +45,14 @@ public class ConfigurationController {
         try {
             Double minCharge = charges.get("minCharge");
             Double maxCharge = charges.get("maxCharge");
-
             boolean updateResult = true;
-            List<AGV> allAGV = new ArrayList<>();
-
-            for (ISelect iSelect : iSelectList) {
-                allAGV = iSelect.getAllAGV();
-            }
+            List<AGV> allAGV = selectData.getAllAGV();
 
             if (!allAGV.isEmpty() && minCharge < maxCharge) {
                 for (AGV agv : allAGV) {
                     agv.setMinCharge(minCharge);
                     agv.setMaxCharge(maxCharge);
-
-                    for (IUpdate iUpdate : iUpdateList) {
-                        updateResult = iUpdate.updateAGV(agv);
-                    }
+                    updateResult = updateData.updateAGV(agv);
                 }
             }
             System.out.println("Charges are updated");
@@ -73,6 +73,11 @@ public class ConfigurationController {
             System.out.println("Received component name: " + componentName);
 
             component.setName(componentName);
+            component.setWishedAmount(0);
+
+
+
+            System.out.println(insertData.addComponent(component));
 
             return ResponseEntity.ok("Component added successfully!");
 
@@ -89,12 +94,8 @@ public class ConfigurationController {
 
             boolean deleteResult = false;
 
-            for (IDelete iDelete : iDeleteList) {
-                deleteResult = iDelete.deleteComponent(Integer.parseInt(componentName));
-                if (deleteResult) {
-                    break;
-                }
-            }
+
+            deleteResult = deleteData.deleteComponent(Integer.parseInt(componentName));
 
             if (deleteResult) {
                 return ResponseEntity.ok("Component removed successfully!");

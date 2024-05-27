@@ -18,13 +18,18 @@ public class InsertData implements IInsert {
         try(var connection = conn.getConnection()) {
             var TableSQL = "insert into " + table + "(";
             var ValuesSQL = "values (";
+            boolean notfirst = false;
             for(Map.Entry<String,Object> attribute : attributes.entrySet()) {
-                TableSQL += attribute.getKey() + ", ";
-                ValuesSQL += "?, ";
+                if(notfirst) TableSQL += ", ";
+                TableSQL += attribute.getKey();
+                if(notfirst) ValuesSQL += ", ";
+                ValuesSQL += "?";
+                notfirst = true;
             }
             TableSQL += ") ";
             ValuesSQL += ")";
             var sql = TableSQL+ValuesSQL;
+            System.out.println("SQL: "+sql);
             var insertSQL = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             int i = 0;
             for(Map.Entry<String,Object> attribute : attributes.entrySet()) {
@@ -99,6 +104,7 @@ public class InsertData implements IInsert {
     @Override
     public int addComponent(Component component) {
         int id = 0;
+        System.out.println("Component to be inserted: "+component.getName());
         try {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("name", component.getName());

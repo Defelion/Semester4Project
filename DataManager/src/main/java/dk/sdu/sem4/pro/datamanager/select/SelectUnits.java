@@ -243,25 +243,54 @@ public class SelectUnits {
 
     public List<AGV> getAllAGVs() throws IOException {
         List<AGV> selectedAGVs = new ArrayList<>();
+        System.out.println("Getting all AGVs");
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
-            var sql = "select * from units";
+            var sql = "select * from agv";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
+            System.out.println("ResultSet: "+rs.getFetchSize());
+            int rows = 0;
             while (rs.next()) {
-                selectedAGVs.add(new AGV(
-                        rs.getInt("id"),
-                        rs.getString("type"),
-                        rs.getString("state"),
-                        rs.getInt("chargevalue"),
-                        rs.getDate("changeddatetime"),
-                        rs.getDate("checkdattime"),
-                        rs.getDouble("mincharge"),
-                        rs.getDouble("maxcharge"),
-                        getInventoryByUnit(new Unit(rs.getInt("id")), false)
-                ));
+                rows += 1;
+                System.out.println("Rows: "+rows);
+                AGV selectedAGV = new AGV();
+                selectedAGV.setId(rs.getInt("id"));
+                System.out.println("id: "+selectedAGV.getId());
+                selectedAGV.setState(rs.getString("state"));
+                System.out.println("state: "+selectedAGV.getState());
+                selectedAGV.setType(rs.getString("type"));
+                System.out.println("type: "+selectedAGV.getType());
+                selectedAGV.setChargeValue(rs.getInt("chargevalue"));
+                System.out.println("chargevalue: "+selectedAGV.getChargeValue());
+                selectedAGV.setMinCharge(rs.getDouble("mincharge"));
+                System.out.println("mincharge: "+selectedAGV.getMinCharge());
+                selectedAGV.setMaxCharge(rs.getDouble("maxcharge"));
+                System.out.println("maxcharge: "+selectedAGV.getMaxCharge());
+                selectedAGV.setChangedDateTime(rs.getDate("changeddatetime"));
+                System.out.println("changeddatetime: "+selectedAGV.getChangedDateTime());
+                selectedAGV.setCheckDateTime(rs.getDate("checkdattime"));
+                System.out.println("checkdattime: "+selectedAGV.getCheckDateTime());
+                selectedAGVs.add(selectedAGV);
+            }
+            rs.close();
+            ps.close();
+            System.out.println("Amount of AGV"+selectedAGVs.size());
+            for (AGV agv : selectedAGVs) {
+                System.out.println("AGV: "+agv);
+                agv.setInventory(getInventoryByUnit(agv, false));
             }
         } catch (SQLException e) {
+            for (int retry = 1; retry <= 3; retry++) { // Try up to 3 times
+                try {
+                    Thread.sleep(1000); // Delay for 1 second
+                    // ... (retry the query) ...
+                    return selectedAGVs; // Exit the retry loop if successful
+                } catch (InterruptedException retryException) {
+                    System.out.println(retryException);
+                }
+            }
+            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
         return selectedAGVs;

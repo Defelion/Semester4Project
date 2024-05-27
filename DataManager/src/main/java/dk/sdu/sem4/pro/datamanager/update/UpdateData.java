@@ -131,6 +131,7 @@ public class UpdateData implements IUpdate {
     public boolean updateAGV(AGV agv) throws IOException {
         boolean success = false;
         Conn conn = new Conn();
+        System.out.println("updating agv");
         try (Connection connection = conn.getConnection()) {
             var sql = "update agv " +
                     "set state = ?, " +
