@@ -42,15 +42,21 @@ public class SelectComponent {
 
     public List<Component> getAllComponents () throws IOException {
         List<Component> components = new ArrayList<>();
+        System.out.println("Getting all Components");
         Conn conn = new Conn();
         try (Connection con = conn.getConnection()) {
-            var SQL = "SELECT * FROM Component";
+            var SQL = "SELECT * FROM component";
+            System.out.println("SQL Query: " + SQL);
             var selectSQL = con.prepareStatement(SQL);
             ResultSet rs = selectSQL.executeQuery();
             while (rs.next()) {
-                var component = new Component();
+                Component component = new Component();
                 component.setId(rs.getInt("id"));
+                System.out.println(component.getId());
                 component.setName(rs.getString("name"));
+                System.out.println(component.getName());
+                component.setWishedAmount(rs.getInt("wishedamount"));
+                System.out.println(component.getWishedAmount());
                 components.add(component);
             }
             rs.close();
@@ -65,7 +71,7 @@ public class SelectComponent {
         Recipe selectRecipe = new Recipe();
         try (Connection connection = conn.getConnection()) {
             Component product = new Component();
-            String sql = "SELECT * FROM Recipe ";
+            String sql = "SELECT * FROM recipe ";
             if (recipe.getId() > 0)
                 sql += "WHERE id = ?";
             else if (recipe.getProduct().getId() > 0 || recipe.getProduct().getName() != null)
@@ -110,7 +116,7 @@ public class SelectComponent {
         List<Recipe> recipes = new ArrayList<>();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
-            String sql = "SELECT * FROM Recipe r " +
+            String sql = "SELECT * FROM recipe r " +
                     "join component c on c.id = r.material_component_id";
             var selectSQL = connection.prepareStatement(sql);
             ResultSet rs = selectSQL.executeQuery();
@@ -126,8 +132,8 @@ public class SelectComponent {
                     newRecipe = false;
                     recipe.setId(rs.getInt("id"));
                     recipe.setTimeEstimation(rs.getInt("timeestimation"));
-                    recipe.setProduct(getComponent(new Component
-                            (rs.getInt("product_component_id"))));
+                    recipe.setProduct(new Component
+                            (rs.getInt("product_component_id")));
                 }
                 recipe.addComponent(
                         getComponent(

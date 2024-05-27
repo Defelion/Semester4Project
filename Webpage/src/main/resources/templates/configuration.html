@@ -89,28 +89,28 @@
 
         <label>Select component to be removed</label>
         <select id="component-list">
-            <option>Component 1</option>
+            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
         </select>
         <button type="button" id="remove-component">Remove component</button>
 
         <h2>Product Configuration</h2>
         <label>Select Product to be made</label>
         <select>
-            <option>Product 1</option>
+            <option th:each="product : ${Products}" th:text="${product}" th:value="${product}"></option>
         </select>
         <label>Select Component 1</label>
         <select>
-            <option>Component 1</option>
+            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
         </select>
         <label>Select Component 2</label>
         <select>
-            <option>Component 1</option>
+            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
         </select>
         <button>Add product</button>
 
         <label>Select Product to be removed</label>
         <select>
-            <option>Product 1</option>
+            <option th:each="product : ${Products}" th:text="${product}" th:value="${product}"></option>
         </select>
         <button>Remove product</button>
     </div>

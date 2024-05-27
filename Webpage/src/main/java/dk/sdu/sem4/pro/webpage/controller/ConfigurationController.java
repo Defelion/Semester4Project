@@ -2,6 +2,7 @@ package dk.sdu.sem4.pro.webpage.controller;
 
 import dk.sdu.sem4.pro.commondata.data.AGV;
 import dk.sdu.sem4.pro.commondata.data.Component;
+import dk.sdu.sem4.pro.commondata.data.Recipe;
 import dk.sdu.sem4.pro.commondata.services.IDelete;
 import dk.sdu.sem4.pro.commondata.services.IInsert;
 import dk.sdu.sem4.pro.commondata.services.ISelect;
@@ -14,6 +15,7 @@ import dk.sdu.sem4.pro.webpage.serviceloader.DatabaseLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/configuration")
+//@RequestMapping("/configuration")
 public class ConfigurationController {
     /*private List<ISelect> iSelectList;
     private List<IUpdate> iUpdateList;
@@ -40,7 +42,43 @@ public class ConfigurationController {
         iDeleteList = DatabaseLoader.getIDeleteList();*/
     }
 
+    @GetMapping("/configuration")
+    public String listitems (Model model) {
+        model.addAttribute("Components", getComponents());
+        model.addAttribute("Products", getProducts());
+        return "configuration";
+    }
 
+    private List<String> getComponents () {
+        List<String> components = new ArrayList<>();
+        try {
+            List<Component> componentList = selectData.getAllComponent();
+            System.out.println("componentList Size: " + componentList.size());
+            for (Component component : componentList) {
+                components.add(component.getName());
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        System.out.println(components);
+        return components;
+    }
+
+    private List<String> getProducts () {
+        List<String> products = new ArrayList<>();
+        try {
+            List<Recipe> recipes = selectData.getAllProducts();
+            for (Recipe recipe : recipes) {
+                products.add(recipe.getProduct().getName());
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        System.out.println(products);
+        return products;
+    }
 
     @PostMapping("/updateAllCharges")
     public ResponseEntity<String> updateAllCharges(@RequestBody Map<String, Double> charges) {

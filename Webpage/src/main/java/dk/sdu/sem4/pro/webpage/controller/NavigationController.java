@@ -36,8 +36,8 @@ public class NavigationController {
         return "reports";
     }
 
-    @GetMapping("/configuration")
-    public String getConfiguration() {
+    @GetMapping("/configuration-page")
+    public String getConfigurationPage() {
         return "configuration";
     }
 }
