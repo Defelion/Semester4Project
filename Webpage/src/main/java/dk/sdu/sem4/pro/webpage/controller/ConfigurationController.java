@@ -40,6 +40,8 @@ public class ConfigurationController {
         iDeleteList = DatabaseLoader.getIDeleteList();*/
     }
 
+
+
     @PostMapping("/updateAllCharges")
     public ResponseEntity<String> updateAllCharges(@RequestBody Map<String, Double> charges) {
         try {
@@ -75,8 +77,6 @@ public class ConfigurationController {
             component.setName(componentName);
             component.setWishedAmount(0);
 
-
-
             System.out.println(insertData.addComponent(component));
 
             return ResponseEntity.ok("Component added successfully!");
@@ -93,7 +93,6 @@ public class ConfigurationController {
             System.out.println("Received component name to remove: " + componentName);
 
             boolean deleteResult = false;
-
 
             deleteResult = deleteData.deleteComponent(Integer.parseInt(componentName));
 
