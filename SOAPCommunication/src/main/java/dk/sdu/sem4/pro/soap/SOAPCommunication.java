@@ -23,9 +23,21 @@ public class SOAPCommunication implements IClient {
     public JSONObject receive() {
         try {
             SOAPConnection connection = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = SOAPRequest.handleRequest("GetData", null, endpoint, connection);
+            SOAPMessage message = createSOAPMessage("GetData", null);
+            SOAPMessage response = connection.call(message, endpoint);
             connection.close();
-            return SOAPRequest.parseResponse(response);
+
+            JSONObject jsonObject = new JSONObject();
+            SOAPBody body = response.getSOAPBody();
+            Iterator it = body.getChildElements();
+            while (it.hasNext()) {
+                Node node = (Node) it.next();
+                if (node instanceof SOAPElement) {
+                    SOAPElement element = (SOAPElement) node;
+                    jsonObject.put(element.getLocalName(), element.getValue());
+                }
+            }
+            return jsonObject;
         } catch (SOAPException | JSONException e) {
             e.printStackTrace();
             try {
@@ -36,80 +48,39 @@ public class SOAPCommunication implements IClient {
         }
     }
 
+
     @Override
     public Integer send(JSONObject jsonObject) {
         try {
             SOAPConnection connection = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = SOAPRequest.handleRequest("SendData", jsonObject, endpoint, connection);
+            SOAPMessage message = createSOAPMessage("SendData", jsonObject);
+            SOAPMessage response = connection.call(message, endpoint);
             connection.close();
-            return SOAPRequest.extractStatusCode(response);
+
+            return response.getSOAPBody().hasFault() ? 500 : 200;
         } catch (SOAPException | JSONException e) {
             e.printStackTrace();
             return 500;
         }
     }
 
-    static class SOAPRequest {
-        static SOAPMessage handleRequest(String operation, JSONObject data, URL endpoint, SOAPConnection connection) throws SOAPException, JSONException {
-            MessageFactory factory = MessageFactory.newInstance(); // Creates a factory to build SOAP messages.
-            SOAPMessage message = factory.createMessage(); // Creates a new empty SOAP message.
-            SOAPPart part = message.getSOAPPart(); // Gets the main part of the SOAP message.
-            SOAPEnvelope envelope = part.getEnvelope(); // Gets the envelope, which wraps the content.
-            SOAPBody body = envelope.getBody(); // Gets the body where the main data of the message goes.
+    private SOAPMessage createSOAPMessage(String operation, JSONObject data) throws SOAPException, JSONException {
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage message = factory.createMessage();
+        SOAPPart part = message.getSOAPPart();
+        SOAPEnvelope envelope = part.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPElement operationElement = body.addChildElement(envelope.createName(operation));
 
-            SOAPElement operationElement = body.addChildElement(envelope.createName(operation)); // Creates a new element for the operation.
-
-            // If there is data, add it to the SOAP message.
-            if (data != null) {
-                Iterator<String> keys = data.keys(); // Gets all the keys in the JSON object.
-                while (keys.hasNext()) {
-                    String key = keys.next(); // The key in the JSON pair.
-                    String value = data.getString(key); // The value in the JSON pair.
-                    // Creates a new element with the key name and adds the value as its text.
-                    operationElement.addChildElement(key).addTextNode(value);
-                }
-            }
-
-            message.saveChanges(); // Finalizes the changes to the SOAP message.
-            SOAPMessage response = connection.call(message, endpoint); // Sends the message and waits for a response.
-            return response; // Returns the SOAP response message.
-        }
-
-        // This method parses the SOAP message response into a JSON object.
-        static JSONObject parseResponse(SOAPMessage response) throws JSONException, SOAPException {
-            JSONObject jsonObject = new JSONObject(); // Creates a new empty JSON object.
-            SOAPBody body = response.getSOAPBody(); // Gets the body part of the SOAP response.
-
-            // Iterates through each node (element) in the SOAP body.
-            Iterator<Node> iterator = body.getChildElements(); // Gets all child elements of the SOAP body.
-            while (iterator.hasNext()) {
-                Node node = iterator.next(); // Gets the next node in the iteration.
-                // Checks if the node is a SOAP element to ensure it's a valid element.
-                if (node instanceof SOAPElement) {
-                    SOAPElement element = (SOAPElement) node; // Casts the node to a SOAP element.
-                    String name = element.getLocalName(); // Gets the tag name of the element.
-                    String value = element.getValue(); // Gets the text content of the element.
-                    // Adds the tag name and text content as a key-value pair in the JSON object.
-                    jsonObject.put(name, value);
-                }
-            }
-
-            return jsonObject; // Returns the filled JSON object.
-        }
-
-
-        static Integer extractStatusCode(SOAPMessage response) {
-            try {
-                SOAPBody body = response.getSOAPBody();
-                if (body.hasFault()) {
-                    return 500; // Simulating a failure scenario
-                } else {
-                    return 200; // Simulating a success scenario
-                }
-            } catch (SOAPException e) {
-                e.printStackTrace();
-                return 500; // Default error code in case of exception
+        if (data != null) {
+            Iterator<String> keys = data.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                operationElement.addChildElement(key).addTextNode(data.getString(key));
             }
         }
+
+        message.saveChanges();
+        return message;
     }
 }
