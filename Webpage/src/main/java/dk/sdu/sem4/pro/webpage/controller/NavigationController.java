@@ -16,13 +16,13 @@ public class NavigationController {
         return "production";
     }
 
-    @GetMapping("/inventory")
-    public String getInventory() {
+    @GetMapping("/inventory-page")
+    public String getInventoryPage() {
         return "inventory";
     }
 
-    @GetMapping("/batch")
-    public String getBatch() {
+    @GetMapping("/batch-page")
+    public String getBatchPage() {
         return "batch";
     }
 
@@ -31,13 +31,13 @@ public class NavigationController {
         return "units";
     }
 
-    @GetMapping("/reports")
-    public String getReports() {
+    @GetMapping("/reports-page")
+    public String getReportsPage() {
         return "reports";
     }
 
-    @GetMapping("/configuration")
-    public String getConfiguration() {
+    @GetMapping("/configuration-page")
+    public String getConfigurationPage() {
         return "configuration";
     }
 }

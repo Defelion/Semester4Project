@@ -37,6 +37,17 @@ public class AGV extends Unit{
         this.changedDateTime = ChangedDateTime;
     }
 
+    public AGV (int ID, String Type, String State, double ChargeValue, Date ChangedDateTime, Date checkDateTime, double minCharge, double maxCharge) {
+        setId(ID);
+        setType(Type);
+        setState(State);
+        this.chargeValue = ChargeValue;
+        this.changedDateTime = ChangedDateTime;
+        this.checkDateTime = checkDateTime;
+        this.minCharge = minCharge;
+        this.maxCharge = maxCharge;
+    }
+
     public AGV (int ID, String Type, String State, double ChargeValue, Date ChangedDateTime, Date checkDateTime, double minCharge, double maxCharge, Inventory inventory) {
         setId(ID);
         setType(Type);

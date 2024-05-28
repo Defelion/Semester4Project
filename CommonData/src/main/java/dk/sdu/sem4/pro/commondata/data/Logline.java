@@ -11,6 +11,10 @@ public class Logline {
 
     public Logline() {}
 
+    public Logline(int ID) {
+        this.id = ID;
+    }
+
     public Logline(String Description, Date DateTime, String Type) {
         this.description = Description;
         this.date = DateTime;

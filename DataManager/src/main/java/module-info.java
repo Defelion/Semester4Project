@@ -10,6 +10,10 @@ import dk.sdu.sem4.pro.datamanager.update.UpdateData;
 import dk.sdu.sem4.pro.datamanager.hash.Hashing;
 
 module DataManager {
+    exports dk.sdu.sem4.pro.datamanager.select;
+    exports dk.sdu.sem4.pro.datamanager.update;
+    exports dk.sdu.sem4.pro.datamanager.delete;
+    exports dk.sdu.sem4.pro.datamanager.insert;
     requires CommonData;
     requires flyway.core;
     requires java.sql;

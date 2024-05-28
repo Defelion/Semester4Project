@@ -1,89 +1,68 @@
 package dk.sdu.sem4.pro.webpage.serviceloader;
 
+import dk.sdu.sem4.pro.common.modulefinder.ModuleLocator;
 import dk.sdu.sem4.pro.commondata.services.*;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.*;
-@Configuration
-@ComponentScan(basePackages = "dk.sdu.sem4.pro.datamanager.select")
-public class DatabaseLoader {
+import java.util.stream.Collectors;
 
-    public DatabaseLoader() {
-    }
+import static java.util.stream.Collectors.toList;
 
-    @Bean
-    public List<ISelect> getISelectList(){
+public abstract class DatabaseLoader {
+    public static List<ISelect> getISelectList(){
+
         List<ISelect> selectServices = new ArrayList<>();
-        ServiceLoader<ISelect> selectLoader = ServiceLoader.load(ISelect.class);
-
-        System.out.println("Elements in ServiceLoader:" + selectLoader.stream().count());
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        System.out.println("ClassLoader for DatabaseLoader: " + classLoader);
-
-        System.out.println("Paths searched by ServiceLoader:");
-        try {
-            Enumeration<URL> resources = classLoader.getResources("META-INF/services/dk.sdu.sem4.pro.commondata.services.ISelect");
-            while (resources.hasMoreElements()) {
-                URL url = resources.nextElement();
-                System.out.println(url);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Iterator<ISelect> iterator = selectLoader.iterator();
-        while(iterator.hasNext()){
-            selectServices.add(iterator.next());
-        }
+        /*ServiceLoader<ISelect> loader = ServiceLoader.load(ISelect.class);
+        for (ISelect service : loader) {
+            selectServices.add(service);
+        }*/
+        //selectServices = ServiceLoader.load(ISelect.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+        //System.out.println(selectServices);
         return selectServices;
     }
 
-    @Bean
-    public List<IDelete> getIDeleteList(){
+    public static List<IDelete> getIDeleteList(){
         List<IDelete> deleteServices = new ArrayList<>();
-        ServiceLoader<IDelete> deleteLoader = ServiceLoader.load(IDelete.class);
+        /*ServiceLoader<IDelete> deleteLoader = ServiceLoader.load(IDelete.class);
         Iterator<IDelete> iterator = deleteLoader.iterator();
         while(iterator.hasNext()){
             deleteServices.add(iterator.next());
-        }
+        }*/
+        deleteServices = ServiceLoader.load(IDelete.class).stream().map(ServiceLoader.Provider::get).collect(toList());
         return deleteServices;
     }
 
-    @Bean
-    public List<IUpdate> getIUpdateList(){
+    public static List<IUpdate> getIUpdateList(){
         List<IUpdate> updateServices = new ArrayList<>();
-        ServiceLoader<IUpdate> updateLoader = ServiceLoader.load(IUpdate.class);
+        /*ServiceLoader<IUpdate> updateLoader = ServiceLoader.load(IUpdate.class);
         Iterator<IUpdate> iterator = updateLoader.iterator();
         while(iterator.hasNext()){
             updateServices.add(iterator.next());
-        }
+        }*/
+        updateServices = ServiceLoader.load(IUpdate.class).stream().map(ServiceLoader.Provider::get).collect(toList());
         return updateServices;
     }
 
-    @Bean
-    public List<IInsert> getIInsertList(){
+    public static List<IInsert> getIInsertList(){
         List<IInsert> insertServices = new ArrayList<>();
-        ServiceLoader<IInsert> insertLoader = ServiceLoader.load(IInsert.class);
+        /*ServiceLoader<IInsert> insertLoader = ServiceLoader.load(IInsert.class);
         Iterator<IInsert> iterator = insertLoader.iterator();
         while(iterator.hasNext()){
             insertServices.add(iterator.next());
-        }
+        }*/
+        insertServices = ServiceLoader.load(IInsert.class).stream().map(ServiceLoader.Provider::get).collect(toList());
         return insertServices;
     }
 
-    @Bean
-    public List<IHash> getIHashList(){
+    public static List<IHash> getIHashList(){
         List<IHash> hashServices = new ArrayList<>();
-        ServiceLoader<IHash> hashLoader = ServiceLoader.load(IHash.class);
+        /*ServiceLoader<IHash> hashLoader = ServiceLoader.load(IHash.class);
         Iterator<IHash> iterator = hashLoader.iterator();
         while(iterator.hasNext()){
             hashServices.add(iterator.next());
-        }
+        }*/
+        hashServices = ServiceLoader.load(IHash.class).stream().map(ServiceLoader.Provider::get).collect(toList());
         return hashServices;
     }
 }

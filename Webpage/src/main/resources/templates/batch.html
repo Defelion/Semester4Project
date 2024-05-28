@@ -58,69 +58,12 @@
 <div class="monitor-batch">
     <h1>Monitor Batch</h1>
 
-    <table style="width:100%">
+    <table>
         <tr>
-            <th>Batch ID</th>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Produced</th>
-            <th>Start time</th>
-            <th>Expected end time</th>
-            <th>Status</th>
+            <th th:each="header : ${createdTables[0].tableCols}" th:text="${header.colName}"></th>
         </tr>
-        <tr>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-        </tr>
-        <tr>
-            <td>6</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
+        <tr th:each="createdTable, rowStat : ${createdTables}" th:if="${rowStat.index} >= 0">
+            <td th:each="tableCol : ${createdTable.tableCols}" th:text="${tableCol.value}"></td>
         </tr>
     </table>
 </div>
