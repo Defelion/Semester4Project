@@ -203,11 +203,16 @@ public class SelectUnits {
             while (rs.next()) {
                 selectedUnits.add(new Unit(
                         rs.getInt("id"),
-                        rs.getString("type"),
                         rs.getString("state"),
-                        getInventoryByUnit(new Unit(rs.getInt("id")), true)
+                        rs.getString("type")
                 ));
             }
+            rs.close();
+            ps.close();
+            for (Unit unit : selectedUnits) {
+                unit.setInventory(getInventoryByUnit(unit, true));
+            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

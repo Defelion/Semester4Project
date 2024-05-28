@@ -74,12 +74,23 @@
 <div class="config-page">
     <h1>Configuration</h1>
 
-    <div class="agv-config">
-        <h2>AGV Configuration</h2>
+    <div class="products-config">
+        <h2>Unit Configuration</h2>
+        <label>Change AGV Charge</label>
         <form th:action="@{/updateCharges}" method="post">
             <input type="number" name="minCharge" placeholder="Enter minimum charge">
             <input type="number" name="maxCharge" placeholder="Enter maximum charge">
-            <a href="/updateChargesForm"><button>Update Charges</button></a>
+            <button type="submit">Update Charges</button>
+        </form>
+
+        <form th:action="@{/addUnit}" method="post">
+            <label>Select Unit Type to add</label>
+            <select id="type" name="type">
+                <option>Wharehouse</option>
+                <option>Assembly</option>
+                <option>AGV</option>
+            </select>
+            <button type="submit">Add Component</button>
         </form>
     </div>
 
@@ -88,35 +99,45 @@
         <form th:action="@{/addComponent}" method="post">
             <label>Add Component</label>
             <input type="text" id="component-name" name="component-name" placeholder="Enter component name">
-            <input type="button" id="add-component" name="add-component" th:href="/configuration/addComponentForm" value="Add component">
+           <!-- <label>Select Wharehouse the component are put into</label>
+            <select id="wharehouse-list" name="wharehouse-list">
+                <option th:each="Wharehouse : ${Wharehouses}" th:text="${Wharehouse}" th:value="${Wharehouse}"></option>
+            </select>-->
+            <button type="submit">Add Component</button>
         </form>
 
         <label>Select component to be removed</label>
-        <select id="component-list">
-            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
-        </select>
-        <button type="button" id="remove-component">Remove component</button>
+        <form th:action="@{/removeComponent}" method="post">
+            <select id="component-list" name="component-list">
+                <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
+            </select>
+            <button type="submit" id="remove-component">Remove component</button>
+        </form>
 
         <h2>Product Configuration</h2>
+        <form th:action="@{/addProduct}" method="post">
         <label>Select Product to be made</label>
-        <select>
-            <option th:each="product : ${Products}" th:text="${product}" th:value="${product}"></option>
+        <select id="selectedProduct" name="selectedProduct">
+            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
         </select>
         <label>Select Component 1</label>
-        <select>
+        <select id="selectedcompnent1" name="selectedcompnent1">
             <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
         </select>
         <label>Select Component 2</label>
-        <select>
+        <select id="selectedcompnent2" name="selectedcompnent2">
             <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
         </select>
-        <button>Add product</button>
+        <button type="submit">Add product</button>
+        </form>
 
+        <form th:action="@{/removeProduct}" method="post">
         <label>Select Product to be removed</label>
         <select>
             <option th:each="product : ${Products}" th:text="${product}" th:value="${product}"></option>
         </select>
-        <button>Remove product</button>
+        <button type="submit">Remove product</button>
+        </form>
     </div>
 </div>
 
@@ -124,11 +145,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <script>
-
-
-
-    $(document).ready(function() {
-        /*function updateChargesForAllAGVs(minCharge, maxCharge) {
+    /*$(document).ready(function() {
+        function updateChargesForAllAGVs(minCharge, maxCharge) {
             $.ajax({
                 url: '/configuration/updateAllCharges',
                 type: 'POST',
@@ -174,7 +192,7 @@
             var componentName = $('#component-name').val();
             addComponent(componentName);
             $('#component-name').val('');
-        });*/
+        });
 
         function removeComponent(componentName) {
             $.ajax({
@@ -197,10 +215,7 @@
             removeComponent(componentName);
         });
 
-    });
-
-
-
+    });*/
 </script>
 
 </body>

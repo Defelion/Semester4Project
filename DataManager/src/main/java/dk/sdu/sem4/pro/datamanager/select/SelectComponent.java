@@ -23,6 +23,7 @@ public class SelectComponent {
                 sql += "WHERE id = ?";
             else if(component.getName() != null)
                 sql += "WHERE name = ?";
+            System.out.println("getComponent sql: "+sql);
             var selectSQL = connection.prepareStatement(sql);
             if(component.getId() > 0)
                 selectSQL.setInt(1, component.getId());
@@ -32,6 +33,7 @@ public class SelectComponent {
             while (rs.next()) {
                 selectComponent.setId(rs.getInt("id"));
                 selectComponent.setName(rs.getString("name"));
+                selectComponent.setWishedAmount(rs.getInt("wishedamount"));
             }
             rs.close();
         } catch (SQLException e) {
@@ -117,15 +119,20 @@ public class SelectComponent {
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             String sql = "SELECT * FROM recipe r " +
-                    "join component c on c.id = r.material_component_id";
+                    "join component c on c.id = r.material_component_id " +
+                    "order by r.product_component_id";
             var selectSQL = connection.prepareStatement(sql);
             ResultSet rs = selectSQL.executeQuery();
             boolean newRecipe = true;
-            Recipe recipe = null;
+            Recipe recipe = new Recipe(0);
+            recipe.setProduct(new Component(0));
+            int rows = 0;
             while (rs.next()) {
+                rows += 1;
                 if(recipe.getProduct().getId() != rs.getInt("product_component_id")){
-                    if(recipe != null) recipes.add(recipe);
-                    newRecipe = false;
+                    if(recipe.getId() > 0) recipes.add(recipe);
+                    System.out.println("saved a new recipe: "+recipes.size());
+                    newRecipe = true;
                 }
                 if(newRecipe) {
                     recipe = new Recipe();
@@ -134,6 +141,7 @@ public class SelectComponent {
                     recipe.setTimeEstimation(rs.getInt("timeestimation"));
                     recipe.setProduct(new Component
                             (rs.getInt("product_component_id")));
+                    System.out.println("found a new recipe: "+recipe.getId());
                 }
                 recipe.addComponent(
                         getComponent(
@@ -141,6 +149,17 @@ public class SelectComponent {
                                         rs.getInt("material_component_id"))),
                         rs.getInt("amount"));
             }
+            rs.close();
+            for (Recipe recipeComponent : recipes) {
+                Map<Component, Integer> recipeEntrys = new HashMap<>();
+                recipeComponent.setProduct(getComponent(recipeComponent.getProduct()));
+                for(Map.Entry<Component, Integer> componentIntegerEntry : recipeComponent.getComponentMap().entrySet()) {
+                    recipeEntrys.put(getComponent(componentIntegerEntry.getKey()), componentIntegerEntry.getValue());
+                }
+                recipeComponent.setComponentList(recipeEntrys);
+            }
+            System.out.println("amount of Recipe rows found: "+rows);
+            System.out.println("amount of recipes found: "+recipes.size());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

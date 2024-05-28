@@ -3,24 +3,17 @@ package dk.sdu.sem4.pro.webpage.controller;
 import dk.sdu.sem4.pro.commondata.data.AGV;
 import dk.sdu.sem4.pro.commondata.data.Component;
 import dk.sdu.sem4.pro.commondata.data.Recipe;
-import dk.sdu.sem4.pro.commondata.services.IDelete;
-import dk.sdu.sem4.pro.commondata.services.IInsert;
-import dk.sdu.sem4.pro.commondata.services.ISelect;
-import dk.sdu.sem4.pro.commondata.services.IUpdate;
+import dk.sdu.sem4.pro.commondata.data.Unit;
 import dk.sdu.sem4.pro.datamanager.delete.DeleteData;
 import dk.sdu.sem4.pro.datamanager.insert.InsertData;
 import dk.sdu.sem4.pro.datamanager.select.SelectData;
 import dk.sdu.sem4.pro.datamanager.update.UpdateData;
-import dk.sdu.sem4.pro.webpage.serviceloader.DatabaseLoader;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 //@RequestMapping("/configuration")
@@ -46,6 +39,7 @@ public class ConfigurationController {
     public String listitems (Model model) {
         model.addAttribute("Components", getComponents());
         model.addAttribute("Products", getProducts());
+        model.addAttribute("Wharehouses", getWharehouses());
         return "configuration";
     }
 
@@ -80,6 +74,23 @@ public class ConfigurationController {
         return products;
     }
 
+    private List<String> getWharehouses () {
+        List<String> Wharehouses = new ArrayList<>();
+        try {
+            List<Unit> units = selectData.getAllUnitByType("Wharehouse");
+            System.out.println("units Size: " + units.size());
+            for (Unit unit : units) {
+                Wharehouses.add(String.valueOf(unit.getId()));
+            }
+            System.out.println(Wharehouses);
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        System.out.println(Wharehouses);
+        return Wharehouses;
+    }
+
     @GetMapping("/updateChargesForm")
     public String updateChargesForm() {
         return "updateChargesForm";
@@ -93,7 +104,7 @@ public class ConfigurationController {
             }
             double minCharge = setMinCharge;
             double maxCharge = setMaxCharge;
-            boolean updateResult = true;
+            boolean updateResult = false;
             List<AGV> allAGV = selectData.getAllAGV();
 
             if (!allAGV.isEmpty() && minCharge < maxCharge) {
@@ -126,7 +137,7 @@ public class ConfigurationController {
             Component component = new Component();
             component.setName(componentName);
             component.setWishedAmount(0);
-
+            //insertData.addUnitInvetory()
             System.out.println(insertData.addComponent(component));
         } catch (Exception e) {
             System.out.println("Failed to add component: " + e.getMessage());
@@ -134,25 +145,95 @@ public class ConfigurationController {
         return "redirect:/configuration";
     }
 
+    @GetMapping("/removeComponentForm")
+    public String removeComponentForm() {
+        return "removeComponentForm";
+    }
+
     @PostMapping("/removeComponent")
-    public ResponseEntity<?> removeComponent(@RequestBody Map<String, String> request) {
+    public String removeComponent(@RequestParam("component-list") String componentName) {
         try {
-            String componentName = request.get("name");
             System.out.println("Received component name to remove: " + componentName);
 
             boolean deleteResult = false;
-
-            deleteResult = deleteData.deleteComponent(Integer.parseInt(componentName));
+            int componentId = selectData.getComponent(componentName).getId();
+            if(componentId > 0) deleteResult = deleteData.deleteComponent(componentId);
+            else System.out.println(componentId + " is not a valid component");
 
             if (deleteResult) {
-                return ResponseEntity.ok("Component removed successfully!");
+                System.out.println("Component removed successfully!");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove component");
+                System.out.println("Failed to remove component");
             }
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to remove component: " + e.getMessage());
+            System.out.println("Failed to remove component: " + e.getMessage());
         }
+        return "redirect:/configuration";
     }
+
+    @GetMapping("/addUnitForm")
+    public String addUnitForm() {
+        return "addUnitForm";
+    }
+
+    @PostMapping("/addUnit")
+    public String addUnit(@RequestParam("type") String unitType) {
+        try {
+            System.out.println("Received component name: " + unitType);
+            Unit unit = new Unit();
+            unit.setState("idle");
+            switch (unitType) {
+                case "Wharehouse":
+                    unit.setType(unitType);
+                    insertData.addUnit(unit);
+                    break;
+                case "Assembly":
+                    unit.setType(unitType);
+                    insertData.addUnit(unit);
+                    break;
+                case "AGV":
+                    unit.setType(unitType);
+                    AGV agv = new AGV();
+                    agv.setType(unitType);
+                    agv.setMinCharge(20);
+                    agv.setMaxCharge(80);
+                    agv.setChargeValue(80);
+                    agv.setState("idle");
+                    insertData.addAGV(agv);
+                    break;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Failed to add component: " + e.getMessage());
+        }
+        return "redirect:/configuration";
+    }
+
+    @GetMapping("/addProductForm")
+    public String addProductForm() {
+        return "addProductForm";
+    }
+
+    @PostMapping("/addProduct")
+    public String addProduct(@RequestParam("selectedProduct") String selectedProduct,
+                             @RequestParam("selectedcompnent1") String selectedcompnent1,
+                             @RequestParam("selectedcompnent2") String selectedcompnent2) {
+        try {
+            System.out.println("Received product name: " + selectedProduct);
+            Recipe recipe = new Recipe();
+            recipe.setProduct(selectData.getComponent(selectedProduct));
+            if(selectedcompnent2 == selectedcompnent1) recipe.addComponent(selectData.getComponent(selectedcompnent1), 2);
+            else {
+                recipe.addComponent(selectData.getComponent(selectedcompnent1), 1);
+                recipe.addComponent(selectData.getComponent(selectedcompnent2), 1);
+            }
+            System.out.println(insertData.addProduct(recipe));
+        } catch (Exception e) {
+            System.out.println("Failed to add product: " + e.getMessage());
+        }
+        return "redirect:/configuration";
+    }
+
 }
 

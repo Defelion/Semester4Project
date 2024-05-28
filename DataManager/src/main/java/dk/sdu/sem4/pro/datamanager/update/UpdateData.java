@@ -133,23 +133,25 @@ public class UpdateData implements IUpdate {
         Conn conn = new Conn();
         System.out.println("updating agv");
         try (Connection connection = conn.getConnection()) {
-            var sql = "update agv " +
-                    "set state = ?, " +
+            var sql = "update agv set " +
+                    "state = ?, " +
                     "type = ?, " +
                     "chargevalue = ?, " +
                     "mincharge = ?, " +
-                    "maxcharge = ?, " +
-                    "checkdatetime = ?, " +
-                    "changedatetime = ?" +
-                    "where id = ?";
+                    "maxcharge = ?";
+            if (agv.getCheckDateTime() != null) sql += ", checkdatetime = ?";
+            if (agv.getChangedDateTime() != null) sql += ", changedatetime = ?";
+            sql += "where id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, agv.getState());
             ps.setString(2, agv.getType());
             ps.setDouble(3, agv.getChargeValue());
             ps.setDouble(4, agv.getMinCharge());
             ps.setDouble(5, agv.getMaxCharge());
-            ps.setTimestamp(6, Timestamp.valueOf(agv.getCheckDateTime().toString()));
-            ps.setTimestamp(7, Timestamp.valueOf(agv.getChangedDateTime().toString()));
+            if (agv.getCheckDateTime() != null)
+                ps.setTimestamp(6, Timestamp.valueOf(agv.getCheckDateTime().toString()));
+            if (agv.getChangedDateTime() != null)
+                ps.setTimestamp(7, Timestamp.valueOf(agv.getChangedDateTime().toString()));
             ps.setInt(8, agv.getId());
             ps.executeUpdate();
             success = updateAGVInventory(agv.getId(), agv.getInventory());
