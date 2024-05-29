@@ -1,5 +1,6 @@
 package dk.sdu.sem4.pro.commondata.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Batch {
@@ -90,6 +91,7 @@ public class Batch {
     }
 
     public void addLogline (Logline logline) {
+        if (log == null) log = new ArrayList<Logline>();
         this.log.add(logline);
     }
 

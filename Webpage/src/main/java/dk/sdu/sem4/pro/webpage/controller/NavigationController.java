@@ -11,8 +11,8 @@ public class NavigationController {
         return "index";
     }
 
-    @GetMapping("/production")
-    public String getProduction() {
+    @GetMapping("/production-page")
+    public String getProductionPage() {
         return "production";
     }
 

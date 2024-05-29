@@ -67,7 +67,7 @@ public class SelectData implements ISelect {
     @Override
     public Component getComponent(String componentName) throws IOException {
         SelectComponent selectComponent = new SelectComponent();
-        return selectComponent.getComponent(new Component(componentName));
+        return selectComponent.getComponent(new Component(0, componentName));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class SelectData implements ISelect {
     @Override
     public Recipe getProduct(String productName) throws IOException {
         SelectComponent selectComponent = new SelectComponent();
-        return selectComponent.getRecipe(new Recipe(new Component(productName)));
+        return selectComponent.getRecipe(new Recipe(getComponent(productName)));
     }
 
     @Override

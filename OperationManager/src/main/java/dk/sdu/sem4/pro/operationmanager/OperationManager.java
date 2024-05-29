@@ -20,4 +20,9 @@ public class OperationManager implements IProduction {
     public boolean resumeProduction() {
         return false;
     }
+
+    @Override
+    public boolean runProduction() {
+        return false;
+    }
 }

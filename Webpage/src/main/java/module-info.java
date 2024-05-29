@@ -18,11 +18,5 @@ open module Webpage {
     uses ISelect;
     uses IInsert;
     uses IUpdate;
-
-    uses dk.sdu.sem4.pro.commondata.services.IInsert;
-    uses dk.sdu.sem4.pro.commondata.services.ISelect;
     uses dk.sdu.sem4.pro.common.services.IProduction;
-    uses dk.sdu.sem4.pro.commondata.services.IDelete;
-    uses dk.sdu.sem4.pro.commondata.services.IUpdate;
-    uses dk.sdu.sem4.pro.commondata.services.IHash;
 }

@@ -2,49 +2,43 @@ package dk.sdu.sem4.pro.webpage.controller;
 
 import dk.sdu.sem4.pro.common.services.IProduction;
 import dk.sdu.sem4.pro.commondata.data.Batch;
+import dk.sdu.sem4.pro.commondata.data.Component;
+import dk.sdu.sem4.pro.commondata.data.Logline;
 import dk.sdu.sem4.pro.commondata.data.Recipe;
-import dk.sdu.sem4.pro.commondata.services.IInsert;
-import dk.sdu.sem4.pro.commondata.services.ISelect;
-import dk.sdu.sem4.pro.webpage.serviceloader.DatabaseLoader;
-import dk.sdu.sem4.pro.webpage.serviceloader.ProductionLoader;
+import dk.sdu.sem4.pro.datamanager.insert.InsertData;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
-@Component
-@RestController
-@RequestMapping("/production")
+//@Component
+@Controller
+//@RequestMapping("/production")
 public class ProductionController {
     private IProduction iProduction;
-    private IInsert iInsert;
-    private ISelect iSelect;
+    private final SelectData selectData = new SelectData();
+    private final InsertData insertData = new InsertData();
 
-    private DatabaseLoader databaseLoader;
+    public ProductionController() { }
 
-    public ProductionController() {
-        databaseLoader = new DatabaseLoader();
-        iInsert = findSpecificImplementation(databaseLoader.getIInsertList(), "InsertData");
-        iSelect = findSpecificImplementation(databaseLoader.getISelectList(), "SelectData");
 
-        List<IProduction> productionList = ProductionLoader.getIProductionList();
-        if (!productionList.isEmpty()) {
-            iProduction = productionList.get(0);
+    @GetMapping("/production")
+    public String productListing(Model model) {
+        try {
+            List<Recipe> recipes = selectData.getAllProducts();
+            model.addAttribute("Recipes", recipes);
+        }
+        catch (Exception e) {
+            System.out.println("productListing Error: "+e);
         }
 
-        if (iInsert == null) {
 
-            System.out.println("No implementations of iInsert found.");
-        }
-
-        if (iSelect == null) {
-            System.out.println("No implementations of iSelect found.");
-        }
-
-        if (iProduction == null) {
-            System.out.println("No implementations of IProduction found.");
-        }
+        return "production";
     }
 
     @PostMapping("/start")
@@ -77,23 +71,40 @@ public class ProductionController {
         }
     }
 
+    @GetMapping("/addBatchForm")
+    public String addBatchForm() {
+        return "addBatchForm";
+    }
+
     @PostMapping("/addBatch")
-    public ResponseEntity<Integer> addBatch(@RequestBody Batch batch) {
-        if (batch.getProduct() == null || batch.getAmount() <= 0 || batch.getPriority() <= 0) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public String addBatch(@RequestParam("recipeInput") int recipeInput,
+                           @RequestParam("quantityInput") int quantityInput,
+                           @RequestParam("priorityInput") int priorityInput) {
+        try {
+            System.out.println(recipeInput);
+            System.out.println(quantityInput);
+            System.out.println(priorityInput);
+            if (recipeInput > 0 || quantityInput > 0 || priorityInput > 0) {
+                Batch batch = new Batch();
+                batch.setProduct(selectData.getProduct(recipeInput));
+                if(batch.getProduct().getProduct() == null) selectData.getComponent(recipeInput);
+                batch.setAmount(quantityInput);
+                batch.setPriority(priorityInput);
+                batch.addLogline(new Logline("Batch Created", Date.from(Instant.now()), "Created"));
+                int batchId = insertData.addBatch(batch);
+                System.out.println("Batch ID generated: "+batchId);
+            }
+        } catch (Exception e) {
+            System.out.println("addBatch Error: "+e);
         }
 
-        try {
-            int batchId = iInsert.addBatch(batch);
-            return new ResponseEntity<>(batchId, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return "redirect:/production";
     }
-    @GetMapping("/getAllRecipes")
+
+    /*@GetMapping("/getAllRecipes")
     public ResponseEntity<List<Recipe>> getAllRecipes() {
         try {
-            List<Recipe> recipes = iSelect.getAllProducts();
+            List<Recipe> recipes = selectData.getAllProducts();
             if (recipes.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -101,8 +112,8 @@ public class ProductionController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }*/
 
-    }
     public static <T> T findSpecificImplementation(List<? extends T> implementations, String className) {
         for (T implementation : implementations) {
             if (implementation.getClass().getName().equals(className)) {

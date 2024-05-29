@@ -5,10 +5,14 @@ import dk.sdu.sem4.pro.commondata.data.*;
 import dk.sdu.sem4.pro.datamanager.connection.Conn;
 import dk.sdu.sem4.pro.datamanager.hash.Hashing;
 import dk.sdu.sem4.pro.commondata.services.IInsert;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 public class InsertData implements IInsert {
@@ -40,6 +44,7 @@ public class InsertData implements IInsert {
                 var generatedKeys = insertSQL.getGeneratedKeys();
                 if(generatedKeys.next()) { id = generatedKeys.getInt(1); }
             }
+            insertSQL.close();
         } catch (SQLException e) {
             id = -2;
             throw new SQLException(e);
@@ -55,12 +60,15 @@ public class InsertData implements IInsert {
     public int addBatch(Batch batch) {
         int id = 0;
         try {
+            SelectData selectData = new SelectData();
+            System.out.println("addBatch: "+batch);
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("priority", batch.getPriority());
             attributes.put("description", batch.getDescription());
             attributes.put("amount", batch.getAmount());
+            attributes.put("component_id", batch.getProduct().getProduct().getId());
             id = insertIntoDBSecure("batch", attributes);
-            if(batch.getProduct() != null) addProduct(batch.getProduct());
+            //if(batch.getProduct() != null) addProduct(batch.getProduct());
             if(!batch.getLog().isEmpty()){
                 for(Logline logline : batch.getLog()) {
                     addLogline(id, logline);
@@ -83,10 +91,11 @@ public class InsertData implements IInsert {
     public int addLogline(int batchID, Logline logline) {
         int id = 0;
         try {
+
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("type", logline.getType());
             attributes.put("description", logline.getDescription());
-            attributes.put("dateTime", logline.getDate());
+            attributes.put("dateTime", Timestamp.from(Instant.now()));
             attributes.put("Batch_ID", batchID);
             id = insertIntoDBSecure("logline", attributes);
         }

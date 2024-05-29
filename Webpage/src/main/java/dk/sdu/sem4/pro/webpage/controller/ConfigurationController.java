@@ -16,24 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-//@RequestMapping("/configuration")
 public class ConfigurationController {
-    /*private List<ISelect> iSelectList;
-    private List<IUpdate> iUpdateList;
-    private List<IInsert> iInsertList;
-    private List<IDelete> iDeleteList;*/
     private final SelectData selectData = new SelectData();
     private final UpdateData updateData = new UpdateData();
     private final DeleteData deleteData = new DeleteData();
     private final InsertData insertData = new InsertData();
-
-
-    public ConfigurationController() {
-        /*iSelectList = DatabaseLoader.getISelectList();
-        iUpdateList = DatabaseLoader.getIUpdateList();
-        iInsertList = DatabaseLoader.getIInsertList();
-        iDeleteList = DatabaseLoader.getIDeleteList();*/
-    }
 
     @GetMapping("/configuration")
     public String listitems (Model model) {
@@ -47,7 +34,7 @@ public class ConfigurationController {
         List<String> components = new ArrayList<>();
         try {
             List<Component> componentList = selectData.getAllComponent();
-            System.out.println("componentList Size: " + componentList.size());
+            //System.out.println("componentList Size: " + componentList.size());
             for (Component component : componentList) {
                 components.add(component.getName());
             }
@@ -70,7 +57,7 @@ public class ConfigurationController {
         catch (Exception e) {
             System.out.println(e);
         }
-        System.out.println(products);
+        //System.out.println(products);
         return products;
     }
 
@@ -78,7 +65,7 @@ public class ConfigurationController {
         List<String> Wharehouses = new ArrayList<>();
         try {
             List<Unit> units = selectData.getAllUnitByType("Wharehouse");
-            System.out.println("units Size: " + units.size());
+            //System.out.println("units Size: " + units.size());
             for (Unit unit : units) {
                 Wharehouses.add(String.valueOf(unit.getId()));
             }
@@ -133,7 +120,7 @@ public class ConfigurationController {
     @PostMapping("/addComponent")
     public String addComponent(@RequestParam("component-name") String componentName) {
         try {
-            System.out.println("Received component name: " + componentName);
+            //System.out.println("Received component name: " + componentName);
             Component component = new Component();
             component.setName(componentName);
             component.setWishedAmount(0);
@@ -180,7 +167,7 @@ public class ConfigurationController {
     @PostMapping("/addUnit")
     public String addUnit(@RequestParam("type") String unitType) {
         try {
-            System.out.println("Received component name: " + unitType);
+            System.out.println("Received unit type: " + unitType);
             Unit unit = new Unit();
             unit.setState("idle");
             switch (unitType) {

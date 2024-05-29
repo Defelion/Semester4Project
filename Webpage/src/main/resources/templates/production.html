@@ -61,35 +61,37 @@
 <body>
 <div th:replace="~{fragments/navigation :: navigation}"></div>
 
-<div class="production-section">
+<div class="production-section, control-production">
     <div class="create-production">
-        <h1>Production</h1>
-        <div class="input-item">
-            <label for="recipeInput">Please select the type to be produced:</label>
-        </div>
-        <div class="input-item">
-            <select class="Recipes" name="recipeInput" id="recipeInput">
-                <option th:each="recipe : ${recipes}" th:value="${recipe.id}" th:text="${recipe.name}"></option>
-            </select>
-        </div>
-        <div class="input-item">
-            <label for="quantityInput">Please enter the quantity of the batch to be produced:</label>
-        </div>
-        <div class="input-item">
-            <input type="number" id="quantityInput" name="quantityInput">
-        </div>
-        <br>
-        <div class="input-item">
-            <label for="priorityInput">Please enter the priority of the batch to be produced:</label>
-        </div>
-        <div class="input-item">
-            <input type="number" id="priorityInput" name="priorityInput">
-        </div>
-        <br>
-        <!-- This button is used to create a Batch using the input data. -->
-        <div class="input-item">
-            <button type="button" id="createBatchButton">Create Batch</button>
-        </div>
+        <form th:action="@{/addBatch}" method="post">
+            <h1>Production</h1>
+            <div class="input-item">
+                <label for="recipeInput">Please select the type to be produced:</label>
+            </div>
+            <div class="input-item">
+                <select class="Recipes" name="recipeInput" id="recipeInput">
+                    <option th:each="recipe : ${Recipes}" th:value="${recipe.product.id}" th:text="${recipe.product.name}"></option>
+                </select>
+            </div>
+            <div class="input-item">
+                <label for="quantityInput">Please enter the quantity of the batch to be produced:</label>
+            </div>
+            <div class="input-item">
+                <input type="number" id="quantityInput" name="quantityInput">
+            </div>
+            <br>
+            <div class="input-item">
+                <label for="priorityInput">Please enter the priority of the batch to be produced:</label>
+            </div>
+            <div class="input-item">
+                <input type="number" id="priorityInput" name="priorityInput">
+            </div>
+            <br>
+            <!-- This button is used to create a Batch using the input data. -->
+            <div class="input-item">
+                <button type="submit" id="createBatchButton">Create Batch</button>
+            </div>
+        </form>
     </div>
 
     <div class="control-production">

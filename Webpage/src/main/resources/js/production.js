@@ -48,14 +48,32 @@ function button_actions(action) {
 }
 
 //This function gets all the Recipes from the database
-function getAllRecipes() {
+/*function getAllRecipes() {
     $.ajax({
 
         type: "GET",
         url: '/production/getAllRecipes',
+        success: function(products) {
+            $.each(products, function(index, product) {
+                $('#recipeInput').append('<option value="' + product.id + '">' + product.name + '</option>');
+            });
+        },
+        error: function(error) {
+            console.log('Error fetching recipes:', error);
+            alert("An error occurred. Please try again.");
+        }
+    });
+}*/
+
+function getAllRecipes() {
+    $.ajax({
+        type: "GET",
+        url: '/production/getAllRecipes',
         success: function(recipes) {
+            // Clear existing options first
+            $('#recipeInput').empty().append('<option value="">Select a Recipe</option>');
             $.each(recipes, function(index, recipe) {
-                $('#recipeInput').append('<option value="' + recipe.id + '">' + recipe.name + '</option>');
+                $('#recipeInput').append('<option value="' + recipe.product.id + '">' + recipe.product.name + '</option>');
             });
         },
         error: function(error) {

@@ -4,4 +4,5 @@ public interface IProduction {
     public boolean startProduction();
     public boolean stopProduction();
     public boolean resumeProduction();
+    public boolean runProduction();
 }
