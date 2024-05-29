@@ -28,6 +28,12 @@ public class Unit {
         this.inventory = inventory;
     }
 
+    public Unit (int ID, String State, String Type) {
+        this.id = ID;
+        this.type = Type;
+        this.state = State;
+    }
+
     public Unit (int ID, String Type, String State, Inventory inventory) {
         this.id = ID;
         this.type = Type;

@@ -1,5 +1,6 @@
 package dk.sdu.sem4.pro.commondata.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Batch {
@@ -31,6 +32,21 @@ public class Batch {
         this.description = description;
         this.priority = priority;
         this.log = log;
+    }
+
+    public Batch (int ID, int amount, String description, int priority) {
+        this.id = ID;
+        this.amount = amount;
+        this.description = description;
+        this.priority = priority;
+    }
+
+    public Batch (int ID, Recipe recipe, int amount, String description, int priority) {
+        this.id = ID;
+        this.recipe = recipe;
+        this.amount = amount;
+        this.description = description;
+        this.priority = priority;
     }
 
     public Batch (int ID, Recipe recipe, int amount, String description, int priority, List<Logline> log) {
@@ -75,6 +91,7 @@ public class Batch {
     }
 
     public void addLogline (Logline logline) {
+        if (log == null) log = new ArrayList<Logline>();
         this.log.add(logline);
     }
 

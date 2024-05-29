@@ -22,10 +22,17 @@ public class Conn {
     private PropertiReader propertiReader;
 
     public Conn() throws IOException {
-        propertiReader = new PropertiReader("my.properties");
-        URL = propertiReader.getProperty("database.url");
-        user = propertiReader.getProperty("database.user");
-        pass = propertiReader.getProperty("database.password");
+        //propertiReader = new PropertiReader("mods-mvn/my.properties");
+        URL = "jdbc:postgresql://localhost:5432/OperationDB";
+        //System.out.println("SQL Conn: " + URL);
+        user = "sem4pro";
+        pass = "Pro2024";
+
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("PostgreSQL JDBC driver not found", e);
+        }
     }
 
     public String getURL() { return URL; }
@@ -33,6 +40,6 @@ public class Conn {
     public String getPass() { return pass; }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL,user,pass);
+        return DriverManager.getConnection(URL, user, pass);
     }
 }

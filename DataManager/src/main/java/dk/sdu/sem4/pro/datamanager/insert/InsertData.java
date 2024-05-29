@@ -5,10 +5,14 @@ import dk.sdu.sem4.pro.commondata.data.*;
 import dk.sdu.sem4.pro.datamanager.connection.Conn;
 import dk.sdu.sem4.pro.datamanager.hash.Hashing;
 import dk.sdu.sem4.pro.commondata.services.IInsert;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 public class InsertData implements IInsert {
@@ -16,15 +20,20 @@ public class InsertData implements IInsert {
         Conn conn = new Conn();
         int id = 0;
         try(var connection = conn.getConnection()) {
-            var TableSQL = "insert into " + table + "(";
+            var TableSQL = "insert into " + table + " (";
             var ValuesSQL = "values (";
+            boolean notfirst = false;
             for(Map.Entry<String,Object> attribute : attributes.entrySet()) {
-                TableSQL += attribute.getKey() + ", ";
-                ValuesSQL += "?, ";
+                if(notfirst) TableSQL += ", ";
+                TableSQL += attribute.getKey();
+                if(notfirst) ValuesSQL += ", ";
+                ValuesSQL += "?";
+                notfirst = true;
             }
             TableSQL += ") ";
             ValuesSQL += ")";
             var sql = TableSQL+ValuesSQL;
+            System.out.println("SQL: "+sql);
             var insertSQL = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             int i = 0;
             for(Map.Entry<String,Object> attribute : attributes.entrySet()) {
@@ -35,6 +44,7 @@ public class InsertData implements IInsert {
                 var generatedKeys = insertSQL.getGeneratedKeys();
                 if(generatedKeys.next()) { id = generatedKeys.getInt(1); }
             }
+            insertSQL.close();
         } catch (SQLException e) {
             id = -2;
             throw new SQLException(e);
@@ -50,12 +60,15 @@ public class InsertData implements IInsert {
     public int addBatch(Batch batch) {
         int id = 0;
         try {
+            SelectData selectData = new SelectData();
+            System.out.println("addBatch: "+batch);
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("priority", batch.getPriority());
             attributes.put("description", batch.getDescription());
             attributes.put("amount", batch.getAmount());
-            id = insertIntoDBSecure("Batch", attributes);
-            if(batch.getProduct() != null) addProduct(batch.getProduct());
+            attributes.put("component_id", batch.getProduct().getProduct().getId());
+            id = insertIntoDBSecure("batch", attributes);
+            //if(batch.getProduct() != null) addProduct(batch.getProduct());
             if(!batch.getLog().isEmpty()){
                 for(Logline logline : batch.getLog()) {
                     addLogline(id, logline);
@@ -78,12 +91,13 @@ public class InsertData implements IInsert {
     public int addLogline(int batchID, Logline logline) {
         int id = 0;
         try {
+
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("type", logline.getType());
             attributes.put("description", logline.getDescription());
-            attributes.put("dateTime", logline.getDate());
+            attributes.put("dateTime", Timestamp.from(Instant.now()));
             attributes.put("Batch_ID", batchID);
-            id = insertIntoDBSecure("LogLine", attributes);
+            id = insertIntoDBSecure("logline", attributes);
         }
         catch (IOException | SQLException e){
             id = -1;
@@ -99,11 +113,12 @@ public class InsertData implements IInsert {
     @Override
     public int addComponent(Component component) {
         int id = 0;
+        System.out.println("Component to be inserted: "+component.getName());
         try {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("name", component.getName());
             attributes.put("wishedAmount", component.getWishedAmount());
-            id = insertIntoDBSecure("Component", attributes);
+            id = insertIntoDBSecure("component", attributes);
         }
         catch (IOException | SQLException e){
             id = -1;
@@ -123,11 +138,11 @@ public class InsertData implements IInsert {
             for(Map.Entry<Component, Integer> component : recipe.getComponentMap().entrySet()){
                 if(component.getKey().getId() != 0) {
                     Map<String, Object> attributes = new HashMap<>();
-                    attributes.put("amount", Map.of("Integer", component.getValue()));
-                    attributes.put("timeEstimation", recipe.getTimeEstimation());
-                    attributes.put("Product_Component_ID", recipe.getProduct());
-                    attributes.put("Material_Component_ID", component.getKey().getId());
-                    ids.add(insertIntoDBSecure("Product", attributes));
+                    attributes.put("amount", component.getValue());
+                    attributes.put("timeestimation", recipe.getTimeEstimation());
+                    attributes.put("product_component_ID", recipe.getProduct().getId());
+                    attributes.put("material_component_ID", component.getKey().getId());
+                    ids.add(insertIntoDBSecure("recipe", attributes));
                 }
             }
         }
@@ -149,7 +164,7 @@ public class InsertData implements IInsert {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("state", unit.getState());
             attributes.put("type", unit.getType());
-            id = insertIntoDBSecure("Units", attributes);
+            id = insertIntoDBSecure("units", attributes);
             if(unit.getInventory() != null) addUnitInvetory(id, unit.getInventory());
         }
         catch (IOException | SQLException e){
@@ -174,7 +189,7 @@ public class InsertData implements IInsert {
                     attributes.put("amount", component.getValue());
                     attributes.put("Units_ID", unitID);
                     attributes.put("Component_ID", component.getKey().getId());
-                    ids.add(insertIntoDBSecure("UnitInventory", attributes));
+                    ids.add(insertIntoDBSecure("unitinventory", attributes));
                 }
             }
         }
@@ -196,12 +211,10 @@ public class InsertData implements IInsert {
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("state", agv.getState());
             attributes.put("type", agv.getType());
-            attributes.put("chargeValue", agv.getChargeValue());
-            attributes.put("minCharge", agv.getMinCharge());
-            attributes.put("maxCharge", agv.getMaxCharge());
-            attributes.put("checkDateTime", agv.getCheckDateTime());
-            attributes.put("changeDateTime", agv.getChangedDateTime());
-            id = insertIntoDBSecure("AGV", attributes);
+            attributes.put("chargevalue", agv.getChargeValue());
+            attributes.put("mincharge", agv.getMinCharge());
+            attributes.put("maxcharge", agv.getMaxCharge());
+            id = insertIntoDBSecure("agv", attributes);
             if(agv.getInventory() != null) addAGVInvetory(id, agv.getInventory());
         }
         catch (IOException | SQLException e){
@@ -226,7 +239,7 @@ public class InsertData implements IInsert {
                     attributes.put("amount", component.getValue());
                     attributes.put("Units_ID", agvID);
                     attributes.put("Component_ID", component.getKey().getId());
-                    ids.add(insertIntoDBSecure("AGVInventory", attributes));
+                    ids.add(insertIntoDBSecure("agvinventory", attributes));
                 }
             }
         }

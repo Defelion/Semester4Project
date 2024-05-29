@@ -1,14 +1,20 @@
 package dk.sdu.sem4.pro.webpage.controller;
 
-import dk.sdu.sem4.pro.webpage.classes.ReportTable;
+import dk.sdu.sem4.pro.commondata.data.Component;
+import dk.sdu.sem4.pro.commondata.data.Inventory;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
+import dk.sdu.sem4.pro.webpage.classes.InventoryTable;
 import dk.sdu.sem4.pro.webpage.generatetable.CreatedTable;
 import dk.sdu.sem4.pro.webpage.generatetable.TableCol;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Controller
 public class InventoryController {
@@ -20,37 +26,56 @@ public class InventoryController {
     }
 
     public List<CreatedTable> showTable() {
-        /*List<>  = new ArrayList<>();
+        Inventory inventory = new Inventory();
         try {
-            List<ISelect> selects = DatabaseLoader.getISelectList();
-            for (ISelect select : selects) {
-
-            }
+            SelectData selectData = new SelectData();
+            inventory = selectData.getInventory();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
-        List<ReportTable> reportTables = new ArrayList<>();
+        }
+        List<InventoryTable> inventoryTables = new ArrayList<>();
         List<String> headers = new ArrayList<>();
-        /*ReportTable reportTable = null;
-        for (Batch batch : batches) {
-            reportTable = new ReportTable();
-            if(batch.getId() > 0) {
-                reportTable.setId(batch.getId());
-                if(!headers.contains("ID")) {
-                    headers.add("ID");
+        InventoryTable inventoryTable = new InventoryTable();
+
+        if (inventory != null) {
+            for (Map.Entry<Component, Integer> componentEntry : inventory.getComponentList().entrySet()) {
+                inventoryTable = new InventoryTable();
+                if (componentEntry.getKey().getId() > 0) {
+                    inventoryTable.setId(componentEntry.getKey().getId());
+                    if (!headers.contains("ID")) {
+                        headers.add("ID");
+                    }
                 }
+                if (!Objects.equals(componentEntry.getKey().getName(), "")) {
+                    inventoryTable.setName(componentEntry.getKey().getName());
+                    if (!headers.contains("Name")) {
+                        headers.add("Name");
+                    }
+                }
+                if (componentEntry.getKey().getWishedAmount() > 0) {
+                    inventoryTable.setWishedamount(componentEntry.getKey().getWishedAmount());
+                    if (!headers.contains("WishedAmount")) {
+                        headers.add("WishedAmount");
+                    }
+                }
+                if (componentEntry.getValue() > 0) {
+                    inventoryTable.setAmount(componentEntry.getValue());
+                    if (!headers.contains("Amount")) {
+                        headers.add("Amount");
+                    }
+                }
+                inventoryTables.add(inventoryTable);
             }
-            reportTables.add(reportTable);
-        }*/
-        List<CreatedTable> createdTables = createTableList(headers, reportTables);
+        }
+        List<CreatedTable> createdTables = createTableList(headers, inventoryTables);
         return createdTables;
     }
 
-    public List<CreatedTable> createTableList(List<String> headers, List<ReportTable> reportTables) {
+    public List<CreatedTable> createTableList(List<String> headers, List<InventoryTable> Tables) {
         List<CreatedTable> tableList = new ArrayList<>();
 
         int rows = 0;
-        if (reportTables.isEmpty()) {
+        if (Tables.isEmpty()) {
             // Add backup test data
             for (int i = 1; i <= 10; i++) {
                 CreatedTable createdTable = new CreatedTable();
@@ -72,7 +97,7 @@ public class InventoryController {
             }
         } else {
             // Populate table with data from reportTables
-            for (ReportTable reportTable : reportTables) {
+            for (InventoryTable reportTable : Tables) {
                 rows++;
                 CreatedTable createdTable = new CreatedTable();
                 createdTable.setRow(rows);

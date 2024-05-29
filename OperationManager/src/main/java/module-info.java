@@ -1,7 +1,7 @@
 import dk.sdu.sem4.pro.common.services.IProduction;
-import dk.sdu.sem4.pro.opperationsmanager.Production;
+import dk.sdu.sem4.pro.operationmanager.OperationManager;
 
 module OperationManager {
     requires Common;
-    provides IProduction with Production;
+    provides IProduction with OperationManager;
 }

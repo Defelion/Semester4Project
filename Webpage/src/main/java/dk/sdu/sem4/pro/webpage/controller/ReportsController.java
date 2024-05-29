@@ -3,6 +3,7 @@ package dk.sdu.sem4.pro.webpage.controller;
 import dk.sdu.sem4.pro.commondata.data.Batch;
 import dk.sdu.sem4.pro.commondata.data.Logline;
 import dk.sdu.sem4.pro.commondata.services.ISelect;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
 import dk.sdu.sem4.pro.webpage.classes.ReportTable;
 import dk.sdu.sem4.pro.webpage.generatetable.CreatedTable;
 import dk.sdu.sem4.pro.webpage.generatetable.TableCol;
@@ -30,58 +31,69 @@ public class ReportsController {
     }
 
     public List<CreatedTable> showTable() {
-        List<Batch> batches = new ArrayList<>();
+        List<Batch> batches = null;
         try {
-            List<ISelect> selects = DatabaseLoader.getISelectList();
-            for (ISelect select : selects) {
-                batches = select.getAllBatch();
-            }
+            /*List<ISelect> selects = DatabaseLoader.getISelectList();
+            System.out.println(selects);
+            if(selects.size() > 0) {
+                for (ISelect select : selects) {
+                    batches = select.getAllBatch();
+                }
+            }*/
+            SelectData selectData = new SelectData();
+            batches = selectData.getAllBatch();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         List<ReportTable> reportTables = new ArrayList<>();
         List<String> headers = new ArrayList<>();
         ReportTable reportTable = null;
-        for (Batch batch : batches) {
-            reportTable = new ReportTable();
-            if(batch.getId() > 0) {
-                reportTable.setId(batch.getId());
-                if(!headers.contains("ID")) {
-                    headers.add("ID");
+        if (batches != null) {
+            for (Batch batch : batches) {
+
+                reportTable = new ReportTable();
+                if(batch.getId() > 0) {
+                    reportTable.setId(batch.getId());
+                    if(!headers.contains("ID")) {
+                        headers.add("ID");
+                    }
                 }
-            }
-            if(!Objects.equals(batch.getProduct().getProduct().getName(), "")) {
-                reportTable.setProduct(batch.getProduct().getProduct().getName());
-                if(!headers.contains("Product")) {
-                    headers.add("Product");
+                if(batch.getProduct().getProduct() != null){
+                    if(batch.getProduct().getProduct().getName() != "") {
+                        reportTable.setProduct(batch.getProduct().getProduct().getName());
+                        if(!headers.contains("Product")) {
+                            headers.add("Product");
+                        }
+                    }
                 }
-            }
-            if(batch.getAmount() > 0) {
-                reportTable.setAmount(batch.getAmount());
-                if(!headers.contains("Amount")) {
-                    headers.add("Amount");
+                if(batch.getAmount() > 0) {
+                    reportTable.setAmount(batch.getAmount());
+                    if(!headers.contains("Amount")) {
+                        headers.add("Amount");
+                    }
                 }
-            }
-            if(reportTable.getPriority() >= 0) {
-                reportTable.setPriority(batch.getPriority());
-                if(!headers.contains("Priority")) {
-                    headers.add("Priority");
+                if(reportTable.getPriority() >= 0) {
+                    reportTable.setPriority(batch.getPriority());
+                    if(!headers.contains("Priority")) {
+                        headers.add("Priority");
+                    }
                 }
-            }
-            if(!Objects.equals(batch.getDescription(), "")) {
-                reportTable.setDescription(batch.getDescription());
-                if(!headers.contains("Description")) {
+                if(!Objects.equals(batch.getDescription(), "")) {
+                    reportTable.setDescription(batch.getDescription());
+                    if(!headers.contains("Description")) {
+                        headers.add("Description");
+                    }
                     headers.add("Description");
                 }
-                headers.add("Description");
-            }
-            for(Logline logline : batch.getLog()) {
-                reportTable.getLoglines().add(logline);
-                if(!headers.contains(logline.getType())) {
-                    headers.add(logline.getType());
+                for(Logline logline : batch.getLog()) {
+                    if(reportTable.getLoglines() == null) continue;
+                    reportTable.getLoglines().add(logline);
+                    if(!headers.contains(logline.getType())) {
+                        headers.add(logline.getType());
+                    }
                 }
+                reportTables.add(reportTable);
             }
-            reportTables.add(reportTable);
         }
         List<CreatedTable> createdTables = createTableList(headers, reportTables);
         return createdTables;

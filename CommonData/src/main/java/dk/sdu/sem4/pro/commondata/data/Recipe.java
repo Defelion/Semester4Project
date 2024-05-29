@@ -1,10 +1,11 @@
 package dk.sdu.sem4.pro.commondata.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Recipe {
     private int id;
-    private Component product;
+    public Component product;
     private Map<Component, Integer> componentList;
     private double timeEstimation;
 
@@ -49,6 +50,7 @@ public class Recipe {
     }
 
     public void addComponent (Component Component, int amount) {
+        if(componentList == null) { componentList = new HashMap<Component, Integer>(); }
         componentList.put(Component, amount);
     }
 
@@ -60,6 +62,7 @@ public class Recipe {
     }
 
     public Component getProduct() {
+        if(product == null) product = new Component(0);
         return product;
     }
 

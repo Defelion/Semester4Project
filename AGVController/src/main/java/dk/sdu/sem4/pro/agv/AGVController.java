@@ -14,13 +14,6 @@ public class AGVController implements IController {
         this.client = client;
     }
 
-    public boolean isStopTask() {
-        return stopTask;
-    }
-    public void setStopTask(boolean bool){
-        stopTask = bool;
-    }
-
     public boolean startTask(String operation) {
         if(!stopTask) {
             JSONObject programObject = client.receive();

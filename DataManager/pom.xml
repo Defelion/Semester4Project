@@ -39,6 +39,17 @@
             <artifactId>jhash</artifactId>
             <version>2.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.1.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgres.driver.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -56,7 +67,7 @@
                     <user>${database.user}</user>
                     <password>${database.password}</password>
                     <schemas>
-                        <schema>Operations</schema>
+                        <schema>public</schema>
                     </schemas>
                 </configuration>
                 <dependencies>
@@ -84,7 +95,7 @@
                             <goal>write-project-properties</goal>
                         </goals>
                         <configuration>
-                            <outputFile>../mods-mvn/my.properties</outputFile>
+                            <outputFile>${project.build.outputDirectory}/my.properties</outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -101,6 +112,14 @@
                         <arg>--add-modules</arg>
                         <arg>CommonData,flyway.core,jhash</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>dk.sdu.sem4.pro.webpage.WebpageApplication</mainClass>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

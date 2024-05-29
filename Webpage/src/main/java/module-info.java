@@ -12,9 +12,11 @@ open module Webpage {
     requires spring.beans;
     requires org.apache.tomcat.embed.core;
     requires thymeleaf;
+    requires DataManager;
     uses IDelete;
     uses IHash;
     uses ISelect;
     uses IInsert;
     uses IUpdate;
+    uses dk.sdu.sem4.pro.common.services.IProduction;
 }
