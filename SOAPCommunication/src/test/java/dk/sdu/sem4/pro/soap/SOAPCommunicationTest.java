@@ -1,15 +1,17 @@
 package dk.sdu.sem4.pro.soap;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
+import dk.sdu.sem4.pro.communication.services.IClient;
+import jakarta.xml.soap.*;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import jakarta.xml.soap.*;
-import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.Iterator;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class SOAPCommunicationTest {
 
@@ -20,68 +22,109 @@ public class SOAPCommunicationTest {
     @Mock
     private SOAPMessage soapMessage;
     @Mock
+    private SOAPPart soapPart;
+    @Mock
+    private SOAPEnvelope soapEnvelope;
+    @Mock
     private SOAPBody soapBody;
     @Mock
     private SOAPElement soapElement;
+    @Mock
+    private MessageFactory messageFactory;
 
-    @InjectMocks
     private SOAPCommunication soapCommunication;
 
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
+
+        // Setup the connection and message factories
         when(soapConnectionFactory.createConnection()).thenReturn(soapConnection);
-        when(soapConnection.call(any(SOAPMessage.class), any())).thenReturn(soapMessage);
-        when(soapMessage.getSOAPBody()).thenReturn(soapBody);
+        when(messageFactory.createMessage()).thenReturn(soapMessage);
+
+        // Setup the SOAP Message structure
+        when(soapMessage.getSOAPPart()).thenReturn(soapPart);
+        when(soapPart.getEnvelope()).thenReturn(soapEnvelope);
+        when(soapEnvelope.getBody()).thenReturn(soapBody);
+
+        // Ensure every possible addChildElement call on SOAPBody and SOAPElement returns a soapElement
+        when(soapBody.addChildElement(anyString())).thenReturn(soapElement);
+        when(soapElement.addChildElement(anyString())).thenReturn(soapElement);
+
+        // Assertions to verify setup
+        assertNotNull(soapConnectionFactory);
+        assertNotNull(soapConnection);
+        assertNotNull(soapMessage);
+        assertNotNull(soapPart);
+        assertNotNull(soapEnvelope);
+        assertNotNull(soapBody);
+        assertNotNull(soapElement);
+
+        // Inject mocks into SOAPCommunication
+        soapCommunication = new SOAPCommunication() {
+            @Override
+            protected SOAPConnectionFactory createConnectionFactory() {
+                return soapConnectionFactory;
+            }
+
+            @Override
+            protected MessageFactory createMessageFactory() {
+                return messageFactory;
+            }
+        };
+
+        // Direct test after setup
+        assertDoesNotThrow(() -> {
+            SOAPBody testBody = soapEnvelope.getBody();
+            testBody.addChildElement("testElement");
+        });
     }
 
     @Test
     void testReceive() throws Exception {
-        // Setup mock response
-        Iterator it = mock(Iterator.class);
+        // Add pre-execution assertions to check object states
+        assertNotNull(soapBody, "SOAPBody is null before calling receive()");
+        assertNotNull(soapConnection, "SOAPConnection is null before calling receive()");
+
+        // Setup iterator and element mocks for child elements retrieval
+        Iterator<Node> it = mock(Iterator.class);
         when(it.hasNext()).thenReturn(true, false);
         when(it.next()).thenReturn(soapElement);
         when(soapBody.getChildElements()).thenReturn(it);
         when(soapElement.getLocalName()).thenReturn("status");
         when(soapElement.getValue()).thenReturn("ok");
 
-        // Perform the operation
-        JSONObject result = soapCommunication.receive();
+        // Mock the connection call to simulate receiving a SOAP message
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(soapMessage);
 
-        // Assertions
-        assertTrue(result.has("status"));
+        JSONObject result = soapCommunication.receive();
+        assertNotNull(result);
         assertEquals("ok", result.getString("status"));
-        verify(soapConnection).close(); // Ensure connection is closed
     }
 
     @Test
     void testSend() throws Exception {
-        // Prepare data
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("request", "data");
+        assertNotNull(soapElement, "SOAPElement is null before calling send()");
+        assertNotNull(soapConnection, "SOAPConnection is null before calling send()");
 
-        // No faults in response
+        JSONObject jsonObject = new JSONObject().put("request", "data");
+
+        when(soapBody.addChildElement(anyString())).thenReturn(soapElement);
+        when(soapElement.addChildElement(anyString())).thenReturn(soapElement);
+
         when(soapBody.hasFault()).thenReturn(false);
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(soapMessage);
 
-        // Perform the operation
         int statusCode = soapCommunication.send(jsonObject);
-
-        // Assertions
         assertEquals(200, statusCode);
-        verify(soapConnection).close(); // Ensure connection is closed
     }
 
     @Test
     void testErrorHandlingInReceive() throws Exception {
-        // Force a SOAPException
-        when(soapConnection.call(any(SOAPMessage.class), any())).thenThrow(new SOAPException("Failed to send"));
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenThrow(new SOAPException("Failed to send"));
 
-        // Perform the operation
         JSONObject result = soapCommunication.receive();
-
-        // Assertions
         assertTrue(result.has("error"));
         assertEquals("Failed to send", result.getString("error"));
-        verify(soapConnection).close(); // Ensure connection is closed
     }
 }

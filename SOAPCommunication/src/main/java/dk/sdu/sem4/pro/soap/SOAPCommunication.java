@@ -10,10 +10,14 @@ import java.util.Iterator;
 
 public class SOAPCommunication implements IClient {
     private URL endpoint;
+    private SOAPConnectionFactory connectionFactory;
+    private MessageFactory messageFactory;
 
     public SOAPCommunication() {
         try {
             this.endpoint = new URL("http://localhost:8082/v1/status/");
+            this.connectionFactory = createConnectionFactory();
+            this.messageFactory = createMessageFactory();
         } catch (MalformedURLException e) {
             throw new RuntimeException("Invalid endpoint URL", e);
         }
@@ -21,11 +25,11 @@ public class SOAPCommunication implements IClient {
 
     @Override
     public JSONObject receive() {
+        SOAPConnection connection = null;
         try {
-            SOAPConnection connection = SOAPConnectionFactory.newInstance().createConnection();
+            connection = connectionFactory.createConnection();
             SOAPMessage message = createSOAPMessage("GetData", null);
             SOAPMessage response = connection.call(message, endpoint);
-            connection.close();
 
             JSONObject jsonObject = new JSONObject();
             SOAPBody body = response.getSOAPBody();
@@ -45,28 +49,42 @@ public class SOAPCommunication implements IClient {
             } catch (JSONException ex) {
                 throw new RuntimeException(ex);
             }
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SOAPException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-
     @Override
     public Integer send(JSONObject jsonObject) {
+        SOAPConnection connection = null;
         try {
-            SOAPConnection connection = SOAPConnectionFactory.newInstance().createConnection();
+            connection = connectionFactory.createConnection();
             SOAPMessage message = createSOAPMessage("SendData", jsonObject);
             SOAPMessage response = connection.call(message, endpoint);
-            connection.close();
 
             return response.getSOAPBody().hasFault() ? 500 : 200;
         } catch (SOAPException | JSONException e) {
             e.printStackTrace();
             return 500;
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SOAPException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     private SOAPMessage createSOAPMessage(String operation, JSONObject data) throws SOAPException, JSONException {
-        MessageFactory factory = MessageFactory.newInstance();
-        SOAPMessage message = factory.createMessage();
+        SOAPMessage message = messageFactory.createMessage();
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
         SOAPBody body = envelope.getBody();
@@ -82,5 +100,21 @@ public class SOAPCommunication implements IClient {
 
         message.saveChanges();
         return message;
+    }
+
+    protected SOAPConnectionFactory createConnectionFactory() {
+        try {
+            return SOAPConnectionFactory.newInstance();
+        } catch (SOAPException e) {
+            throw new RuntimeException("Unable to create SOAP connection factory", e);
+        }
+    }
+
+    protected MessageFactory createMessageFactory() {
+        try {
+            return MessageFactory.newInstance();
+        } catch (SOAPException e) {
+            throw new RuntimeException("Unable to create SOAP message factory", e);
+        }
     }
 }
