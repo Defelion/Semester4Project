@@ -33,12 +33,45 @@
             <version>21.0.2</version>
             <scope>compile</scope>
         </dependency>
-    </dependencies>
-
-    <dependencies>
         <dependency>
             <groupId>dk.sdu.sem4.pro</groupId>
-            <artifactId>Common</artifactId>
+            <artifactId>DataManager</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu.sem4.pro</groupId>
+            <artifactId>AGVController</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu.sem4.pro</groupId>
+            <artifactId>RESTCommunication</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu.sem4.pro</groupId>
+            <artifactId>AssemblyStationController</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu.sem4.pro</groupId>
+            <artifactId>SOAPCommunication</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu.sem4.pro</groupId>
+            <artifactId>MQTTCommunication</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dk.sdu.sem4.pro</groupId>
+            <artifactId>WarehouseController</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

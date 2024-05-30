@@ -17,7 +17,7 @@ public class SelectComponent {
     public Component getComponent (Component component) throws IOException {
         Conn conn = new Conn();
         Component selectComponent = new Component();
-        System.out.println("Component: " + component.getName());
+        //System.out.println("Component: " + component.getName());
         try (Connection connection = conn.getConnection()) {
             String sql = "SELECT * FROM Component ";
             if (component.getId() > 0)
@@ -55,11 +55,11 @@ public class SelectComponent {
             while (rs.next()) {
                 Component component = new Component();
                 component.setId(rs.getInt("id"));
-                System.out.println(component.getId());
                 component.setName(rs.getString("name"));
-                System.out.println(component.getName());
                 component.setWishedAmount(rs.getInt("wishedamount"));
-                System.out.println(component.getWishedAmount());
+                /*System.out.println(component.getId());
+                System.out.println(component.getName());
+                System.out.println(component.getWishedAmount());*/
                 components.add(component);
             }
             rs.close();
@@ -85,6 +85,7 @@ public class SelectComponent {
                 selectSQL.setInt(1, product.getId());
             }
             ResultSet rs = selectSQL.executeQuery();
+            if(selectRecipe.getComponentMap() == null) selectRecipe.setComponentList(new HashMap<>());
             while (rs.next()) {
                 if(selectRecipe.getId() != rs.getInt("id")) {
                     selectRecipe.setId(rs.getInt("id"));

@@ -120,13 +120,12 @@ public class SelectUnits {
             int componentcount = 0;
             Component selectedComponent = new Component(0);
             while (rs.next()) {
-                if(selectedComponent.getId() != rs.getInt("component_id")) {
-                    if (componentcount != 0) selectedInventory.addComponent(selectedComponent, componentcount);
+                if(selectedComponent.getId() != rs.getInt("c.id")) {
                     selectedComponent.setId(rs.getInt("c.id"));
                     selectedComponent.setName(rs.getString("c.name"));
                     selectedComponent.setWishedAmount(rs.getInt("c.wishedamount"));
                 }
-                componentcount += rs.getInt("i.amount");
+                selectedInventory.addComponent(selectedComponent, rs.getInt("i.trayid"));
             }
             ps.close();
             rs.close();
@@ -140,7 +139,7 @@ public class SelectUnits {
         var sql = "select c.id, c.name, c.wishedamount, i.amount ";
         if(unit.getId() == 0){
             if(isUnit) {
-                sql += "from units u ";
+                sql += ", i.trayid from units u ";
                 sql += "right join unitinventory i on u.id = i.units_id";
                 sql += "right join component c on c.id = i.component_id";
                 sql += "where u.type = '" + unit.getType()+"'";
@@ -152,7 +151,7 @@ public class SelectUnits {
             }
         }
         else if (isUnit) {
-            sql += "from units u ";
+            sql += ", i.trayid from units u ";
             sql += "right join unitinventory i on u.id = i.units_id";
             sql += "right join component c on c.id = i.component_id";
             sql += "where u.id = '" + unit.getId()+"'";

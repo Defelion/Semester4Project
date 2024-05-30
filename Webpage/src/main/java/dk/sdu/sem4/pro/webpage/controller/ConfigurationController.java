@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class ConfigurationController {
@@ -40,7 +41,7 @@ public class ConfigurationController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getComponents Error:" + e.getMessage());
         }
         System.out.println(components);
         return components;
@@ -55,7 +56,7 @@ public class ConfigurationController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getProducts Error:" + e.getMessage());
         }
         //System.out.println(products);
         return products;
@@ -72,7 +73,7 @@ public class ConfigurationController {
             System.out.println(Wharehouses);
         }
         catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getWharehouses Error:" + e.getMessage());
         }
         System.out.println(Wharehouses);
         return Wharehouses;
@@ -210,7 +211,7 @@ public class ConfigurationController {
             System.out.println("Received product name: " + selectedProduct);
             Recipe recipe = new Recipe();
             recipe.setProduct(selectData.getComponent(selectedProduct));
-            if(selectedcompnent2 == selectedcompnent1) recipe.addComponent(selectData.getComponent(selectedcompnent1), 2);
+            if(Objects.equals(selectedcompnent2, selectedcompnent1)) recipe.addComponent(selectData.getComponent(selectedcompnent1), 2);
             else {
                 recipe.addComponent(selectData.getComponent(selectedcompnent1), 1);
                 recipe.addComponent(selectData.getComponent(selectedcompnent2), 1);

@@ -13,6 +13,7 @@ open module Webpage {
     requires org.apache.tomcat.embed.core;
     requires thymeleaf;
     requires DataManager;
+    requires OperationManager;
     uses IDelete;
     uses IHash;
     uses ISelect;

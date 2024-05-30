@@ -35,4 +35,6 @@ public interface IInsert {
 
     //hashes password
     public int addUser (User user) throws IOException;
+
+    public int addUnitComponentInvetory(int id, int trayid, Inventory inventory);
 }

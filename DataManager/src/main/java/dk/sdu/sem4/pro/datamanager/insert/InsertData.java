@@ -200,6 +200,28 @@ public class InsertData implements IInsert {
         return ids;
     }
 
+    @Override
+    public int addUnitComponentInvetory(int id, int trayid, Inventory inventory) {
+        int ids = 0;
+        try {
+            for(Map.Entry<Component, Integer> component : inventory.getComponentList().entrySet()) {
+                if(component.getKey().getId() != 0){
+                    Map<String, Object> attributes = new HashMap<>();
+                    attributes.put("amount", component.getValue());
+                    attributes.put("trayid", trayid);
+                    attributes.put("Units_ID", id);
+                    attributes.put("Component_ID", component.getKey().getId());
+                    ids = insertIntoDBSecure("unitinventory", attributes));
+                }
+            }
+        }
+        catch (IOException | SQLException e){
+            ids = -1;
+            throw new RuntimeException(e);
+        }
+        return ids;
+    }
+
     /**
      * @param agv
      * @return ID

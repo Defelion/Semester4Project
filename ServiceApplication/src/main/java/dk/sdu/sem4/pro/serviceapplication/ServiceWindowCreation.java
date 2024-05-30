@@ -4,6 +4,7 @@ import dk.sdu.sem4.pro.common.services.IProduction;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -22,7 +23,7 @@ public class ServiceWindowCreation {
 
     public Pane createServiceWindow() {
         ServiceWindow.setPrefSize(400, 600);
-        BackgroundFill bgFill = new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY);
+        BackgroundFill bgFill = new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY);
         Background bg = new Background(bgFill);
         ServiceWindow.setBackground(bg);
         ServiceWindow.autosize();
@@ -58,12 +59,16 @@ public class ServiceWindowCreation {
         };
         double buttonWidth = 60;
         double buttonHeight = 30;
-        double spacing = 10;
+        double spacing = 20;
+        TextArea textArea = new TextArea();
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefSize(ServiceWindow.getWidth(), (ServiceWindow.getHeight())-buttonHeight-10);
         Button StartButton = new Button("Start");
         StartButton.setId("StartButton");
         StartButton.setPrefWidth(buttonWidth);
         StartButton.setPrefHeight(buttonHeight);
-        StartButton.setTranslateX(10);
+        StartButton.setTranslateX(spacing);
         StartButton.setTranslateY(StartButton.getHeight());
         StartButton.setOnMouseClicked(startEvent);
         Button StopButton = new Button("Stop");
@@ -77,18 +82,19 @@ public class ServiceWindowCreation {
         ResumeButton.setId("ResumeButton");
         ResumeButton.setPrefWidth(buttonWidth);
         ResumeButton.setPrefHeight(buttonHeight);
-        ResumeButton.setTranslateX(StartButton.getTranslateX()+buttonWidth+spacing);
+        ResumeButton.setTranslateX(StopButton.getTranslateX()+buttonWidth+spacing);
         ResumeButton.setTranslateY(ResumeButton.getHeight());
         StopButton.setOnMouseClicked(resumeEvent);
         Button ExitButton = new Button("Exit");
         ExitButton.setId("ExitButton");
         ExitButton.setPrefWidth(buttonWidth);
         ExitButton.setPrefHeight(buttonHeight);
-        ExitButton.setTranslateX(StartButton.getTranslateX()+buttonWidth+spacing);
+        ExitButton.setTranslateX(ResumeButton.getTranslateX()+buttonWidth+spacing);
         ExitButton.setTranslateY(ExitButton.getHeight());
         ExitButton.setOnMouseClicked(exitEvent);
-        Text text = new Text(ServiceWindow.getWidth()/2,ServiceWindow.getHeight()/2,"Opperations Manager");
+        Text text = new Text(ServiceWindow.getWidth()/2,ServiceWindow.getHeight()-10,"Opperations Manager");
         ServiceWindow.getChildren().add(text);
+        ServiceWindow.getChildren().add(textArea);
         ServiceWindow.getChildren().add(StartButton);
         ServiceWindow.getChildren().add(StopButton);
         ServiceWindow.getChildren().add(ResumeButton);

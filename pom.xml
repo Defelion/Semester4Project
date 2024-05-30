@@ -28,6 +28,7 @@
         <module>WarehouseController</module>
         <module>OperationManager</module>
         <module>Webpage</module>
+        <module>ServiceApplication</module>
     </modules>
 
     <properties>
