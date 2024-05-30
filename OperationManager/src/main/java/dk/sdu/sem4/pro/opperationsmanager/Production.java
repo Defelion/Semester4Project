@@ -2,6 +2,7 @@ package dk.sdu.sem4.pro.opperationsmanager;
 
 import dk.sdu.sem4.pro.common.services.IProduction;
 import dk.sdu.sem4.pro.commondata.data.Component;
+import dk.sdu.sem4.pro.commondata.data.Logline;
 import dk.sdu.sem4.pro.commondata.data.Unit;
 import dk.sdu.sem4.pro.datamanager.insert.InsertData;
 import dk.sdu.sem4.pro.datamanager.select.SelectData;
@@ -42,12 +43,12 @@ public class Production implements IProduction {
     }
 
     @Override
-    public boolean addComponent(String component) {
+    public boolean addComponent(String componentName) {
         boolean result = false;
         try {
-            Component component1 = selectData.getComponent(component);
+            Component component = selectData.getComponent(componentName);
             List<Unit> warehouse = selectData.getAllUnitByType("Wharehouse");
-            result = unitHandler.addComponenttoWarehouse(component1, warehouse.getFirst());
+            result = unitHandler.addComponenttoWarehouse(component, warehouse.getFirst());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -56,7 +57,10 @@ public class Production implements IProduction {
 
     public boolean runNextProcess () {
         boolean result = false;
+        Logline logline = batchHandler.getLastProcess();
+        if (logline != null) {
 
+        }
         return result;
     }
 }

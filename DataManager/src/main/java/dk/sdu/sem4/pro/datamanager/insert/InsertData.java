@@ -211,7 +211,7 @@ public class InsertData implements IInsert {
                     attributes.put("trayid", trayid);
                     attributes.put("Units_ID", id);
                     attributes.put("Component_ID", component.getKey().getId());
-                    ids = insertIntoDBSecure("unitinventory", attributes));
+                    ids = insertIntoDBSecure("unitinventory", attributes);
                 }
             }
         }
