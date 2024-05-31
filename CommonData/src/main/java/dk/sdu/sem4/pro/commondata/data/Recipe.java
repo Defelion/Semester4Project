@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Recipe {
     private int id;
-    private Component product;
+    public Component product;
     private Map<Component, Integer> componentList;
     private double timeEstimation;
 
@@ -62,6 +62,7 @@ public class Recipe {
     }
 
     public Component getProduct() {
+        if(product == null) product = new Component(0);
         return product;
     }
 

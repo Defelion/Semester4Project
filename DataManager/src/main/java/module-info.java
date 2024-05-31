@@ -11,11 +11,15 @@ import dk.sdu.sem4.pro.datamanager.hash.Hashing;
 
 module DataManager {
     exports dk.sdu.sem4.pro.datamanager.select;
+    exports dk.sdu.sem4.pro.datamanager.insert;
+    exports dk.sdu.sem4.pro.datamanager.update;
+    exports dk.sdu.sem4.pro.datamanager.delete;
     requires CommonData;
     requires flyway.core;
     requires java.sql;
     requires java.desktop;
     requires jhash;
+    requires spring.context;
     provides IUpdate with UpdateData;
     provides IDelete with DeleteData;
     provides IInsert with InsertData;

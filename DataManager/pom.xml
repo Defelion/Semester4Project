@@ -40,6 +40,12 @@
             <version>2.2.0</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.1.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgres.driver.version}</version>
@@ -89,7 +95,7 @@
                             <goal>write-project-properties</goal>
                         </goals>
                         <configuration>
-                            <outputFile>../mods-mvn/my.properties</outputFile>
+                            <outputFile>${project.build.outputDirectory}/my.properties</outputFile>
                         </configuration>
                     </execution>
                 </executions>

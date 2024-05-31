@@ -3,6 +3,7 @@ package dk.sdu.sem4.pro.datamanager.delete;
 import dk.sdu.sem4.pro.datamanager.connection.Conn;
 import dk.sdu.sem4.pro.commondata.data.*;
 import dk.sdu.sem4.pro.commondata.services.IDelete;
+import dk.sdu.sem4.pro.datamanager.select.SelectData;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DeleteData implements IDelete {
+    private final SelectData selectData = new SelectData();
+
     private boolean exitenceTest (String table, int id, Connection conn) throws SQLException {
         boolean exist = false;
         var sql = "select * from ? where id = ?";
@@ -76,9 +79,13 @@ public class DeleteData implements IDelete {
     @Override
     public boolean deleteComponent(int componentID) throws IOException {
         boolean succes = false;
+        boolean exist = false;
+
+        Component component = selectData.getComponent(componentID);
+        if(component != null) exist = true;
         Conn conn = new Conn();
         try(Connection connection = conn.getConnection()) {
-            if(exitenceTest("component", componentID, connection)) {
+            if(exist) {
                 var sql = "DELETE FROM component WHERE id=?";
                 PreparedStatement ps = connection.prepareStatement(sql);
                 ps.setInt(1, componentID);

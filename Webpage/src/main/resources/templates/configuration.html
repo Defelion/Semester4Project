@@ -45,7 +45,7 @@
         color: #2c3e50;
     }
 
-    .agv-config input[type="number"], .products-config input, .products-config select, .products-config button {
+    .agv-config input[type="number"], .products-config input, .products-config select, .products-config button, .agv-config button {
         width: 100%;
         padding: 8px;
         margin-top: 5px;
@@ -55,7 +55,7 @@
         border-radius: 4px;
     }
 
-    .products-config button {
+    .agv-config button, .products-config button {
         background-color: #ecf0f1;
         color: #333;
         border: none;
@@ -63,9 +63,10 @@
         cursor: pointer;
     }
 
-    .products-config button:hover {
+    .agv-config button:hover, .products-config button:hover {
         background-color: #dcdde1;
     }
+
 </style>
 <body>
 <div th:replace="~{fragments/navigation :: navigation}"></div>
@@ -73,38 +74,149 @@
 <div class="config-page">
     <h1>Configuration</h1>
 
-    <div class="agv-config">
-        <h2>AGV Configuration</h2>
-        <label>Minimum charge: </label>
-        <input type="number" placeholder="">
-        <label>Maximum charge: </label>
-        <input type="number" placeholder="">
+    <div class="products-config">
+        <h2>Unit Configuration</h2>
+        <label>Change AGV Charge</label>
+        <form th:action="@{/updateCharges}" method="post">
+            <input type="number" name="minCharge" placeholder="Enter minimum charge">
+            <input type="number" name="maxCharge" placeholder="Enter maximum charge">
+            <button type="submit">Update Charges</button>
+        </form>
+
+        <form th:action="@{/addUnit}" method="post">
+            <label>Select Unit Type to add</label>
+            <select id="type" name="type">
+                <option>Wharehouse</option>
+                <option>Assembly</option>
+                <option>AGV</option>
+            </select>
+            <button type="submit">Add Component</button>
+        </form>
     </div>
 
     <div class="products-config">
-        <h2>Products Configuration</h2>
-        <input>
-        <button>Add component</button>
+        <h2>Component Configuration</h2>
+        <form th:action="@{/addComponent}" method="post">
+            <label>Add Component</label>
+            <input type="text" id="component-name" name="component-name" placeholder="Enter component name">
+           <!-- <label>Select Wharehouse the component are put into</label>
+            <select id="wharehouse-list" name="wharehouse-list">
+                <option th:each="Wharehouse : ${Wharehouses}" th:text="${Wharehouse}" th:value="${Wharehouse}"></option>
+            </select>-->
+            <button type="submit">Add Component</button>
+        </form>
 
-        <select>
-            <option>Component 1</option>
-        </select>
-        <button>Remove component</button>
+        <label>Select component to be removed</label>
+        <form th:action="@{/removeComponent}" method="post">
+            <select id="component-list" name="component-list">
+                <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
+            </select>
+            <button type="submit" id="remove-component">Remove component</button>
+        </form>
 
-        <select>
-            <option>Product 1</option>
+        <h2>Product Configuration</h2>
+        <form th:action="@{/addProduct}" method="post">
+        <label>Select Product to be made</label>
+        <select id="selectedProduct" name="selectedProduct">
+            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
         </select>
-        <button>Add product</button>
+        <label>Select Component 1</label>
+        <select id="selectedcompnent1" name="selectedcompnent1">
+            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
+        </select>
+        <label>Select Component 2</label>
+        <select id="selectedcompnent2" name="selectedcompnent2">
+            <option th:each="component : ${Components}" th:text="${component}" th:value="${component}"></option>
+        </select>
+        <button type="submit">Add product</button>
+        </form>
 
+        <form th:action="@{/removeProduct}" method="post">
+        <label>Select Product to be removed</label>
         <select>
-            <option>Product 1</option>
+            <option th:each="product : ${Products}" th:text="${product}" th:value="${product}"></option>
         </select>
-        <button>Remove product</button>
+        <button type="submit">Remove product</button>
+        </form>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script>
+    /*$(document).ready(function() {
+        function updateChargesForAllAGVs(minCharge, maxCharge) {
+            $.ajax({
+                url: '/configuration/updateAllCharges',
+                type: 'POST',
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    minCharge: minCharge,
+                    maxCharge: maxCharge
+                }),
+                success: function(response) {
+                    console.log('Success:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        }
+
+        $('#updateMinMaxCharge').click(function(event) {
+            event.preventDefault();
+            var minChargeValue = parseFloat($('#minCharge').val());
+            var maxChargeValue = parseFloat($('#maxCharge').val());
+            updateChargesForAllAGVs(minChargeValue, maxChargeValue);
+        });
+
+        function addComponent(componentName) {
+            $.ajax({
+                url: '/configuration/addComponent',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({ name: componentName }),
+                success: function(response) {
+                    console.log('Component added:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to add component:', xhr.responseText);
+                }
+            });
+        }
+
+        $('#add-component').click(function(event) {
+            event.preventDefault();
+            var componentName = $('#component-name').val();
+            addComponent(componentName);
+            $('#component-name').val('');
+        });
+
+        function removeComponent(componentName) {
+            $.ajax({
+                url: '/configuration/removeComponent',
+                type: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({ name: componentName }),
+                success: function(response) {
+                    console.log('Component removed:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to remove component:', xhr.responseText);
+                }
+            });
+        }
+
+        $('#remove-component').click(function(event) {
+            event.preventDefault();
+            var componentName = $('#component-list').val();
+            removeComponent(componentName);
+        });
+
+    });*/
+</script>
 
 </body>
 </html>

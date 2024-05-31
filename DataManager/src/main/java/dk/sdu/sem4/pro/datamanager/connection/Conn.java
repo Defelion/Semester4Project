@@ -24,7 +24,7 @@ public class Conn {
     public Conn() throws IOException {
         //propertiReader = new PropertiReader("mods-mvn/my.properties");
         URL = "jdbc:postgresql://localhost:5432/OperationDB";
-        System.out.println("SQL Conn: " + URL);
+        //System.out.println("SQL Conn: " + URL);
         user = "sem4pro";
         pass = "Pro2024";
 

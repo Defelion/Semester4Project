@@ -18,4 +18,5 @@ open module Webpage {
     uses ISelect;
     uses IInsert;
     uses IUpdate;
+    uses dk.sdu.sem4.pro.common.services.IProduction;
 }
