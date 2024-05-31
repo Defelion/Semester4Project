@@ -22,7 +22,15 @@ public class SOAPCommunicationTest {
     @Mock
     private MessageFactory messageFactory;
     @Mock
+    private SOAPMessage soapMessage;
+    @Mock
+    private SOAPPart soapPart;
+    @Mock
+    private SOAPEnvelope soapEnvelope;
+    @Mock
     private SOAPBody soapBody;
+    @Mock
+    private SOAPElement soapElement;
 
     private SOAPCommunication soapCommunication;
 
@@ -30,22 +38,31 @@ public class SOAPCommunicationTest {
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
 
+        // Setup for unit tests
         when(soapConnectionFactory.createConnection()).thenReturn(soapConnection);
-        when(messageFactory.createMessage()).thenReturn(mock(SOAPMessage.class, RETURNS_DEEP_STUBS));
-        when(soapConnection.call(any(), any())).thenReturn(mock(SOAPMessage.class, RETURNS_DEEP_STUBS));
-        when(soapConnection.call(any(), any()).getSOAPBody()).thenReturn(soapBody);
+        when(messageFactory.createMessage()).thenReturn(soapMessage);
+        when(soapMessage.getSOAPPart()).thenReturn(soapPart);
+        when(soapPart.getEnvelope()).thenReturn(soapEnvelope);
+        when(soapEnvelope.getBody()).thenReturn(soapBody);
 
-        URL endpoint = new URL("http://localhost:8082/v1/status/");
-        soapCommunication = new SOAPCommunication(endpoint, soapConnectionFactory, messageFactory);
+        // Instantiate the class under test with mocked factories
+        soapCommunication = new SOAPCommunication(new URL("http://localhost:8082/v1/status/"), soapConnectionFactory, messageFactory);
     }
 
     @Test
     void testReceive_Success() throws Exception {
-        when(soapBody.getChildElements()).thenReturn(mock(Iterator.class, RETURNS_DEEP_STUBS));
-        when(soapBody.getChildElements().hasNext()).thenReturn(true, false);
-        when(soapBody.getChildElements().next()).thenReturn(mock(SOAPElement.class));
-        when(soapBody.getChildElements().next().getLocalName()).thenReturn("status");
-        when(soapBody.getChildElements().next().getValue()).thenReturn("ok");
+        // Mock the response elements
+        SOAPElement responseElement = mock(SOAPElement.class);
+        when(responseElement.getLocalName()).thenReturn("status");
+        when(responseElement.getValue()).thenReturn("ok");
+
+        Iterator<SOAPElement> mockIterator = mock(Iterator.class);
+        when(mockIterator.hasNext()).thenReturn(true, false);
+        when(mockIterator.next()).thenReturn(responseElement);
+
+        when(soapBody.getChildElements()).thenReturn((Iterator) mockIterator);
+        when(soapMessage.getSOAPBody()).thenReturn(soapBody);
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(soapMessage);
 
         JSONObject result = soapCommunication.receive();
         assertEquals("ok", result.getString("status"));
@@ -53,15 +70,27 @@ public class SOAPCommunicationTest {
 
     @Test
     void testSend_Success() throws Exception {
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(soapMessage);
+
+        // Mock the SOAPBody to not have faults
         when(soapBody.hasFault()).thenReturn(false);
 
+        // Ensure the soapBody is retrieved correctly in the response
+        when(soapMessage.getSOAPBody()).thenReturn(soapBody);
+
         int statusCode = soapCommunication.send(new JSONObject().put("key", "value"));
-        assertEquals(200, statusCode);
+        assertEquals(200, statusCode); // Expect 200 for successful send
     }
 
     @Test
     void testSend_Fault() throws Exception {
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(soapMessage);
+
+        // Mock the SOAPBody to have faults
         when(soapBody.hasFault()).thenReturn(true);
+
+        // Ensure the soapBody is retrieved correctly in the response
+        when(soapMessage.getSOAPBody()).thenReturn(soapBody);
 
         int statusCode = soapCommunication.send(new JSONObject().put("key", "value"));
         assertEquals(500, statusCode);
