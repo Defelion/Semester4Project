@@ -13,7 +13,7 @@ public class SOAPCommunication implements IClient {
 
     public SOAPCommunication() {
         try {
-            this.endpoint = new URL("http://localhost:8082/v1/status/");
+            this.endpoint = new URL("http://localhost:8081/Service.asmx");
         } catch (MalformedURLException e) {
             throw new RuntimeException("Invalid endpoint URL", e);
         }
