@@ -1,8 +1,7 @@
 package dk.sdu.sem4.pro.soap;
 
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.*;
 
 import jakarta.xml.soap.*;
@@ -48,11 +47,15 @@ public class SOAPCommunicationTest {
         // Mock the operation element correctly
         when(soapBody.addChildElement(anyString())).thenReturn(soapElement);
 
-        // Instantiate the class under test with mocked factories
+        // Mock the SOAPElement to add children correctly
+        when(soapElement.addChildElement(anyString())).thenReturn(soapElement);
+
+        // Instantiate the class under test with mocked factories for unit tests
         soapCommunication = new SOAPCommunication(new URL("http://localhost:8081/v1/status/"), soapConnectionFactory, messageFactory);
     }
 
     @Test
+    @Tag("unit")
     void testReceive_Success() throws Exception {
         // Mock the response elements
         SOAPElement responseElement = mock(SOAPElement.class);
@@ -72,6 +75,7 @@ public class SOAPCommunicationTest {
     }
 
     @Test
+    @Tag("unit")
     void testSend_Success() throws Exception {
         // Mock the response elements
         SOAPMessage mockResponse = mock(SOAPMessage.class);
@@ -94,6 +98,7 @@ public class SOAPCommunicationTest {
     }
 
     @Test
+    @Tag("unit")
     void testSend_Fault() throws Exception {
         // Mock the response elements
         SOAPMessage mockResponse = mock(SOAPMessage.class);
@@ -113,5 +118,47 @@ public class SOAPCommunicationTest {
 
         // Assert that the status code is 500
         assertEquals(500, statusCode); // Expect 500 for a fault response
+    }
+
+    // Integration tests using real SOAP server connection
+    @Test
+    @Tag("integration")
+    void testSend_Success_Integration() throws Exception {
+        // Assuming the SOAP server is running at this endpoint
+        URL endpoint = new URL("http://localhost:8081/v1/status/");
+
+        // Create instances of the necessary factories
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        MessageFactory messageFactory = MessageFactory.newInstance();
+
+        // Instantiate the class under test with real connection factory and message factory
+        SOAPCommunication soapCommunication = new SOAPCommunication(endpoint, soapConnectionFactory, messageFactory);
+
+        // Send a real request to the SOAP server
+        JSONObject request = new JSONObject().put("key", "value");
+        int statusCode = soapCommunication.send(request);
+
+        // Assert the status code (expecting 200 for success)
+        assertEquals(200, statusCode);
+    }
+
+    @Test
+    @Tag("integration")
+    void testReceive_Success_Integration() throws Exception {
+        // Assuming the SOAP server is running at this endpoint
+        URL endpoint = new URL("http://localhost:8081/v1/status/");
+
+        // Create instances of the necessary factories
+        SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+        MessageFactory messageFactory = MessageFactory.newInstance();
+
+        // Instantiate the class under test with real connection factory and message factory
+        SOAPCommunication soapCommunication = new SOAPCommunication(endpoint, soapConnectionFactory, messageFactory);
+
+        // Receive a real response from the SOAP server
+        JSONObject response = soapCommunication.receive();
+
+        // Assert the response content (assuming the response contains "status": "ok")
+        assertEquals("ok", response.getString("status"));
     }
 }
