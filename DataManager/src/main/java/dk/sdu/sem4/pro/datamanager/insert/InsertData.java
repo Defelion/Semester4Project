@@ -100,7 +100,7 @@ public class InsertData implements IInsert {
                 attributes.put("description", logline.getDescription());
                 attributes.put("dateTime", Timestamp.from(Instant.now()));
                 attributes.put("Batch_ID", logline.getBatchID());
-                System.out.println("addLogline: " + attributes);
+                //System.out.println("addLogline: " + attributes);
                 id = insertIntoDBSecure("logline", attributes);
             }
         }

@@ -77,6 +77,7 @@ public class UnitHandler {
     public boolean AGVMoveWarehouse () {
         boolean result = false;
         result = agvController.startTask("MoveToStorageOperation");
+        System.out.println("AGVMoveWarehouse Result: " + result);
         return result;
     }
 

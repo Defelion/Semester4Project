@@ -96,7 +96,7 @@ public class SelectBatch {
 
     public Batch getBatch (int batchID) throws IOException {
         Batch batch = new Batch();
-        System.out.println("getBath - batchID = " + batchID);
+        //System.out.println("getBath - batchID = " + batchID);
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM batch where id = ?";
@@ -115,9 +115,9 @@ public class SelectBatch {
             ps.close();
             rs.close();
             SelectData selectData = new SelectData();
-            System.out.println("Batch ID: " + batch.getId());
-            System.out.println("Bath Priority: " + batch.getPriority());
-            System.out.println("getBatch - Recipe: " + productID);
+            //System.out.println("Batch ID: " + batch.getId());
+            //System.out.println("Bath Priority: " + batch.getPriority());
+            //System.out.println("getBatch - Recipe: " + productID);
             batch.setProduct(selectData.getProduct(productID));
             batch.setLog(getBatchLog(batch.getId()));
         } catch (SQLException e) {
@@ -145,7 +145,7 @@ public class SelectBatch {
             ps.close();
             rs.close();
             SelectData selectData = new SelectData();
-            System.out.println("getBatchWithHigestPriority - Recipe: " + productID);
+            //System.out.println("getBatchWithHigestPriority - Recipe: " + productID);
             batch.setProduct(selectData.getProduct(productID));
             batch.setLog(getBatchLog(batch.getId()));
         } catch (SQLException e) {

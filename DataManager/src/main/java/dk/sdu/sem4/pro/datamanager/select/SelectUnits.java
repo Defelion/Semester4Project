@@ -142,7 +142,7 @@ public class SelectUnits {
     public Inventory getInventoryByUnit(Unit unit) throws IOException {
         Inventory selectedInventory = new Inventory();
         Conn conn = new Conn();
-        System.out.println("getInventoryByUnit input: " + unit.getId());
+        //System.out.println("getInventoryByUnit input: " + unit.getId());
         try (Connection connection = conn.getConnection()) {
             var sql = "select c.id, c.name, c.wishedamount, i.amount, u.type, i.trayid " +
                     "from units u " +
@@ -151,7 +151,7 @@ public class SelectUnits {
             if(unit.getId() == 0) sql += "where u.type = ?";
             else sql += "where u.id = ?";
             sql += " order by c.id";
-            System.out.println("selectedInventory - sql: " + sql);
+            //System.out.println("selectedInventory - sql: " + sql);
             PreparedStatement ps = connection.prepareStatement(sql);
             if(unit.getId() == 0) { ps.setString(1, unit.getType()); }
             else ps.setInt(1, unit.getId());
@@ -183,7 +183,7 @@ public class SelectUnits {
                     "right join component c on c.id = i.component_id ";
             if(agv.getId() != 0) sql += "where u.id = ? ";
             sql += "order by c.id";
-            System.out.println("getInventoryByAGV - sql: " + sql);
+            //System.out.println("getInventoryByAGV - sql: " + sql);
             PreparedStatement ps = connection.prepareStatement(sql);
             if(agv.getId() != 0) ps.setInt(1, agv.getId());
             ResultSet rs = ps.executeQuery();
@@ -248,10 +248,10 @@ public class SelectUnits {
             }
             rs.close();
             ps.close();
-            System.out.println("getAllUnits: " + rows);
+            //System.out.println("getAllUnits: " + rows);
             if(rows > 0) {
                 for (Unit unit : selectedUnits) {
-                    System.out.println("getAllUnits unitID: "+unit.getId());
+                    //System.out.println("getAllUnits unitID: "+unit.getId());
                     unit.setInventory(getInventoryByUnit(unit));
                 }
             }
@@ -297,11 +297,11 @@ public class SelectUnits {
             var sql = "select * from agv";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            System.out.println("ResultSet: "+rs.getFetchSize());
+            //System.out.println("ResultSet: "+rs.getFetchSize());
             int rows = 0;
             while (rs.next()) {
                 rows += 1;
-                System.out.println("Rows: "+rows);
+                //System.out.println("Rows: "+rows);
                 AGV selectedAGV = new AGV();
                 selectedAGV.setId(rs.getInt("id"));
                 selectedAGV.setState(rs.getString("state"));
@@ -323,9 +323,9 @@ public class SelectUnits {
             }
             rs.close();
             ps.close();
-            System.out.println("Amount of AGV"+selectedAGVs.size());
+            //System.out.println("Amount of AGV"+selectedAGVs.size());
             for (AGV agv : selectedAGVs) {
-                System.out.println("AGV: "+agv.getId());
+                //System.out.println("AGV: "+agv.getId());
                 agv.setInventory(getInventoryByAGV(agv));
             }
         } catch (SQLException e) {
