@@ -29,11 +29,13 @@ public class Production implements IProduction {
         if(Objects.equals(runNextProcess(), "FAILED")) {
             try {
                 Batch batch = selectData.getBatchWithHigestPriority();
+                System.out.println("Selected batch: " + batch.getId());
                 Logline logline = new Logline(
                         "Start," + batch.getProduct().getProduct().getName(),
                         Date.from(Instant.now()),
-                        "Process " + 0
+                        "Process " + 1
                 );
+                logline.setBatchID(batch.getId());
                 insertData.addLogline(logline.getBatchID(), logline);
                 runNextProcess();
                 result = true;
@@ -91,7 +93,7 @@ public class Production implements IProduction {
             Map<String, String> processes = batchHandler.getAllProcess();
             Logline logline = batchHandler.getLastProcess();
             Logline agvlogline = new Logline();
-            if(logline.getType() != null) {
+            if(logline.getType() != null && batch.getPriority() != 0) {
                 String[] splitType = logline.getType().split(" ");
                 processNumber = Integer.parseInt(splitType[1]);
                 if (processes.containsKey("MoveToWarehouse"))

@@ -92,13 +92,15 @@ public class InsertData implements IInsert {
         int id = 0;
         try {
             SelectData selectData = new SelectData();
+
             Batch batch = selectData.getBatch(batchID);
             if(batch.getProduct() != null) {
                 Map<String, Object> attributes = new HashMap<>();
                 attributes.put("type", logline.getType());
                 attributes.put("description", logline.getDescription());
                 attributes.put("dateTime", Timestamp.from(Instant.now()));
-                attributes.put("Batch_ID", batchID);
+                attributes.put("Batch_ID", logline.getBatchID());
+                System.out.println("addLogline: " + attributes);
                 id = insertIntoDBSecure("logline", attributes);
             }
         }

@@ -96,6 +96,7 @@ public class SelectBatch {
 
     public Batch getBatch (int batchID) throws IOException {
         Batch batch = new Batch();
+        System.out.println("getBath - batchID = " + batchID);
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM batch where id = ?";
@@ -114,6 +115,8 @@ public class SelectBatch {
             ps.close();
             rs.close();
             SelectData selectData = new SelectData();
+            System.out.println("Batch ID: " + batch.getId());
+            System.out.println("Bath Priority: " + batch.getPriority());
             System.out.println("getBatch - Recipe: " + productID);
             batch.setProduct(selectData.getProduct(productID));
             batch.setLog(getBatchLog(batch.getId()));
@@ -130,19 +133,20 @@ public class SelectBatch {
             var sql = "SELECT * FROM batch order by priority desc limit 1";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
+            int productID = 0;
             while (rs.next()) {
-                batch = new Batch(
-                        rs.getInt("id"),
-                        new Recipe(rs.getInt("component_id")),
-                        rs.getInt("amount"),
-                        rs.getString("description"),
-                        rs.getInt("priority")
-                    );
+                batch = new Batch();
+                batch.setId(rs.getInt("id"));
+                batch.setPriority(rs.getInt("priority"));
+                if(rs.getString("description") != "") batch.setDescription(rs.getString("description"));
+                batch.setAmount(rs.getInt("amount"));
+                productID = rs.getInt("component_id");
             }
             ps.close();
             rs.close();
-            SelectComponent component = new SelectComponent();
-            batch.setProduct(component.getRecipe(batch.getProduct()));
+            SelectData selectData = new SelectData();
+            System.out.println("getBatchWithHigestPriority - Recipe: " + productID);
+            batch.setProduct(selectData.getProduct(productID));
             batch.setLog(getBatchLog(batch.getId()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
