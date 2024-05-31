@@ -42,6 +42,7 @@ public class Production implements IProduction {
     @Override
     public String runProduction() {
         System.out.println("Running production");
+        runNextProcess();
         return null;
     }
 
@@ -62,9 +63,15 @@ public class Production implements IProduction {
         boolean result = false;
         try {
             Component component = new Component();
+            Unit warehouse = selectData.getAllUnitByType("Warehouse").getFirst();
+            AGV agv = selectData.getAllAGV().getFirst();
+            Batch batch = selectData.getBatchWithHigestPriority();
             int processNumber = 0;
+            int count = 0;
+            String description = "";
             Map<String, String> processes = batchHandler.getAllProcess();
             Logline logline = batchHandler.getLastProcess();
+            Logline agvlogline = new Logline();
             if(logline != null) {
                 String[] splitType = logline.getType().split(" ");
                 processNumber = Integer.parseInt(splitType[1]);
@@ -72,65 +79,103 @@ public class Production implements IProduction {
             if (processes.containsKey("MoveToWarehouse")) component = selectData.getComponent(processes.get("MoveToWarehouse"));
             switch (logline.getDescription()) {
                 case "MoveToWarehouse":
-                    Unit warehouse = selectData.getAllUnitByType("Warehouse").getFirst();
-                    AGV agv = selectData.getAllAGV().getFirst();
-                    if (processes.containsKey("PickFromAssemblyStation")) {
+                    for(Map.Entry<String, String> entry : processes.entrySet()) {
+                        if(entry.getValue().equals("PickFromAssemblyStation")) count++;
+                    }
+                    if (count == 0) {
                         result = unitHandler.AGVComponentWarehouse(true);
                         if (result) {
-                            unitHandler.addComponenttoWarehouse(component, warehouse);
                             Inventory inventory = selectData.getInventoryByAGV(agv.getId());
+                            unitHandler.addComponenttoWarehouse(component, warehouse);
                             deleteData.deleteAGVInventory(inventory.getId());
                             insertData.addUnitInvetory(warehouse.getId(), inventory);
-                            Logline warehouseLogline = new Logline(
-                                    "PutWarehouseOperation,"+component.getName(),
-                                    Date.from(Instant.now()),
-                                    "Process "+(processNumber+1)
-                            );
-                            insertData.addLogline(logline.getBatchID(), warehouseLogline);
+                            description = "PutWarehouseOperation";
                         }
                     }
                     else {
                         result = unitHandler.AGVComponentWarehouse(false);
                         if (result) {
-                            Inventory inventory = selectData.getInventoryByUnitAndComponent(warehouse.getId(), component.getName());
+                            if(count <= 2) {
+                                int pickCount = 0;
+                                for (Map.Entry<Component, Integer> entry : batch.getProduct().getComponentMap().entrySet()) {
+                                    pickCount++;
+                                    if (pickCount == count) {
+                                        component = entry.getKey();
+                                    }
+                                }
+                            }
+                            else component = batch.getProduct().getProduct();
+                            Inventory inventory = selectData.getInventoryByUnitAndComponent(
+                                    warehouse.getId(),
+                                    component.getName());
                             deleteData.deleteUnitInventory(inventory.getId());
                             insertData.addAGVInvetory(agv.getId(), inventory);
-                            Logline warehouseLogline = new Logline(
-                                    "PickWarehouseOperation,"+component.getName(),
-                                    Date.from(Instant.now()),
-                                    "Process "+(processNumber+1)
-                            );
-                            insertData.addLogline(logline.getBatchID(), warehouseLogline);
+                            description = "PickWarehouseOperation";
                         }
                     }
                     break;
                 case "PickFromWarehouse":
-
-                    break;
+                    result = unitHandler.AGVMoveAssemblyStation();
+                    description = "MoveToAssemblyStation";
 
                 case "PutIntoWarehouse":
-
+                    result = unitHandler.MoveToCharger();
+                    insertData.addLogline(logline.getBatchID(), new Logline(
+                            "finished",
+                            Date.from(Instant.now()),
+                            "Finished"
+                    ));
+                    description = "done";
                     break;
 
                 case "MoveToAssemblyStation":
-
+                    for(Map.Entry<String, String> entry : processes.entrySet()) {
+                        if(entry.getValue().equals("PutOntoAssemblyStation")) count++;
+                    }
+                    switch (count) {
+                        case 0, 1:
+                            result = unitHandler.AGVComponentAssemblyStation(true);
+                            description = "PutOntoAssemblyStation";
+                            break;
+                        case 2:
+                            result = unitHandler.AGVComponentAssemblyStation(false);
+                            component = batch.getProduct().getProduct();
+                            description = "PickFromAssemblyStation";
+                            break;
+                    }
                     break;
 
                 case "PutOntoAssemblyStation":
-
+                    for(Map.Entry<String, String> entry : processes.entrySet()) {
+                        if(entry.getValue().equals("PutOntoAssemblyStation")) count++;
+                    }
+                    if(count == 2) {
+                        result = unitHandler.AsseblyStationStart("2024");
+                        description = "AsseblyStationStart";
+                    }
                     break;
                 case "AsseblyStationStart":
-
+                    result = unitHandler.AGVMoveAssemblyStation();
+                    description = "MoveToAssemblyStation";
                     break;
 
                 case "PickFromAssemblyStation":
-
+                    result = unitHandler.AGVMoveWarehouse();
+                    description = "MoveToWarehouse";
                     break;
 
                 default:
-
+                    result = unitHandler.AGVMoveWarehouse();
+                    component = batch.getProduct().getComponentMap().entrySet().iterator().next().getKey();
+                    description = "MoveToWarehouse";
                     break;
             }
+            agvlogline = new Logline(
+                    description+","+component.getName(),
+                    Date.from(Instant.now()),
+                    "Process "+(processNumber+1)
+            );
+            insertData.addLogline(logline.getBatchID(), agvlogline);
         }
         catch (IOException e) {
             System.out.println("runNextProcess error:" + e.getMessage());
