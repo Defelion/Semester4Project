@@ -86,7 +86,7 @@
         <form th:action="@{/addUnit}" method="post">
             <label>Select Unit Type to add</label>
             <select id="type" name="type">
-                <option>Wharehouse</option>
+                <option>Warehouse</option>
                 <option>Assembly</option>
                 <option>AGV</option>
             </select>
@@ -99,9 +99,9 @@
         <form th:action="@{/addComponent}" method="post">
             <label>Add Component</label>
             <input type="text" id="component-name" name="component-name" placeholder="Enter component name">
-           <!-- <label>Select Wharehouse the component are put into</label>
-            <select id="wharehouse-list" name="wharehouse-list">
-                <option th:each="Wharehouse : ${Wharehouses}" th:text="${Wharehouse}" th:value="${Wharehouse}"></option>
+           <!-- <label>Select Warehouse the component are put into</label>
+            <select id="warehouse-list" name="warehouse-list">
+                <option th:each="Warehouse : ${Warehouses}" th:text="${Warehouse}" th:value="${Warehouse}"></option>
             </select>-->
             <button type="submit">Add Component</button>
         </form>

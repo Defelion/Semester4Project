@@ -2,21 +2,15 @@ package dk.sdu.sem4.pro.opperationsmanager;
 
 import dk.sdu.sem4.pro.commondata.data.Batch;
 import dk.sdu.sem4.pro.commondata.data.Logline;
-import dk.sdu.sem4.pro.datamanager.delete.DeleteData;
 import dk.sdu.sem4.pro.datamanager.insert.InsertData;
 import dk.sdu.sem4.pro.datamanager.select.SelectData;
-import dk.sdu.sem4.pro.datamanager.update.UpdateData;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class BatchHandling {
-    private final UpdateData updateData = new UpdateData();
     private final SelectData selectData = new SelectData();
     private final InsertData insertData = new InsertData();
-    private final DeleteData deleteData = new DeleteData();
 
     public List<Logline> getTaskQueue () {
         List<Logline> taskQueue = new ArrayList<>();
@@ -41,6 +35,16 @@ public class BatchHandling {
             if(processIdtest > processId) lastProcess = logline;
         }
         return lastProcess;
+    }
+
+    public Map<String,String> getAllProcess () {
+        Map<String,String> processList = new HashMap<>();
+        List<Logline> taskQueue = getTaskQueue();
+        for (Logline logline : taskQueue) {
+            String[] splitString = logline.getDescription().split(",");
+            processList.put(splitString[0], splitString[1]);
+        }
+        return processList;
     }
 
     public boolean saveTask (Logline logline) {

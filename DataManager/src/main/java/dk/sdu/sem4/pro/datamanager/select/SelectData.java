@@ -131,6 +131,12 @@ public class SelectData implements ISelect {
     }
 
     @Override
+    public Inventory getInventoryByUnitAndComponent(int unitID, String componentName) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventoryByUnitAndComponent(new Unit(unitID), new Component(componentName));
+    }
+
+    @Override
     public Inventory getInventoryByComponent(int componentID) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
         return selectUnits.getInventoryByComponent(new Component(componentID));

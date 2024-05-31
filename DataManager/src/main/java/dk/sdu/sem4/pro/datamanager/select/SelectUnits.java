@@ -56,14 +56,43 @@ public class SelectUnits {
         return selectedInventory;
     }
 
+    public Inventory getInventoryByUnitAndComponent(Unit unit, Component component) throws IOException {
+        Inventory selectedInventory = new Inventory();
+        Conn conn = new Conn();
+        try (Connection connection = conn.getConnection()) {
+            var sql = "select c.id, c.name, c.wishedamount, i.id, i.trayid, u.type, u.id from component c " +
+                    "left join unitinventory i on c.id = i.component_id " +
+                    "right join units u on u.id = i.units_id " +
+                    "where c.name = ? and u.id = ? " +
+                    "order by c.id;";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, component.getName());
+            ps.setInt(2, unit.getId());
+            ResultSet rs = ps.executeQuery();
+            Component selectedComponent = new Component(0);
+            while (rs.next()) {
+                selectedInventory.setId(rs.getInt("i.id"));
+                selectedComponent.setId(rs.getInt("c.id"));
+                selectedComponent.setName(rs.getString("c.name"));
+                selectedComponent.setWishedAmount(rs.getInt("c.wishedamount"));
+                selectedInventory.addComponent(selectedComponent, rs.getInt("i.trayid"));
+                break;
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return selectedInventory;
+    }
+
     public Inventory getInventoryByComponent(Component component) throws IOException {
         Inventory selectedInventory = new Inventory();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "select c.id, c.name, c.wishedamount, a.id, a.amount, u.id, u.amount from agvinventory a " +
                     "right join component c on c.id = a.component_id " +
-                    "left join unitinventory u on c.id = u.component_id " +
-                    "order by c.id";
+                    "left join unitinventory u on c.id = u.component_id ";
             if(component.getId() != 0) {
                 sql += " where c.id = ?";
             }

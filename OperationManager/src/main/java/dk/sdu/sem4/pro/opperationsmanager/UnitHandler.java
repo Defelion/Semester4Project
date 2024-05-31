@@ -6,10 +6,8 @@ import dk.sdu.sem4.pro.commondata.data.AGV;
 import dk.sdu.sem4.pro.commondata.data.Component;
 import dk.sdu.sem4.pro.commondata.data.Inventory;
 import dk.sdu.sem4.pro.commondata.data.Unit;
-import dk.sdu.sem4.pro.datamanager.delete.DeleteData;
 import dk.sdu.sem4.pro.datamanager.insert.InsertData;
 import dk.sdu.sem4.pro.datamanager.select.SelectData;
-import dk.sdu.sem4.pro.datamanager.update.UpdateData;
 import dk.sdu.sem4.pro.mqttcommunication.MQTTCommunication;
 import dk.sdu.sem4.pro.rest.RESTCommunication;
 import dk.sdu.sem4.pro.soap.SOAPCommunication;
@@ -21,10 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 public class UnitHandler {
-    private final UpdateData updateData = new UpdateData();
     private final SelectData selectData = new SelectData();
     private final InsertData insertData = new InsertData();
-    private final DeleteData deleteData = new DeleteData();
     private final RESTCommunication restCommunication = new RESTCommunication();
     private final AGVController agvController = new AGVController(restCommunication);
     private final SOAPCommunication soapCommunication = new SOAPCommunication();
@@ -41,14 +37,11 @@ public class UnitHandler {
             for (Map.Entry<Component, Integer> componentIntegerEntry : selectedinventory.getComponentList().entrySet()) {
                 trayIDs.add(componentIntegerEntry.getValue());
             }
-            int i = 0;
-            int trayid = 0;
-            boolean found = false;
+            int i = 0; int trayid = 0; boolean found = false;
             for(Integer id : trayIDs) {
                 i++;
                 if(id != i && !found) {
-                    found = true;
-                    trayid = id;
+                    found = true; trayid = id;
                     break;
                 }
             }

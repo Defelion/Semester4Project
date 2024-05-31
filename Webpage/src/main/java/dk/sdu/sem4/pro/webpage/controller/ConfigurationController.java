@@ -27,7 +27,7 @@ public class ConfigurationController {
     public String listitems (Model model) {
         model.addAttribute("Components", getComponents());
         model.addAttribute("Products", getProducts());
-        model.addAttribute("Wharehouses", getWharehouses());
+        model.addAttribute("Warehouses", getWarehouses());
         return "configuration";
     }
 
@@ -62,21 +62,21 @@ public class ConfigurationController {
         return products;
     }
 
-    private List<String> getWharehouses () {
-        List<String> Wharehouses = new ArrayList<>();
+    private List<String> getWarehouses() {
+        List<String> Warehouses = new ArrayList<>();
         try {
-            List<Unit> units = selectData.getAllUnitByType("Wharehouse");
+            List<Unit> units = selectData.getAllUnitByType("Warehouse");
             //System.out.println("units Size: " + units.size());
             for (Unit unit : units) {
-                Wharehouses.add(String.valueOf(unit.getId()));
+                Warehouses.add(String.valueOf(unit.getId()));
             }
-            System.out.println(Wharehouses);
+            System.out.println(Warehouses);
         }
         catch (Exception e) {
-            System.out.println("getWharehouses Error:" + e.getMessage());
+            System.out.println("getWarehouses Error:" + e.getMessage());
         }
-        System.out.println(Wharehouses);
-        return Wharehouses;
+        System.out.println(Warehouses);
+        return Warehouses;
     }
 
     @GetMapping("/updateChargesForm")
@@ -172,7 +172,7 @@ public class ConfigurationController {
             Unit unit = new Unit();
             unit.setState("idle");
             switch (unitType) {
-                case "Wharehouse":
+                case "Warehouse":
                     unit.setType(unitType);
                     insertData.addUnit(unit);
                     break;

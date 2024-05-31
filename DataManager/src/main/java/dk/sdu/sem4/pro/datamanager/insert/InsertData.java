@@ -33,7 +33,6 @@ public class InsertData implements IInsert {
             TableSQL += ") ";
             ValuesSQL += ")";
             var sql = TableSQL+ValuesSQL;
-            System.out.println("SQL: "+sql);
             var insertSQL = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             int i = 0;
             for(Map.Entry<String,Object> attribute : attributes.entrySet()) {
