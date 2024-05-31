@@ -144,25 +144,26 @@ public class SelectUnits {
         Conn conn = new Conn();
         System.out.println("getInventoryByUnit input: " + unit.getId());
         try (Connection connection = conn.getConnection()) {
-            var sql = "select c.id, c.name, c.wishedamount, i.amount, u.id, u.type, i.trayid " +
+            var sql = "select c.id, c.name, c.wishedamount, i.amount, u.type, i.trayid " +
                     "from units u " +
-                    "right join unitinventory i on u.id = i.units_id" +
-                    "right join component c on c.id = i.component_id";
-            if(unit.getId() == 0) sql += "where u.type = '?'";
-            else sql += "where u.id = '?'";
+                    "right join unitinventory i on u.id = i.units_id " +
+                    "right join component c on c.id = i.component_id ";
+            if(unit.getId() == 0) sql += "where u.type = ?";
+            else sql += "where u.id = ?";
             sql += " order by c.id";
+            System.out.println("selectedInventory - sql: " + sql);
             PreparedStatement ps = connection.prepareStatement(sql);
             if(unit.getId() == 0) { ps.setString(1, unit.getType()); }
             else ps.setInt(1, unit.getId());
             ResultSet rs = ps.executeQuery();
             Component selectedComponent = new Component(0);
             while (rs.next()) {
-                if(selectedComponent.getId() != rs.getInt("c.id")) {
-                    selectedComponent.setId(rs.getInt("c.id"));
-                    selectedComponent.setName(rs.getString("c.name"));
-                    selectedComponent.setWishedAmount(rs.getInt("c.wishedamount"));
+                if(selectedComponent.getId() != rs.getInt("id")) {
+                    selectedComponent.setId(rs.getInt("id"));
+                    selectedComponent.setName(rs.getString("name"));
+                    selectedComponent.setWishedAmount(rs.getInt("wishedamount"));
                 }
-                selectedInventory.addComponent(selectedComponent, rs.getInt("i.trayid"));
+                selectedInventory.addComponent(selectedComponent, rs.getInt("trayid"));
             }
             ps.close();
             rs.close();
@@ -176,22 +177,24 @@ public class SelectUnits {
         Inventory selectedInventory = new Inventory();
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
-            var sql = "select c.id, c.name, c.wishedamount, i.amount, u.id, u.type " +
+            var sql = "select c.id, c.name, c.wishedamount, i.amount " +
                     "from agv u " +
                     "right join agvinventory i on u.id = i.agv_id " +
                     "right join component c on c.id = i.component_id ";
-            if(agv.getId() != 0) sql += "where u.id = '?'";
+            if(agv.getId() != 0) sql += "where u.id = ? ";
+            sql += "order by c.id";
+            System.out.println("getInventoryByAGV - sql: " + sql);
             PreparedStatement ps = connection.prepareStatement(sql);
             if(agv.getId() != 0) ps.setInt(1, agv.getId());
             ResultSet rs = ps.executeQuery();
             Component selectedComponent = new Component(0);
             while (rs.next()) {
-                if(selectedComponent.getId() != rs.getInt("c.id")) {
-                    selectedComponent.setId(rs.getInt("c.id"));
-                    selectedComponent.setName(rs.getString("c.name"));
-                    selectedComponent.setWishedAmount(rs.getInt("c.wishedamount"));
+                if(selectedComponent.getId() != rs.getInt("id")) {
+                    selectedComponent.setId(rs.getInt("id"));
+                    selectedComponent.setName(rs.getString("name"));
+                    selectedComponent.setWishedAmount(rs.getInt("wishedamount"));
                 }
-                selectedInventory.addComponent(selectedComponent, rs.getInt("i.amount"));
+                selectedInventory.addComponent(selectedComponent, rs.getInt("amount"));
             }
             ps.close();
             rs.close();
@@ -245,8 +248,10 @@ public class SelectUnits {
             }
             rs.close();
             ps.close();
+            System.out.println("getAllUnits: " + rows);
             if(rows > 0) {
                 for (Unit unit : selectedUnits) {
+                    System.out.println("getAllUnits unitID: "+unit.getId());
                     unit.setInventory(getInventoryByUnit(unit));
                 }
             }
@@ -271,8 +276,8 @@ public class SelectUnits {
                         rs.getString("type"),
                         rs.getString("state"),
                         rs.getInt("chargevalue"),
-                        rs.getDate("changeddatetime"),
-                        rs.getDate("checkdattime"),
+                        rs.getDate("changedatetime"),
+                        rs.getDate("checkdatetime"),
                         rs.getDouble("mincharge"),
                         rs.getDouble("maxcharge"),
                         getInventoryByAGV(new AGV(rs.getInt("id")))
@@ -304,16 +309,16 @@ public class SelectUnits {
                 selectedAGV.setChargeValue(rs.getInt("chargevalue"));
                 selectedAGV.setMinCharge(rs.getDouble("mincharge"));
                 selectedAGV.setMaxCharge(rs.getDouble("maxcharge"));
-                selectedAGV.setChangedDateTime(rs.getDate("changeddatetime"));
-                selectedAGV.setCheckDateTime(rs.getDate("checkdattime"));
-                System.out.println("id: "+selectedAGV.getId());
+                selectedAGV.setChangedDateTime(rs.getDate("changedatetime"));
+                selectedAGV.setCheckDateTime(rs.getDate("checkdatetime"));
+                /*System.out.println("id: "+selectedAGV.getId());
                 System.out.println("state: "+selectedAGV.getState());
                 System.out.println("type: "+selectedAGV.getType());
                 System.out.println("chargevalue: "+selectedAGV.getChargeValue());
                 System.out.println("mincharge: "+selectedAGV.getMinCharge());
                 System.out.println("maxcharge: "+selectedAGV.getMaxCharge());
-                System.out.println("changeddatetime: "+selectedAGV.getChangedDateTime());
-                System.out.println("checkdattime: "+selectedAGV.getCheckDateTime());
+                System.out.println("changedatetime: "+selectedAGV.getChangeDateTime());
+                System.out.println("checkdatetime: "+selectedAGV.getCheckDateTime());*/
                 selectedAGVs.add(selectedAGV);
             }
             rs.close();

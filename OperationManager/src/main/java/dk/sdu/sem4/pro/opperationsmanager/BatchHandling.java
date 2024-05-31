@@ -32,6 +32,8 @@ public class BatchHandling {
         for (Logline logline : taskQueue) {
             String[] splitString = logline.getType().split(" ");
             int processIdtest = Integer.parseInt(splitString[1]);
+            System.out.println("getLastProcess - id: "+processId);
+            System.out.println("getLastProcess - test: "+processIdtest);
             if(processIdtest > processId) lastProcess = logline;
         }
         return lastProcess;

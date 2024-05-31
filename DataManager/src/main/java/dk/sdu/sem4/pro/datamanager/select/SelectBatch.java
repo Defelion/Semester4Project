@@ -67,6 +67,7 @@ public class SelectBatch {
 
     public List<Logline> getBatchLog (int batchID) throws IOException {
         List<Logline> logLines = new ArrayList<>();
+        //System.out.println("getBatchLog - batchID: " + batchID);
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM logline where batch_id = ? order by datetime desc";
@@ -74,21 +75,22 @@ public class SelectBatch {
             ps.setInt(1, batchID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                logLines.add(new Logline(
+                Logline logline = new Logline(
                                 rs.getInt("id"),
                                 rs.getString("description"),
                                 rs.getDate("datetime"),
                                 rs.getString("type"),
                                 rs.getInt("batch_id")
-                        )
-                );
+                        );
+                //System.out.println("getBatchLog - loglines.type: " + logline.getType());
+                logLines.add(logline);
             }
             ps.close();
             rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(logLines);
+        //System.out.println(logLines);
         return logLines;
     }
 
@@ -100,19 +102,20 @@ public class SelectBatch {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, batchID);
             ResultSet rs = ps.executeQuery();
+            int productID = 0;
             while (rs.next()) {
-                batch = new Batch(
-                        rs.getInt("id"),
-                        new Recipe(rs.getInt("component_id")),
-                        rs.getInt("amount"),
-                        rs.getString("description"),
-                        rs.getInt("priority")
-                );
+                batch = new Batch();
+                batch.setId(rs.getInt("id"));
+                batch.setPriority(rs.getInt("priority"));
+                if(rs.getString("description") != "") batch.setDescription(rs.getString("description"));
+                batch.setAmount(rs.getInt("amount"));
+                productID = rs.getInt("component_id");
             }
             ps.close();
             rs.close();
-            SelectComponent component = new SelectComponent();
-            batch.setProduct(component.getRecipe(batch.getProduct()));
+            SelectData selectData = new SelectData();
+            System.out.println("getBatch - Recipe: " + productID);
+            batch.setProduct(selectData.getProduct(productID));
             batch.setLog(getBatchLog(batch.getId()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -129,12 +132,12 @@ public class SelectBatch {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 batch = new Batch(
-                                rs.getInt("id"),
-                                new Recipe(rs.getInt("component_id")),
-                                rs.getInt("amount"),
-                                rs.getString("description"),
-                                rs.getInt("priority")
-                        );
+                        rs.getInt("id"),
+                        new Recipe(rs.getInt("component_id")),
+                        rs.getInt("amount"),
+                        rs.getString("description"),
+                        rs.getInt("priority")
+                    );
             }
             ps.close();
             rs.close();
@@ -152,7 +155,7 @@ public class SelectBatch {
         Conn conn = new Conn();
         try (Connection connection = conn.getConnection()) {
             var sql = "SELECT * FROM batch";
-            System.out.println("SQL Query: " + sql);
+            //System.out.println("SQL Query: " + sql);
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

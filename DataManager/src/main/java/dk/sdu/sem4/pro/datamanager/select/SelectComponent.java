@@ -78,6 +78,7 @@ public class SelectComponent {
             String sql = "SELECT * FROM recipe ";
             if (recipe.getProduct() != null)
                 sql += "WHERE product_component_id = ?";
+            System.out.println("Getting Recipe with id: " + recipe.getProduct().getId());
             var selectSQL = connection.prepareStatement(sql);
             if(recipe.getId() > 0)
                 selectSQL.setInt(1, recipe.getId());

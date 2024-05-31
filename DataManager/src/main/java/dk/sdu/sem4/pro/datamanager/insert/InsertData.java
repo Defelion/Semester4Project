@@ -5,6 +5,7 @@ import dk.sdu.sem4.pro.commondata.data.*;
 import dk.sdu.sem4.pro.datamanager.connection.Conn;
 import dk.sdu.sem4.pro.datamanager.hash.Hashing;
 import dk.sdu.sem4.pro.commondata.services.IInsert;
+import dk.sdu.sem4.pro.datamanager.select.SelectBatch;
 import dk.sdu.sem4.pro.datamanager.select.SelectData;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class InsertData implements IInsert {
             insertSQL.close();
         } catch (SQLException e) {
             id = -2;
-            throw new SQLException(e);
+            System.out.println("insertIntoDBSecure: " + e.getMessage());
         }
         return id;
     }
@@ -76,7 +77,7 @@ public class InsertData implements IInsert {
         }
         catch (IOException | SQLException e){
             id = -1;
-            throw new RuntimeException(e);
+            System.out.println("addBatch: " + e.getMessage());
         }
         return id;
     }
@@ -90,17 +91,20 @@ public class InsertData implements IInsert {
     public int addLogline(int batchID, Logline logline) {
         int id = 0;
         try {
-
-            Map<String, Object> attributes = new HashMap<>();
-            attributes.put("type", logline.getType());
-            attributes.put("description", logline.getDescription());
-            attributes.put("dateTime", Timestamp.from(Instant.now()));
-            attributes.put("Batch_ID", batchID);
-            id = insertIntoDBSecure("logline", attributes);
+            SelectData selectData = new SelectData();
+            Batch batch = selectData.getBatch(batchID);
+            if(batch.getProduct() != null) {
+                Map<String, Object> attributes = new HashMap<>();
+                attributes.put("type", logline.getType());
+                attributes.put("description", logline.getDescription());
+                attributes.put("dateTime", Timestamp.from(Instant.now()));
+                attributes.put("Batch_ID", batchID);
+                id = insertIntoDBSecure("logline", attributes);
+            }
         }
         catch (IOException | SQLException e){
             id = -1;
-            throw new RuntimeException(e);
+            System.out.println("addLogline: " + e.getMessage());
         }
         return id;
     }
@@ -121,7 +125,7 @@ public class InsertData implements IInsert {
         }
         catch (IOException | SQLException e){
             id = -1;
-            throw new RuntimeException(e);
+            System.out.println("addComponent: " + e.getMessage());
         }
         return id;
     }
@@ -146,8 +150,8 @@ public class InsertData implements IInsert {
             }
         }
         catch (IOException | SQLException e){
-            ids = null;
-            throw new RuntimeException(e);
+            ids.add(-1);
+            System.out.println("addProduct: " + e.getMessage());
         }
         return ids;
     }
@@ -168,7 +172,7 @@ public class InsertData implements IInsert {
         }
         catch (IOException | SQLException e){
             id = -1;
-            throw new RuntimeException(e);
+            System.out.println("addUnit: " + e.getMessage());
         }
         return id;
     }
@@ -194,7 +198,7 @@ public class InsertData implements IInsert {
         }
         catch (IOException | SQLException e){
             ids.add(-1);
-            throw new RuntimeException(e);
+            System.out.println("addUnitInvetory: " + e.getMessage());
         }
         return ids;
     }
@@ -216,7 +220,7 @@ public class InsertData implements IInsert {
         }
         catch (IOException | SQLException e){
             ids = -1;
-            throw new RuntimeException(e);
+            System.out.println("addUnitComponentInvetory: " + e.getMessage());
         }
         return ids;
     }
@@ -240,7 +244,7 @@ public class InsertData implements IInsert {
         }
         catch (IOException | SQLException e){
             id = -1;
-            throw new RuntimeException(e);
+            System.out.println("addAGV: " + e.getMessage());
         }
         return id;
     }
@@ -265,7 +269,7 @@ public class InsertData implements IInsert {
             }
         }
         catch (IOException | SQLException e){
-            throw new RuntimeException(e);
+            System.out.println("addAGVInvetory: " + e.getMessage());
         }
         return ids;
     }
@@ -284,7 +288,7 @@ public class InsertData implements IInsert {
         }
         catch (IOException | SQLException e){
             id = -1;
-            throw new RuntimeException(e);
+            System.out.println("addUserGroup: " + e.getMessage());
         }
         return id;
     }
@@ -305,7 +309,7 @@ public class InsertData implements IInsert {
             id = insertIntoDBSecure("Component", attributes);
         } catch (IOException | SQLException e) {
             id = -1;
-            throw new RuntimeException(e);
+            System.out.println("addUser: " + e.getMessage());
         }
         return id;
     }

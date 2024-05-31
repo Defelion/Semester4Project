@@ -79,7 +79,7 @@ public class SelectData implements ISelect {
     @Override
     public Recipe getProduct(int productID) throws IOException {
         SelectComponent selectComponent = new SelectComponent();
-        return selectComponent.getRecipe(new Recipe(new Component(productID)));
+        return selectComponent.getRecipe(new Recipe(getComponent(productID)));
     }
 
     @Override
