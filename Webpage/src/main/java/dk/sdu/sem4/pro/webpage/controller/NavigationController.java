@@ -1,5 +1,6 @@
 package dk.sdu.sem4.pro.webpage.controller;
 
+import dk.sdu.sem4.pro.opperationsmanager.Production;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -39,5 +40,11 @@ public class NavigationController {
     @GetMapping("/configuration-page")
     public String getConfigurationPage() {
         return "configuration";
+    }
+
+    @GetMapping("/production/run")
+    public String runProduction() {
+        Production production = new Production();
+        return production.runProduction();
     }
 }

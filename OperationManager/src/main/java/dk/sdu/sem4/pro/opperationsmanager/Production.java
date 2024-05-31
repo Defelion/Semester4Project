@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Production implements IProduction {
     private final UpdateData updateData = new UpdateData();
@@ -24,7 +25,22 @@ public class Production implements IProduction {
     @Override
     public boolean startProduction() {
         System.out.println("Starting production");
-        return false;
+        if(Objects.equals(runNextProcess(), "FAILED")) return false;
+        else {
+            try {
+                Batch batch = selectData.getBatchWithHigestPriority();
+                Logline logline = new Logline(
+                        "Start," + batch.getProduct().getProduct().getName(),
+                        Date.from(Instant.now()),
+                        "Process " + 0
+                );
+                insertData.addLogline(logline.getBatchID(), logline);
+                return true;
+            } catch (IOException e) {
+                System.out.println("Error while starting production: " + e.getMessage());
+                return false;
+            }
+        }
     }
 
     @Override
@@ -42,8 +58,7 @@ public class Production implements IProduction {
     @Override
     public String runProduction() {
         System.out.println("Running production");
-        runNextProcess();
-        return null;
+        return runNextProcess();
     }
 
     @Override
@@ -51,24 +66,26 @@ public class Production implements IProduction {
         boolean result = false;
         try {
             Component component = selectData.getComponent(componentName);
-            List<Unit> warehouse = selectData.getAllUnitByType("Warehouse");
-            result = unitHandler.addComponenttoWarehouse(component, warehouse.getFirst());
+            Unit warehouse = selectData.getAllUnitByType("Warehouse").stream().findFirst().get();
+            result = unitHandler.addComponenttoWarehouse(component, warehouse);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return result;
     }
 
-    public boolean runNextProcess () {
+    public String runNextProcess () {
+        String description = "";
         boolean result = false;
         try {
+            AGV agv = new AGV();
+            for(AGV selectedAGV : selectData.getAllAGV()) agv = selectedAGV;
             Component component = new Component();
-            Unit warehouse = selectData.getAllUnitByType("Warehouse").getFirst();
-            AGV agv = selectData.getAllAGV().getFirst();
+            Unit warehouse = new Unit();
+            for(Unit selectedWarehouse : selectData.getAllUnitByType("Warehouse")) warehouse = selectedWarehouse;
             Batch batch = selectData.getBatchWithHigestPriority();
             int processNumber = 0;
             int count = 0;
-            String description = "";
             Map<String, String> processes = batchHandler.getAllProcess();
             Logline logline = batchHandler.getLastProcess();
             Logline agvlogline = new Logline();
@@ -79,10 +96,7 @@ public class Production implements IProduction {
             if (processes.containsKey("MoveToWarehouse")) component = selectData.getComponent(processes.get("MoveToWarehouse"));
             switch (logline.getDescription()) {
                 case "MoveToWarehouse":
-                    for(Map.Entry<String, String> entry : processes.entrySet()) {
-                        if(entry.getValue().equals("PickFromAssemblyStation")) count++;
-                    }
-                    if (count == 0) {
+                    if (processes.containsKey("PickFromAssemblyStation")) {
                         result = unitHandler.AGVComponentWarehouse(true);
                         if (result) {
                             Inventory inventory = selectData.getInventoryByAGV(agv.getId());
@@ -93,6 +107,9 @@ public class Production implements IProduction {
                         }
                     }
                     else {
+                        for(Map.Entry<String, String> entry : processes.entrySet()) {
+                            if(entry.getValue().equals("PickFromAssemblyStation")) count++;
+                        }
                         result = unitHandler.AGVComponentWarehouse(false);
                         if (result) {
                             if(count <= 2) {
@@ -126,6 +143,8 @@ public class Production implements IProduction {
                             "Finished"
                     ));
                     description = "done";
+                    batch.setPriority(0);
+                    updateData.updateBatch(batch);
                     break;
 
                 case "MoveToAssemblyStation":
@@ -165,21 +184,27 @@ public class Production implements IProduction {
                     break;
 
                 default:
-                    result = unitHandler.AGVMoveWarehouse();
-                    component = batch.getProduct().getComponentMap().entrySet().iterator().next().getKey();
-                    description = "MoveToWarehouse";
+                    if(processes.containsKey("Start")) {
+                        result = unitHandler.AGVMoveWarehouse();
+                        component = batch.getProduct().getComponentMap().entrySet().iterator().next().getKey();
+                        description = "MoveToWarehouse";
+                    }
+                    else result = true;
                     break;
             }
-            agvlogline = new Logline(
-                    description+","+component.getName(),
-                    Date.from(Instant.now()),
-                    "Process "+(processNumber+1)
-            );
-            insertData.addLogline(logline.getBatchID(), agvlogline);
+            if(processes.containsKey("start")) {
+                agvlogline = new Logline(
+                        description + "," + component.getName(),
+                        Date.from(Instant.now()),
+                        "Process " + (processNumber + 1)
+                );
+                insertData.addLogline(logline.getBatchID(), agvlogline);
+            }
         }
         catch (IOException e) {
             System.out.println("runNextProcess error:" + e.getMessage());
         }
-        return result;
+        if(!result) description = "FAILED";
+        return description;
     }
 }

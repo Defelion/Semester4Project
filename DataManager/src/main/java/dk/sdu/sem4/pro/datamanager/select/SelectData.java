@@ -151,19 +151,19 @@ public class SelectData implements ISelect {
     @Override
     public Inventory getInventoryByUnit(int unitID) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
-        return selectUnits.getInventoryByUnit(new Unit(unitID), true);
+        return selectUnits.getInventoryByUnit(new Unit(unitID));
     }
 
     @Override
     public Inventory getInventoryByAGV(int AGVID) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
-        return selectUnits.getInventoryByUnit(new Unit(AGVID), true);
+        return selectUnits.getInventoryByAGV(new AGV(AGVID));
     }
 
     @Override
     public Inventory getInventoryByUnitType(String type) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
-        return selectUnits.getInventoryByUnit(new Unit(type), false);
+        return selectUnits.getInventoryByUnit(new Unit(type));
     }
 
     @Override

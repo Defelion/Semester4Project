@@ -139,14 +139,22 @@ public class SelectUnits {
         return selectedInventory;
     }
 
-    public Inventory getInventoryByUnit(Unit unit, Boolean isUnit) throws IOException {
+    public Inventory getInventoryByUnit(Unit unit) throws IOException {
         Inventory selectedInventory = new Inventory();
         Conn conn = new Conn();
+        System.out.println("getInventoryByUnit input: " + unit.getId());
         try (Connection connection = conn.getConnection()) {
-            var sql = getSQLString(unit, isUnit);
+            var sql = "select c.id, c.name, c.wishedamount, i.amount, u.id, u.type, i.trayid " +
+                    "from units u " +
+                    "right join unitinventory i on u.id = i.units_id" +
+                    "right join component c on c.id = i.component_id";
+            if(unit.getId() == 0) sql += "where u.type = '?'";
+            else sql += "where u.id = '?'";
+            sql += " order by c.id";
             PreparedStatement ps = connection.prepareStatement(sql);
+            if(unit.getId() == 0) { ps.setString(1, unit.getType()); }
+            else ps.setInt(1, unit.getId());
             ResultSet rs = ps.executeQuery();
-            int componentcount = 0;
             Component selectedComponent = new Component(0);
             while (rs.next()) {
                 if(selectedComponent.getId() != rs.getInt("c.id")) {
@@ -164,35 +172,33 @@ public class SelectUnits {
         return selectedInventory;
     }
 
-    private String getSQLString (Unit unit, Boolean isUnit) throws IOException {
-        var sql = "select c.id, c.name, c.wishedamount, i.amount ";
-        if(unit.getId() == 0){
-            if(isUnit) {
-                sql += ", i.trayid from units u ";
-                sql += "right join unitinventory i on u.id = i.units_id";
-                sql += "right join component c on c.id = i.component_id";
-                sql += "where u.type = '" + unit.getType()+"'";
+    public Inventory getInventoryByAGV(AGV agv) throws IOException {
+        Inventory selectedInventory = new Inventory();
+        Conn conn = new Conn();
+        try (Connection connection = conn.getConnection()) {
+            var sql = "select c.id, c.name, c.wishedamount, i.amount, u.id, u.type " +
+                    "from agv u " +
+                    "right join agvinventory i on u.id = i.agv_id " +
+                    "right join component c on c.id = i.component_id ";
+            if(agv.getId() != 0) sql += "where u.id = '?'";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            if(agv.getId() != 0) ps.setInt(1, agv.getId());
+            ResultSet rs = ps.executeQuery();
+            Component selectedComponent = new Component(0);
+            while (rs.next()) {
+                if(selectedComponent.getId() != rs.getInt("c.id")) {
+                    selectedComponent.setId(rs.getInt("c.id"));
+                    selectedComponent.setName(rs.getString("c.name"));
+                    selectedComponent.setWishedAmount(rs.getInt("c.wishedamount"));
+                }
+                selectedInventory.addComponent(selectedComponent, rs.getInt("i.amount"));
             }
-            else {
-                sql += "from agv u ";
-                sql += "right join agvinventory i on u.id = i.units_id";
-                sql += "right join component c on c.id = i.component_id";
-            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        else if (isUnit) {
-            sql += ", i.trayid from units u ";
-            sql += "right join unitinventory i on u.id = i.units_id";
-            sql += "right join component c on c.id = i.component_id";
-            sql += "where u.id = '" + unit.getId()+"'";
-        }
-        else {
-            sql += "from agv u ";
-            sql += "right join agvinventory i on u.id = i.units_id";
-            sql += "right join component c on c.id = i.component_id";
-            sql += "where u.id = '" + unit.getId()+"'";
-        }
-        sql += " order by c.id";
-        return sql;
+        return selectedInventory;
     }
 
     public Unit getUnit(int unitID) throws IOException {
@@ -213,7 +219,7 @@ public class SelectUnits {
             }
             ps.close();
             rs.close();
-            selectedUnit.setInventory(getInventoryByUnit(selectedUnit, true));;
+            selectedUnit.setInventory(getInventoryByUnit(selectedUnit));;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -228,7 +234,9 @@ public class SelectUnits {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, type);
             ResultSet rs = ps.executeQuery();
+            int rows = 0;
             while (rs.next()) {
+                rows++;
                 selectedUnits.add(new Unit(
                         rs.getInt("id"),
                         rs.getString("state"),
@@ -237,8 +245,10 @@ public class SelectUnits {
             }
             rs.close();
             ps.close();
-            for (Unit unit : selectedUnits) {
-                unit.setInventory(getInventoryByUnit(unit, true));
+            if(rows > 0) {
+                for (Unit unit : selectedUnits) {
+                    unit.setInventory(getInventoryByUnit(unit));
+                }
             }
 
         } catch (SQLException e) {
@@ -265,7 +275,7 @@ public class SelectUnits {
                         rs.getDate("checkdattime"),
                         rs.getDouble("mincharge"),
                         rs.getDouble("maxcharge"),
-                        getInventoryByUnit(new Unit(rs.getInt("id")), false)
+                        getInventoryByAGV(new AGV(rs.getInt("id")))
                 );
             }
         } catch (SQLException e) {
@@ -296,35 +306,25 @@ public class SelectUnits {
                 selectedAGV.setMaxCharge(rs.getDouble("maxcharge"));
                 selectedAGV.setChangedDateTime(rs.getDate("changeddatetime"));
                 selectedAGV.setCheckDateTime(rs.getDate("checkdattime"));
-                /*System.out.println("id: "+selectedAGV.getId());
+                System.out.println("id: "+selectedAGV.getId());
                 System.out.println("state: "+selectedAGV.getState());
                 System.out.println("type: "+selectedAGV.getType());
                 System.out.println("chargevalue: "+selectedAGV.getChargeValue());
                 System.out.println("mincharge: "+selectedAGV.getMinCharge());
                 System.out.println("maxcharge: "+selectedAGV.getMaxCharge());
                 System.out.println("changeddatetime: "+selectedAGV.getChangedDateTime());
-                System.out.println("checkdattime: "+selectedAGV.getCheckDateTime());*/
+                System.out.println("checkdattime: "+selectedAGV.getCheckDateTime());
                 selectedAGVs.add(selectedAGV);
             }
             rs.close();
             ps.close();
             System.out.println("Amount of AGV"+selectedAGVs.size());
             for (AGV agv : selectedAGVs) {
-                //System.out.println("AGV: "+agv);
-                agv.setInventory(getInventoryByUnit(agv, false));
+                System.out.println("AGV: "+agv.getId());
+                agv.setInventory(getInventoryByAGV(agv));
             }
         } catch (SQLException e) {
-            for (int retry = 1; retry <= 3; retry++) { // Try up to 3 times
-                try {
-                    Thread.sleep(1000); // Delay for 1 second
-                    // ... (retry the query) ...
-                    return selectedAGVs; // Exit the retry loop if successful
-                } catch (InterruptedException retryException) {
-                    System.out.println(retryException);
-                }
-            }
             System.out.println(e.getMessage());
-            throw new RuntimeException(e);
         }
         return selectedAGVs;
     }

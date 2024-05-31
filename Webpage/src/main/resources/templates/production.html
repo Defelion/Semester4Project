@@ -95,7 +95,7 @@
     </div>
 
     <div class="control-production">
-        <form method="post">
+        <form th:action="@{/configuration}" method="post">
             <h1>These buttons manage the production</h1>
             <button type="submit" name="handlingBtn" value="start" id="startButton" th:formaction="@{/start}">Start</button>
             <button type="submit" name="handlingBtn" value="stop" id="stopButton" th:formaction="@{/stop}">Stop</button>

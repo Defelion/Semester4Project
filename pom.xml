@@ -18,7 +18,6 @@
         <module>Common</module>
         <module>Communication</module>
         <module>CommonData</module>
-        <module>CommonWeb</module>
         <module>DataManager</module>
         <module>RESTCommunication</module>
         <module>AGVController</module>
