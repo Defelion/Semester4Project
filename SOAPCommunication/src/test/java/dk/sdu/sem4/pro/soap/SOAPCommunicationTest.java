@@ -45,8 +45,11 @@ public class SOAPCommunicationTest {
         when(soapPart.getEnvelope()).thenReturn(soapEnvelope);
         when(soapEnvelope.getBody()).thenReturn(soapBody);
 
+        // Mock the operation element correctly
+        when(soapBody.addChildElement(anyString())).thenReturn(soapElement);
+
         // Instantiate the class under test with mocked factories
-        soapCommunication = new SOAPCommunication(new URL("http://localhost:8082/v1/status/"), soapConnectionFactory, messageFactory);
+        soapCommunication = new SOAPCommunication(new URL("http://localhost:8081/v1/status/"), soapConnectionFactory, messageFactory);
     }
 
     @Test
@@ -70,29 +73,45 @@ public class SOAPCommunicationTest {
 
     @Test
     void testSend_Success() throws Exception {
-        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(soapMessage);
+        // Mock the response elements
+        SOAPMessage mockResponse = mock(SOAPMessage.class);
+        SOAPBody mockResponseBody = mock(SOAPBody.class);
 
-        // Mock the SOAPBody to not have faults
-        when(soapBody.hasFault()).thenReturn(false);
+        // Ensure the mock response body has no fault
+        when(mockResponseBody.hasFault()).thenReturn(false);
 
-        // Ensure the soapBody is retrieved correctly in the response
-        when(soapMessage.getSOAPBody()).thenReturn(soapBody);
+        // Ensure the mock response returns the mock response body
+        when(mockResponse.getSOAPBody()).thenReturn(mockResponseBody);
 
+        // Ensure the connection call returns the mock response
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(mockResponse);
+
+        // Perform the send operation
         int statusCode = soapCommunication.send(new JSONObject().put("key", "value"));
+
+        // Assert that the status code is 200
         assertEquals(200, statusCode); // Expect 200 for successful send
     }
 
     @Test
     void testSend_Fault() throws Exception {
-        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(soapMessage);
+        // Mock the response elements
+        SOAPMessage mockResponse = mock(SOAPMessage.class);
+        SOAPBody mockResponseBody = mock(SOAPBody.class);
 
-        // Mock the SOAPBody to have faults
-        when(soapBody.hasFault()).thenReturn(true);
+        // Ensure the mock response body has a fault
+        when(mockResponseBody.hasFault()).thenReturn(true);
 
-        // Ensure the soapBody is retrieved correctly in the response
-        when(soapMessage.getSOAPBody()).thenReturn(soapBody);
+        // Ensure the mock response returns the mock response body
+        when(mockResponse.getSOAPBody()).thenReturn(mockResponseBody);
 
+        // Ensure the connection call returns the mock response
+        when(soapConnection.call(any(SOAPMessage.class), any(URL.class))).thenReturn(mockResponse);
+
+        // Perform the send operation
         int statusCode = soapCommunication.send(new JSONObject().put("key", "value"));
-        assertEquals(500, statusCode);
+
+        // Assert that the status code is 500
+        assertEquals(500, statusCode); // Expect 500 for a fault response
     }
 }

@@ -1,4 +1,4 @@
-open module SOAPCommunication {
+module SOAPCommunication {
     requires jakarta.xml.soap;
     requires android.json;
     requires Communication;

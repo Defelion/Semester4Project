@@ -15,7 +15,7 @@ public class SOAPCommunication implements IClient {
 
     public SOAPCommunication() {
         try {
-            this.endpoint = new URL("http://localhost:8082/v1/status/");
+            this.endpoint = new URL("http://localhost:8081/v1/status/");
             this.connectionFactory = SOAPConnectionFactory.newInstance();
             this.messageFactory = MessageFactory.newInstance();
         } catch (MalformedURLException | SOAPException e) {
