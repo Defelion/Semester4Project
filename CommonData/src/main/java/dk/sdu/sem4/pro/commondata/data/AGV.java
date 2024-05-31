@@ -11,6 +11,10 @@ public class AGV extends Unit{
 
     public AGV() {}
 
+    public AGV(int ID) {
+        setId(ID);
+    }
+
     public AGV (String Type, String State) {
         setType(Type);
         setState(State);

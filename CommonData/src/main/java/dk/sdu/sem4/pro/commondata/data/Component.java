@@ -1,8 +1,8 @@
 package dk.sdu.sem4.pro.commondata.data;
 
 public class Component {
-    public int id = 0;
-    public String name;
+    private int id = 0;
+    private String name;
     private int wishedAmount;
 
     public Component() {}

@@ -1,5 +1,6 @@
 package dk.sdu.sem4.pro.commondata.data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Inventory {
@@ -34,6 +35,7 @@ public class Inventory {
     }
 
     public void addComponent (Component component, int amount) {
+        if (componentList == null) componentList = new HashMap<Component, Integer>();
         this.componentList.put(component, amount);
     }
 

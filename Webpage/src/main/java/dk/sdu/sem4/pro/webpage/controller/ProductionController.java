@@ -7,6 +7,7 @@ import dk.sdu.sem4.pro.commondata.data.Logline;
 import dk.sdu.sem4.pro.commondata.data.Recipe;
 import dk.sdu.sem4.pro.datamanager.insert.InsertData;
 import dk.sdu.sem4.pro.datamanager.select.SelectData;
+import dk.sdu.sem4.pro.opperationsmanager.Production;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,7 @@ import java.util.List;
 @Controller
 //@RequestMapping("/production")
 public class ProductionController {
-    private IProduction iProduction;
+    private final Production production = new Production();
     private final SelectData selectData = new SelectData();
     private final InsertData insertData = new InsertData();
 
@@ -36,39 +37,66 @@ public class ProductionController {
         catch (Exception e) {
             System.out.println("productListing Error: "+e);
         }
-
-
         return "production";
     }
 
+    @GetMapping("/handlingForm")
+    public String handlingForm() {
+        return "handlingForm";
+    }
+
+    @GetMapping("/doHandling")
+    public String doHandling (@RequestParam("handlingBtn") String handling) {
+        System.out.println("doHandling "+handling);
+        return "redirect:/production";
+    }
+
+    @PostMapping("/startForm")
+    public String startForm() {
+        return "startForm";
+    }
+
     @PostMapping("/start")
-    public ResponseEntity<String> startProduction() {
-        boolean result = iProduction.startProduction();
+    public String startProduction() {
+        boolean result = production.startProduction();
         if (result) {
-            return new ResponseEntity<>("Production started successfully", HttpStatus.OK);
+
         } else {
-            return new ResponseEntity<>("Failed to start production", HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
+        return "redirect:/production";
+    }
+
+    @GetMapping("/stopForm")
+    public String stopForm() {
+        return "stopForm";
     }
 
     @PostMapping("/stop")
-    public ResponseEntity<String> stopProduction() {
-        boolean result = iProduction.stopProduction();
+    public String stopProduction() {
+        boolean result = production.stopProduction();
         if (result) {
-            return new ResponseEntity<>("Production stopped successfully", HttpStatus.OK);
+
         } else {
-            return new ResponseEntity<>("Failed to stop production", HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
+        return "redirect:/production";
+    }
+
+    @GetMapping("/resumehForm")
+    public String resumehForm() {
+        return "resumehForm";
     }
 
     @PostMapping("/resume")
-    public ResponseEntity<String> resumeProduction() {
-        boolean result = iProduction.resumeProduction();
+    public String resumeProduction() {
+        boolean result = production.resumeProduction();
         if (result) {
-            return new ResponseEntity<>("Production resumed successfully", HttpStatus.OK);
+
         } else {
-            return new ResponseEntity<>("Failed to resume production", HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
+        return "redirect:/production";
     }
 
     @GetMapping("/addBatchForm")
@@ -101,25 +129,5 @@ public class ProductionController {
         return "redirect:/production";
     }
 
-    /*@GetMapping("/getAllRecipes")
-    public ResponseEntity<List<Recipe>> getAllRecipes() {
-        try {
-            List<Recipe> recipes = selectData.getAllProducts();
-            if (recipes.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(recipes, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
 
-    public static <T> T findSpecificImplementation(List<? extends T> implementations, String className) {
-        for (T implementation : implementations) {
-            if (implementation.getClass().getName().equals(className)) {
-                return implementation;
-            }
-        }
-        return null;
-    }
 }

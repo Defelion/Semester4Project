@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class ConfigurationController {
@@ -26,7 +27,7 @@ public class ConfigurationController {
     public String listitems (Model model) {
         model.addAttribute("Components", getComponents());
         model.addAttribute("Products", getProducts());
-        model.addAttribute("Wharehouses", getWharehouses());
+        model.addAttribute("Warehouses", getWarehouses());
         return "configuration";
     }
 
@@ -40,7 +41,7 @@ public class ConfigurationController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getComponents Error:" + e.getMessage());
         }
         System.out.println(components);
         return components;
@@ -55,27 +56,27 @@ public class ConfigurationController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getProducts Error:" + e.getMessage());
         }
         //System.out.println(products);
         return products;
     }
 
-    private List<String> getWharehouses () {
-        List<String> Wharehouses = new ArrayList<>();
+    private List<String> getWarehouses() {
+        List<String> Warehouses = new ArrayList<>();
         try {
-            List<Unit> units = selectData.getAllUnitByType("Wharehouse");
+            List<Unit> units = selectData.getAllUnitByType("Warehouse");
             //System.out.println("units Size: " + units.size());
             for (Unit unit : units) {
-                Wharehouses.add(String.valueOf(unit.getId()));
+                Warehouses.add(String.valueOf(unit.getId()));
             }
-            System.out.println(Wharehouses);
+            System.out.println(Warehouses);
         }
         catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getWarehouses Error:" + e.getMessage());
         }
-        System.out.println(Wharehouses);
-        return Wharehouses;
+        System.out.println(Warehouses);
+        return Warehouses;
     }
 
     @GetMapping("/updateChargesForm")
@@ -171,7 +172,7 @@ public class ConfigurationController {
             Unit unit = new Unit();
             unit.setState("idle");
             switch (unitType) {
-                case "Wharehouse":
+                case "Warehouse":
                     unit.setType(unitType);
                     insertData.addUnit(unit);
                     break;
@@ -210,7 +211,7 @@ public class ConfigurationController {
             System.out.println("Received product name: " + selectedProduct);
             Recipe recipe = new Recipe();
             recipe.setProduct(selectData.getComponent(selectedProduct));
-            if(selectedcompnent2 == selectedcompnent1) recipe.addComponent(selectData.getComponent(selectedcompnent1), 2);
+            if(Objects.equals(selectedcompnent2, selectedcompnent1)) recipe.addComponent(selectData.getComponent(selectedcompnent1), 2);
             else {
                 recipe.addComponent(selectData.getComponent(selectedcompnent1), 1);
                 recipe.addComponent(selectData.getComponent(selectedcompnent2), 1);

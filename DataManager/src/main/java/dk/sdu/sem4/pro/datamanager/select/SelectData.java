@@ -79,7 +79,7 @@ public class SelectData implements ISelect {
     @Override
     public Recipe getProduct(int productID) throws IOException {
         SelectComponent selectComponent = new SelectComponent();
-        return selectComponent.getRecipe(new Recipe(new Component(productID)));
+        return selectComponent.getRecipe(new Recipe(getComponent(productID)));
     }
 
     @Override
@@ -131,6 +131,12 @@ public class SelectData implements ISelect {
     }
 
     @Override
+    public Inventory getInventoryByUnitAndComponent(int unitID, String componentName) throws IOException {
+        SelectUnits selectUnits = new SelectUnits();
+        return selectUnits.getInventoryByUnitAndComponent(new Unit(unitID), new Component(componentName));
+    }
+
+    @Override
     public Inventory getInventoryByComponent(int componentID) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
         return selectUnits.getInventoryByComponent(new Component(componentID));
@@ -145,19 +151,19 @@ public class SelectData implements ISelect {
     @Override
     public Inventory getInventoryByUnit(int unitID) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
-        return selectUnits.getInventoryByUnit(new Unit(unitID), true);
+        return selectUnits.getInventoryByUnit(new Unit(unitID));
     }
 
     @Override
     public Inventory getInventoryByAGV(int AGVID) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
-        return selectUnits.getInventoryByUnit(new Unit(AGVID), true);
+        return selectUnits.getInventoryByAGV(new AGV(AGVID));
     }
 
     @Override
     public Inventory getInventoryByUnitType(String type) throws IOException {
         SelectUnits selectUnits = new SelectUnits();
-        return selectUnits.getInventoryByUnit(new Unit(type), false);
+        return selectUnits.getInventoryByUnit(new Unit(type));
     }
 
     @Override

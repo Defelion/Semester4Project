@@ -1,3 +1,15 @@
+create table Component (
+   ID serial not null unique primary key,
+   name varchar not null,
+   wishedAmount integer not null
+);
+
+create table Units (
+   ID serial not null unique primary key,
+   state varchar not null,
+   type varchar not null
+);
+
 create table Batch (
     ID serial not null unique primary key,
     priority integer not null,
@@ -20,11 +32,6 @@ create table LogLine (
          on delete cascade
 );
 
-create table Component (
-   ID serial not null unique primary key,
-   name varchar not null,
-   wishedAmount integer not null
-);
 
 create table Recipe (
     ID serial not null unique primary key,
@@ -40,15 +47,10 @@ create table Recipe (
         on delete cascade
 );
 
-create table Units (
-    ID serial not null unique primary key,
-    state varchar not null,
-    type varchar not null
-);
-
 create table UnitInventory (
     ID serial not null unique primary key,
     amount integer not null,
+    trayID integer not null,
     Units_ID integer not null,
     Component_ID integer not null,
     foreign key (Units_ID)

@@ -1,7 +1,9 @@
 package dk.sdu.sem4.pro.webpage.controller;
 
+import dk.sdu.sem4.pro.opperationsmanager.Production;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class NavigationController {
@@ -41,3 +43,4 @@ public class NavigationController {
         return "configuration";
     }
 }
+

@@ -38,7 +38,7 @@ public interface ISelect {
 
     public List<Unit> getAllUnit() throws IOException;
 
-    //type can be Wharehouse or Assembly
+    //type can be Warehouse or Assembly
     public List<Unit> getAllUnitByType(String type) throws IOException;
 
     public AGV getAGV(int agvID) throws IOException;
@@ -46,6 +46,8 @@ public interface ISelect {
     public List<AGV> getAllAGV() throws IOException;
 
     public Inventory getInventory() throws IOException;
+
+    public Inventory getInventoryByUnitAndComponent(int unitID, String componentName) throws IOException;
 
     public Inventory getInventoryByComponent(int componentID) throws IOException;
 
@@ -56,7 +58,7 @@ public interface ISelect {
 
     public Inventory getInventoryByAGV(int AGVID) throws IOException;
 
-    //type can be Wharehouse, Assembly or AGV
+    //type can be Warehouse, Assembly or AGV
     public Inventory getInventoryByUnitType(String type) throws IOException;
 
     public User getUser(int userID) throws IOException;
